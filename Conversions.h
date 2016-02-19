@@ -1,3 +1,5 @@
+//Conversions.h, a file with two functions to pick the prefered resistor and capacitor values.
+
 
 //Function to pick the prefered resistor from a given resistor value range.
 short PrefResistor(double OResistor, short BoxNo) {
