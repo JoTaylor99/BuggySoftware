@@ -12,3 +12,5 @@ BuggyCode/Debug/BuggyCode.exe
 *.ilk
 BuggyCode/BuggyCode/Debug/vc140.pdb
 *.pdb
+*.log
+*.opendb
