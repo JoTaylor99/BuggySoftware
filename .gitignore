@@ -3,3 +3,12 @@ BuggyCode/.vs/BuggyCode/v14/.suo
 BuggyCode/BuggyCode.sln
 *.filters
 BuggyCode/BuggyCode/BuggyCode.vcxproj
+BuggyCode/BuggyCode/Debug/BuggyCode.log
+BuggyCode/BuggyCode/Debug/BuggyCode.tlog/BuggyCode.lastbuildstate
+*.tlog
+BuggyCode/BuggyCode/Debug/BuggyTop.obj
+*.idb
+BuggyCode/Debug/BuggyCode.exe
+*.ilk
+BuggyCode/BuggyCode/Debug/vc140.pdb
+*.pdb
