@@ -16,6 +16,4 @@ void boxControl::initControl(){
 
 int switchControl();
 
-int setBC(boxControl::bcState setState);
-
 int setDirection(bool inverted);

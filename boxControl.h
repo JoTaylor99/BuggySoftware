@@ -16,18 +16,19 @@ public:
 
 	~boxControl();
 
-	enum bcState
-	{
-		ON = 1,
-		OFF = 0
+protected:
+//enum for box driving voltage control
+	enum inputStatus {
+		OFF = 0,
+		ON = 1
 	};
 
 	void initControl();
 
 	bool switchControl(boxConfig::boxSettings boxSetting);
 
-
-	bool setBC(boxControl::bcState setState);
+	bool setInput(boxControl::inputStatus position);
+	bool setInput(boxControl::inputStatus position, short boxNumber);
 
 	bool setDirection(bool inverted);
 
@@ -52,6 +53,8 @@ private:
 		short retrievePinNumber(short relayName);
 
 		bool compareRelayAssignments(unsigned short validSet);
+
+		bool _inverted = false;
 	};
 
 	bool assignmentValid = 0;
