@@ -4,6 +4,7 @@
  Author:	Henry
 */
 
+#include <Adafruit_MCP23017.h>
 #include "buggyTop.h"
 
 

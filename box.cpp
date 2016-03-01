@@ -7,8 +7,8 @@ box::~box() {
 }
 
 void box::init(){
-	boxControl * assessBoxControl;
-	assessBoxControl->initControl();
+	boxControl  assessBoxControl;
+	assessBoxControl.initControl();
 	pinMode(_adcInPin, INPUT);
 
 	const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
