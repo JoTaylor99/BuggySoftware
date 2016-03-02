@@ -4,11 +4,11 @@
 namespace boxValues{
 
 	struct returnData {
-		short v1;
+		double v1;
 		short r1, r2, r3;
-		double c1;
+		short c1;
 		double f;
-			
+		byte error;
 	};
 
 

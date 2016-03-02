@@ -5,20 +5,24 @@
 #define FIVEVOLTOUTPUTPIN 1
 #define ADCINPUTPIN	   2
 
-#define pinP1BC        3
-#define pinP15V        8
-#define pinP1ADC       9
-#define pinP2GND       4
-#define pinP25V        2
-#define pinP2Rd        1
-#define pinP2Rk        0
-#define pinP2ADC       13
-#define pinGNDADC      10
-#define pinGNDGND      11
-#define pinGND5V       12
-#define pinP1P2switch  7
-#define pinBC          5    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define pinADCswitch   14
+#define P1BCPIN        3
+#define P15VPIN        8
+#define P1ADCPIN       9
+#define P2GNDPIN       4
+#define P25VPIN        2
+#define P2RdPIN        1
+#define P2RkPIN        0
+#define P2ADCPIN       13
+#define GNDADCPIN     10
+#define GNDGNDPIN      11
+#define GND5VPIN       12
+#define P1P2SWITCHPIN  7
+#define BCPIN          5    //both ADCswitch and BC to be put on 1 pin in next circuit rev
+#define ADCSWITCHPIN   14
+
+#define NUMADCREADINGS 50
+
+
 
 #include <Arduino.h>
 
