@@ -20,3 +20,7 @@ buggyCode/buggyCode/__vm/.buggyCode.vsarduino.h
 __vm/.buggyCode.vsarduino.h
 *.sln
 __vm/
+BuggyCode/BuggyCode/Debug/board.buildinfo
+BuggyCode/BuggyCode/Debug/buggyCode.ino.hex
+*.elf
+Sensors2.ino

@@ -1,6 +1,7 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#include <Arduino.h>
 
 #define FIVEVOLTOUTPUTPIN 1
 #define ADCINPUTPIN	   2
@@ -20,7 +21,7 @@
 #define pinBC          5    //both ADCswitch and BC to be put on 1 pin in next circuit rev
 #define pinADCswitch   14
 
-#include <Arduino.h>
+
 
 
 namespace boxConfig {
