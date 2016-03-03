@@ -5,9 +5,12 @@
 */
 
 
+#include <Wire.h>
+#include <TSL2561.h>
+#include <NewPing.h>
 #include "Config.h"
 #include "buggyTop.h"
-#include "SensorDefs.h"
+//#include "sensorDefs.h"
 #include <Adafruit_MCP23017.h>
 #include <SoftwareSerial.h>
 

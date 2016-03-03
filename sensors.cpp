@@ -1,13 +1,13 @@
 
-#include "SensorsConfig.h"
-#include "SensorDefs.h"
+#include "sensorsConfig.h"
+#include "sensorDefs.h"
 #include <NewPing.h>
 #include <Wire.h>
 #include <SoftwareSerial.h>
 #include "TSL2561.h"
-sensors::sensors() {};
+//sensors::sensors() {};
 
-sensors::~sensors() {};
+//sensors::~sensors() {};
 
 int Counter = 0;
 void Kick(KickDirection dir, int Magnitude);
@@ -601,7 +601,7 @@ void Sensor::PollSensors(Sensor *sens, int *order, int OrderLength) {
 	Serial1.println();
 }
 
-void setup() {
+void setup_sensors() {
 	Serial.begin(115200); //Setup serial conenction over USB
 	Serial1.begin(112500); // Setup serial connection over Xbee
 						   //-------Setup Pins used for sensor select as outputs---------------
@@ -698,7 +698,7 @@ void setup(void) {
 //    delay(50);
 //  }
 //}
-void loop(void) {
+void loop1(void) {
 	/*
 	for (int i = 0; i < 6; i++) {
 	Sensor::SelectSensor(i);

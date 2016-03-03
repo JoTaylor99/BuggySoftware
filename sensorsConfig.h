@@ -1,9 +1,10 @@
 #ifndef _SENSORS_H
 #define _SENSORS_H
+/*
 #include <NewPing.h>
 #include <Wire.h>
 #include "TSL2561.h"
-
+*/
 
 //Definitions for sensors:
 //Change these depending on what pins each sensor's address pin is connected to9
