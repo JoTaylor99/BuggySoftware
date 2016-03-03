@@ -19,13 +19,26 @@ boxValues::returnData box::interrogateBox(byte boxNumber, bool boxInverted){
 	boxValues::returnData presentationData;
 
 	//select correct switch configuration
-	switchControl(retrieveSettings(boxNumber));
+	switchControl((retrieveSettings(boxNumber)));
+	//sets approach direction relay
+	setDirection(boxInverted);
 
 	//check if correctly docked
 	if (!docked()) {
 		presentationData.error = 1;
 	};
 
+	if (boxNumber = 1) {
+		setInput(ON, boxNumber);
+	}
+	else { setInput(ON); }
+
+	setInput(OFF);
+
+
+	if (boxNumber > 4) { setInput(ON); }
+
+	setInput(OFF);
 };
 
 double box::getReadingOnce(){};
@@ -51,7 +64,7 @@ void box::checkconfigCorrect() {
 }
 bool box::_boxinitComplete = false;
 
-boxConfig::boxSettings retrieveSettings(byte boxNumber) {
+boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
 
 };
 

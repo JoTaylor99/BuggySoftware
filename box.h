@@ -44,16 +44,29 @@ public:
 	*		Turn input on via boxControl::setInput
 	*		Take readings
 	*		Turn input off via boxControl::setInput
-	*		Calculate required value
-	*		Get preferred value
+	*		Call calculateValue to return a resistor value
+	*		Call convertresistortoPreferred to get preferred value
 	*		fill in the relevant variable in returnData
+	*		Set second stage bit in boxNumber
 	*		Call boxControl::switchControl to set switches for 2nd stage (if reqd)
-	*		Turn input on via boxControl::setInput	(box 5, 6 and 7 flow instead calls measureCapacitance())
-	*		Take readings
+	*		Clear second stage bit in boxNumber
+	*		IF box1 
+	*			return
+	*		IF boxes 2, 3, 4
+	*			Turn input on via boxControl::setInput
+	*			Call calculateValue to return a resistor value
+	*			Call convertresistortoPreferred to get preferred value
+	*			fill in the relevant variable in returnData
+	*		IF boxes 5, 6, 7
+	*			Call measureCapacitance();
+	*			Call convertcapacitortoPreferred to get preferred value
+	*			fill in the relevant variable in returnData
+	*			IF box 5, 6
+	*				Call calculatecornerFrequency()
+	*			IF box 7
+	*				Call calculateresonantFrequency()
+	*			fill in relevant variable in returnData
 	*		Turn input off via boxControl::setInput
-	*		Calculate required value
-	*		Get preferred value
-	*		fill in the relevant variable in returnData
 	*		return box values to calling function
 	*/
 	boxValues::returnData interrogateBox(byte boxNumber, bool boxInverted);

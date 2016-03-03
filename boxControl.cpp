@@ -19,7 +19,7 @@ void boxControl::initControl(){
 
 bool boxControl::switchControl(boxConfig::boxSettings boxSetting){};
 
-int setDirection(bool inverted);
+void setDirection(bool inverted);
 
 bool boxControl::checkboxcontrolInit() {
 	bool switcherResult = false;
@@ -40,5 +40,5 @@ bool boxControl::_boxcontrolinitComplete = false;
 
 bool boxControl::switcher::_switcherinitComplete = false;
 
-bool boxControl::setInput(boxControl::inputStatus position){};
-bool boxControl::setInput(boxControl::inputStatus position, short boxNumber){};
+void boxControl::setInput(boxControl::inputStatus position){};
+void boxControl::setInput(boxControl::inputStatus position, byte boxNumber){};

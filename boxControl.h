@@ -44,9 +44,15 @@ protected:
 	*	The on option will turn on the 5V supply in the normal function or the boost converter in the overloaded function.
 	*	*/
 	void setInput(boxControl::inputStatus position);
-	void setInput(boxControl::inputStatus position, short boxNumber);
+	void setInput(boxControl::inputStatus position, byte boxNumber);
 
-	bool setDirection(bool inverted);
+	/* setDirection function
+	*	void return type
+	*	@param bool inverted
+	*	configures the P1P2switch relay according to the direction the buggy has docked with the box
+	*	DOES NOT directly interface with the GPIO expander, simply sets a boolean member variable to be checked and if necessary actioned as part of the switchControl function
+	*/
+	void setDirection(bool inverted);
 
 	bool checkboxcontrolInit();
 
@@ -79,6 +85,7 @@ private:
 	};
 
 	static bool _boxcontrolinitComplete;
+	bool _boxInverted = 0;
 	bool assignmentValid = 0;
 	const byte _fiveVoltOutPin = FIVEVOLTOUTPUTPIN;
 	bool checkRelayAssignments(unsigned short setting);
