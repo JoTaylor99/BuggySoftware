@@ -1,13 +1,11 @@
 #ifndef _SENSORS_H
 #define _SENSORS_H
 /*
-#include <NewPing.h>
-#include <Wire.h>
-#include "TSL2561.h"
+A specific configuration file for the sensors code.
 */
 
 //Definitions for sensors:
-//Change these depending on what pins each sensor's address pin is connected to9
+//Change these depending on what pins each sensor's address pin is connected to
 #define SENSOR1 8                                                                                 /*       _ _front _ _    */
 #define SENSOR2 9                                                                                 /*       / s1 | s0 \ */
 #define SENSOR3 10                                                                                 /*      |     |     |*/

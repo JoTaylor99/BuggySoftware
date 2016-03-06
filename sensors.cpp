@@ -5,22 +5,23 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 #include "TSL2561.h"
-//sensors::sensors() {};
 
-//sensors::~sensors() {};
-
+//Initial variable declaration:
 int Counter = 0;
+//Function declarations:
 void Kick(KickDirection dir, int Magnitude);
 void Kick(KickDirection dir, int Magnitude, uint16_t time);
 void Kick(KickDirection dir, int LeftMagnitude, int RightMagnitude);
 void Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightMag);
-//Function declarations
+void MotorRamp(Direction Dir, int LMag, int RMag);
+void DriftCorrect(DriftDirection Dir);
 void start();
 void moveForward();
 void TurnRight();
 void TurnLeft();
 void smartAlignmentRotation();
 void smartAlignmentForward();
+
 
 //CLASS----------------------------------------------------------
 class Sensor {
@@ -59,12 +60,10 @@ private:
 
 };
 //---------------------------------------------------------------
-//JOANNA COME BACK HERE
-//What are these??? What are you using them for?
+//Variable Declarations:
 TSL2561 tsl(TSL2561_ADDR_LOW);
 OutputMode OMode = BW;
-SerialMode SMode = Xbee;
-
+SerialMode SMode = Xbee; //XBee or USB
 Sensor Sensors[6] = { SENSOR1 , SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6 };
 NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
 bool MoveComplete = false;
@@ -82,8 +81,24 @@ uint32_t lum = 0;
 uint16_t ir = 0, full = 0;
 bool LastCorrectLeft = false;
 bool LastCorrectRight = false;
-void MotorRamp(Direction Dir, int LMag, int RMag);
-void DriftCorrect(DriftDirection Dir);
+bool values[6] = { false, false, false, false, false, false };
+bool starting_intersection[6] = { false, false, false, false, false, false }; //array to capture the sensor values at the starting position
+																			  //Flag Variables to help identify if the first two sensors or the last two sensors have passed the intersection
+bool passed_intersection_line = false;    //forward movement
+bool passed_intersection_lineb = false;   // backward movement
+bool sensor0_event = false;
+bool sensor1_event = false;
+bool sensor4_event = false;
+bool sensor5_event = false;
+bool flag0 = false;
+bool flag1 = false;
+bool flag4 = false;
+bool flag5 = false;
+
+int IntersectionCount = 0;
+uint16_t quadrant = 0;  //
+//----------------------------------------------------
+
 Sensor::Sensor(uint16_t Pin) {
 	_pin = Pin;
 	Max = MAX_DEFAULT;
@@ -386,6 +401,8 @@ DriftDirection Sensor::Drifting(Sensor *sens) {
 		}
 	}
 }
+//Being called by PollSensors & loop1
+//This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
 void printbw(bool *values) {
 	//Print via USB
 	if (SMode == USB) {
@@ -567,23 +584,8 @@ void Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightM
 	}
 
 }
-bool values[6] = { false, false, false, false, false, false };
-bool starting_intersection[6] = { false, false, false, false, false, false }; //array to capture the sensor values at the starting position
-																			  //Flag Variables to help identify if the first two sensors or the last two sensors have passed the intersection
-bool passed_intersection_line = false;    //forward movement
-bool passed_intersection_lineb = false;   // backward movement
-bool sensor0_event = false;
-bool sensor1_event = false;
-bool sensor4_event = false;
-bool sensor5_event = false;
-bool flag0 = false;
-bool flag1 = false;
-bool flag4 = false;
-bool flag5 = false;
-//----------------------------------------------------
-int IntersectionCount = 0;
-uint16_t quadrant = 0;  //
-						//Polls all given sensors in the order specified.
+
+//Polls all given sensors in the order specified.
 void Sensor::PollSensors(Sensor *sens, int *order, int OrderLength) {
 	int CurrentSensorIndex = 0;
 
@@ -601,6 +603,7 @@ void Sensor::PollSensors(Sensor *sens, int *order, int OrderLength) {
 	Serial1.println();
 }
 
+//Sensors setup function.
 void setup_sensors() {
 	Serial.begin(115200); //Setup serial conenction over USB
 	Serial1.begin(112500); // Setup serial connection over Xbee
@@ -637,47 +640,6 @@ void setup_sensors() {
 	}
 }
 
-
-//void moveForward();
-//void TurnLeft();
-//void TurnRight();
-/*
-void setup(void) {
-	Serial.begin(115200); //Setup serial conenction over USB
-	Serial1.begin(112500); // Setup serial connection over Xbee
-						   //-------Setup Pins used for sensor select as outputs---------------
-	pinMode(SENSOR1, OUTPUT);
-	pinMode(SENSOR2, OUTPUT);
-	pinMode(SENSOR3, OUTPUT);
-	pinMode(SENSOR4, OUTPUT);
-	pinMode(SENSOR5, OUTPUT);
-	pinMode(SENSOR6, OUTPUT);
-	pinMode(M1, OUTPUT);
-	pinMode(M2, OUTPUT);
-	pinMode(A0, OUTPUT);
-	pinMode(A1, INPUT);
-
-	//-------Set all sensor select pins to high---------------
-	digitalWrite(SENSOR1, HIGH);
-	digitalWrite(SENSOR2, HIGH);
-	digitalWrite(SENSOR3, HIGH);
-	digitalWrite(SENSOR4, HIGH);
-	digitalWrite(SENSOR5, HIGH);
-	digitalWrite(SENSOR6, HIGH);
-	//---------Setip Gains and Intergration time for all sensors
-	tsl.begin();
-	tsl.setGain(TSL2561_GAIN_16X);
-	tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
-												  //tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
-												  //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
-	if (SMode == USB) {
-		Serial.print("Setup Complete!");
-	}
-	else {
-		Serial1.print("Setup Complete!");
-	}
-}
-*/
 //void BoxApproach() {
 //  int Distance = 0;
 //  while (true) {
@@ -698,7 +660,7 @@ void setup(void) {
 //    delay(50);
 //  }
 //}
-void loop1(void) {
+void loop1() {
 	/*
 	for (int i = 0; i < 6; i++) {
 	Sensor::SelectSensor(i);
@@ -789,6 +751,9 @@ bool LineCorrect() {
 		return false;
 	}
 }
+
+//Function to define whether or not the destination node has been reached.
+//If so it returns true and prints "Destination Reached" to the terminal, if not returns false.
 bool reachedDestination() {
 	if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
 		(Sensors[3].Boolian != starting_intersection[3]) && (Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
@@ -876,6 +841,8 @@ void whereAmI() {
 		quadrant = 0; //S0 and S1 on line
 	}
 }
+
+//Come back to this one!
 void findLineS23() {
 	bool smart_line_s45 = false;
 	switch (quadrant) {
@@ -934,7 +901,7 @@ void findLineS23() {
 		break;
 	}
 }
-// Based on the quadrant the buggy rotates left or right to get back to the motion line with sesnors 1 and 2
+// Based on the quadrant the buggy rotates left or right to get back to the motion line with sensors 1 and 2
 void findLineS01() {
 	bool smart_line_s01 = false;
 	switch (quadrant) {
@@ -1032,6 +999,8 @@ void reachNote() {
 		}
 	}
 }
+
+//Smart Alignment Function for Forward movement.
 void smartAlignmentForward() {
 	bool perfect_intersection = false;
 	whereAmI();
@@ -1108,7 +1077,7 @@ void forwardAlignmentOnRotation() {
 		}
 	}
 }
-//Kick back until s2s3 are behind the note
+//Kicks back until s2 and s3 are behind the node
 void backwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
@@ -1140,6 +1109,8 @@ void forwardsToIntersection() {
 		}
 	}
 }
+
+//Function to align the buggy upon rotation.
 void smartAlignmentRotation() {
 	bool alignmentComplete = false;
 	while (alignmentComplete == false) {
@@ -1169,6 +1140,8 @@ void smartAlignmentRotation() {
 	}
 }
 //------BACKWARD ALIGNMENT---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//Function to flag sensor events during backwards alignment.
 void sensorEventsB() {
 	if (Sensors[4].Boolian != starting_intersection[4]) {
 		sensor4_event = true;
@@ -1179,6 +1152,11 @@ void sensorEventsB() {
 		flag5 = true;
 	}
 }
+
+//Function to define whether or not the buggy has passed an interesction backwards.
+//It currently does a serial print to define whether or not it has.
+//May be better to change this function to a bool type and then print to the terminal if the return is true/false.
+//Also the the variable passed_intersection_lineb may then not need to be alive for as long?
 void didIPassIntersectionLineB() {
 	Sensor::PollSensors(Sensors, DefaultOrder, 6);
 	//ideal-case Both sensors have passed the intersection line normally
@@ -1192,6 +1170,8 @@ void didIPassIntersectionLineB() {
 		Serial1.println("No I havent passed intersection line");
 	}
 }
+// Function to identify the quadrant where the buggy is at the moment, when going backwards.
+//Not sure that this really needs to be a seperate function to whereAmI, see slack suggestion for combined function.
 void whereAmIB() {
 	didIPassIntersectionLineB();
 	if (Sensors[4].Boolian == Sensors[5].Boolian) {
