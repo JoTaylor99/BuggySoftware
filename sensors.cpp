@@ -1222,6 +1222,9 @@ void reachedNoteB() {
 		}
 	}
 }
+
+//Funtion to figure out if passed the node backwards.
+//If it has reached the node it will stop. If gone past it, it will kick forwards until reached.
 void passedNoteB() {
 	bool passed_s23 = false;
 	while (passed_s23 == false) {
@@ -1243,6 +1246,8 @@ void passedNoteB() {
 	}
 }
 
+//Function to run the smart alignment when traveling backwards.
+//Not currently being called by anything!
 void SmartAlignmentB() {
 	bool perfect_intersection = false;
 	whereAmIB();
@@ -1274,6 +1279,9 @@ void SmartAlignmentB() {
 	}
 }
 //---------------------------------------------------------------------------
+
+//Not currently being called:
+//Not sure why, assuming this is a function to move backwards one node.
 void moveBackwards() {
 	digitalWrite(M1, LOW);
 	digitalWrite(M2, LOW);
@@ -1293,7 +1301,7 @@ void moveBackwards() {
 	}
 }
 
-
+//Function to move forwards one node
 void moveForward() {
 	digitalWrite(M1, HIGH);
 	digitalWrite(M2, HIGH);
@@ -1312,6 +1320,8 @@ void moveForward() {
 		}
 	}
 }
+
+//Function to turn left.
 void TurnLeft() {
 	Kick(KickDirection::Left, KICK_MAGNITUDE, (uint16_t)10);
 	while (true) {
@@ -1329,6 +1339,8 @@ void TurnLeft() {
 		}
 	}
 }
+
+//Function to turn right.
 void TurnRight() {
 	Kick(KickDirection::Right, KICK_MAGNITUDE, (uint16_t)10);
 	while (true) {
