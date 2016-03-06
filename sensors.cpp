@@ -22,6 +22,7 @@ void TurnLeft();
 void smartAlignmentRotation();
 void smartAlignmentForward();
 void didIPassIntersectionLineB();
+void whereAmI(bool backwards);
 
 
 //CLASS----------------------------------------------------------
