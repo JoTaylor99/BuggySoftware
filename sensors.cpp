@@ -21,6 +21,7 @@ void TurnRight();
 void TurnLeft();
 void smartAlignmentRotation();
 void smartAlignmentForward();
+void didIPassIntersectionLineB();
 
 
 //CLASS----------------------------------------------------------
@@ -814,10 +815,22 @@ Q2|Q1                                            Q1|Q2
 Q3|Q4                                            Q4 Q3
 */
 // Function to identify the quadrant where the buggy is at the moment
-void whereAmI() {
-	if (Sensors[0].Boolian == Sensors[1].Boolian) {
-		if (passed_intersection_line == true) {
-			if (Sensors[0].Boolian != starting_intersection[0]) {
+void whereAmI(bool backwards) {
+	uint8_t i;
+	bool passed_intersection;
+	if (backwards == true) {
+		i = 4;
+		didIPassIntersectionLineB();
+		passed_intersection = passed_intersection_lineb;
+	}
+	else {
+		i = 0;
+		passed_intersection = passed_intersection_line;
+	}
+
+	if (Sensors[i].Boolian == Sensors[i+1].Boolian) {
+		if (passed_intersection == true) {
+			if (Sensors[i].Boolian != starting_intersection[i]) {
 				Serial1.println("I am at Q4");
 				quadrant = 4;
 			}
@@ -827,7 +840,7 @@ void whereAmI() {
 			}
 		}
 		else {
-			if (Sensors[0].Boolian != starting_intersection[0]) {
+			if (Sensors[i].Boolian != starting_intersection[i]) {
 				Serial1.println("I am at Q2");
 				quadrant = 2;
 			}
@@ -838,7 +851,7 @@ void whereAmI() {
 		}
 	}
 	else {
-		quadrant = 0; //S0 and S1 on line
+		quadrant = 0; //Relevant sensors on line (S0 & S1 if forwards, S4 & S5 if backwards). 
 	}
 }
 
@@ -1003,7 +1016,7 @@ void reachNote() {
 //Smart Alignment Function for Forward movement.
 void smartAlignmentForward() {
 	bool perfect_intersection = false;
-	whereAmI();
+	whereAmI(false); //Backwards =false.
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, DefaultOrder, 6);
 		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
@@ -1170,37 +1183,7 @@ void didIPassIntersectionLineB() {
 		Serial1.println("No I havent passed intersection line");
 	}
 }
-// Function to identify the quadrant where the buggy is at the moment, when going backwards.
-//Not sure that this really needs to be a seperate function to whereAmI, see slack suggestion for combined function.
-void whereAmIB() {
-	didIPassIntersectionLineB();
-	if (Sensors[4].Boolian == Sensors[5].Boolian) {
-		if (passed_intersection_lineb == true) {
-			if (Sensors[4].Boolian != starting_intersection[4]) {
-				Serial1.println("I am at Q4");
-				quadrant = 4;
-			}
-			else {
-				Serial1.println(" I am at Q1");
-				quadrant = 1;
-			}
 
-		}
-		else {
-			if (Sensors[4].Boolian != starting_intersection[4]) {
-				Serial1.println("I am at Q2");
-				quadrant = 2;
-			}
-			else {
-				Serial1.println("I am at Q3");
-				quadrant = 3;
-			}
-		}
-	}
-	else {
-		quadrant = 0; //S4 and S5 on line
-	}
-}
 //Identifies whether sensors 4 and 5 have passed the node in the backward motion
 void reachedNoteB() {
 	bool passed_s45 = false;
@@ -1250,7 +1233,7 @@ void passedNoteB() {
 //Not currently being called by anything!
 void SmartAlignmentB() {
 	bool perfect_intersection = false;
-	whereAmIB();
+	whereAmI(true); //Backwards=true
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, DefaultOrder, 6);
 		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
