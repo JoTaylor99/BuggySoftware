@@ -1350,7 +1350,7 @@ void passedNote() {
 
 
 //private member function in navigation class
-//----------------ROTATION ALIGNMENT----------------------------------------------------------------------------------------------------------------------------------------------------
+/* //----------------ROTATION ALIGNMENT----------------------------------------------------------------------------------------------------------------------------------------------------
 //Rotation strategy
 //1) Get back to the line with s0 and s1
 //2) Follow the line by going forwards  to align the entire buggy with it
@@ -1461,7 +1461,10 @@ void smartAlignmentRotation() {
 		}
 	}
 }
+
+
 //------BACKWARD ALIGNMENT---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//private member function in navigation class
 void sensorEventsB() {
 	if (Sensors[4].Boolian != starting_intersection[4]) {
 		sensor4_event = true;
@@ -1472,6 +1475,8 @@ void sensorEventsB() {
 		flag5 = true;
 	}
 }
+
+//private member function in navigation class
 void didIPassIntersectionLineB() {
 	Sensor::PollSensors(Sensors, DefaultOrder, 6);
 	//ideal-case Both sensors have passed the intersection line normally
@@ -1485,6 +1490,8 @@ void didIPassIntersectionLineB() {
 		Serial.println("No I havent passed intersection line");
 	}
 }
+
+//private member function in navigation class
 void whereAmIB() {
 	didIPassIntersectionLineB();
 	if (Sensors[4].Boolian == Sensors[5].Boolian) {
@@ -1514,6 +1521,8 @@ void whereAmIB() {
 		quadrant = 0; //S4 and S5 on line
 	}
 }
+
+//private member function in navigation class
 //Identifies whether sensors 4 and 5 have passed the node in the backward motion
 void reachedNoteB() {
 	bool passed_s45 = false;
@@ -1535,6 +1544,9 @@ void reachedNoteB() {
 		}
 	}
 }
+
+
+//private member function in navigation class
 void passedNoteB() {
 	bool passed_s23 = false;
 	while (passed_s23 == false) {
@@ -1556,6 +1568,7 @@ void passedNoteB() {
 	}
 }
 
+//private member function in navigation class
 void SmartAlignmentB() {
 	bool perfect_intersection = false;
 	whereAmIB();
@@ -1585,9 +1598,11 @@ void SmartAlignmentB() {
 			}
 		}
 	}
-}
+} */
 //---------------------------------------------------------------------------
-void TurnLeft() {
+
+//private member function in navigation class
+/* void TurnLeft() {
 	Sensor::PollSensors(Sensors, DefaultOrder, 6);
 	MotorControl(Direction::B, Direction::F, 70, 70);
 
@@ -1613,6 +1628,8 @@ void TurnLeft() {
 		}
 	}
 }
+
+//private member function in navigation class
 void TurnRight() {
 	//digitalWrite(M1, LOW);
 	//digitalWrite(M2, HIGH);
@@ -1634,6 +1651,8 @@ void TurnRight() {
 	}
 }
 
+
+//private member function in navigation class
 void MoveForward() {
 	Serial.println("Moving Now!");
 	int RCnt = 0;
@@ -1716,6 +1735,10 @@ void MoveForward() {
 	}
 
 }
+
+
+
+//private member function in navigation class
 void MoveBackward() {
 	int RCnt = 0;
 	int LCnt = 0;
@@ -1796,9 +1819,10 @@ void MoveBackward() {
 		}
 	}
 
-}
+} */
 
-void MotorControl(Direction LDir, Direction RDir, int LSpeed, int RSpeed) {
+//protected member function in motor class
+/* void MotorControl(Direction LDir, Direction RDir, int LSpeed, int RSpeed) {
 	if (LSpeed < 0) {
 		LSpeed = 0;
 	}
@@ -1849,4 +1873,4 @@ void MotorControl(Direction LDir, Direction RDir, int LSpeed, int RSpeed) {
 
 	}
 
-}
+} */
