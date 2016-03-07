@@ -7,7 +7,7 @@
 #include "boxValues.h"
 //#include "Conversions.h"
 
-class box : protected boxControl {
+class box : private boxControl {
 
 public:
 	/* Box constructor*/

@@ -12,7 +12,8 @@ void box::init(){
 };
 
 boxValues::returnData box::interrogateBox(byte boxNumber, bool boxInverted){
-	int error = 0;
+	double rawValue = 0;
+	double calculatedValue = 0;
 	checkconfigCorrect();		//ensure init functions sucessfully called
 	setInput(OFF);				//ensure all circuit stimulis are off
 
@@ -30,13 +31,18 @@ boxValues::returnData box::interrogateBox(byte boxNumber, bool boxInverted){
 
 	if (boxNumber = 1) {
 		setInput(ON, boxNumber);
+		presentationData.v1 = getReading();
 	}
-	else { setInput(ON); }
-
+	else {
+		setInput(ON);
+		rawValue = getReading();
+		//calculatedValue = calculateValue(boxConfig::boxSettings box);
+	}
+	
 	setInput(OFF);
 
 
-	if (boxNumber > 4) { setInput(ON); }
+	if (boxNumber < 4) { setInput(ON); }
 
 	setInput(OFF);
 };
@@ -70,3 +76,4 @@ boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
 
 bool box::docked(){};
 
+double box::getReading(){};

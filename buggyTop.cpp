@@ -3,28 +3,37 @@
 buggyTop::buggyTop(){};
 
 buggyTop::~buggyTop(){};
+navigation buggy;
 
 void buggyTop::init(){
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
-	box assessBox;
-	assessBox.init();
+	/*box assessBox;
+	assessBox.init();*/
+
+
+	buggy.initNavigation();
 };
 
 void buggyTop::go(){
+	/* Code here is needed either here or in a not yet written communications class to separate an incomming command string from controlling PC into useful variables
+	*  For the time being this is being done in the navigate function in the navigation class.
+	*/
+	buggy.navigate();
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
-	box assessBox;
-	bool boxDirection = false;
-	byte boxNumber = 0;
-	
-	Serial.println("Which box are you approaching (Enter box number):");
-	if (Serial.available()>0) {
-		boxNumber = Serial.read();
-	}
-	Serial.println("Are you approaching from the knob side? (1 = Yes, 2 = No):");
-	if (Serial.available()>0) {
-		boxDirection = Serial.read();
-	}
 
-	boxValues::returnData info = assessBox.interrogateBox(boxNumber, boxDirection);
+		//box assessBox;
+		//bool boxDirection = false;
+		//byte boxNumber = 0;
+
+		//Serial.println("Which box are you approaching (Enter box number):");
+		//if (Serial.available() > 0) {
+		//	boxNumber = Serial.read();
+		//}
+		//Serial.println("Are you approaching from the knob side? (1 = Yes, 2 = No):");
+		//if (Serial.available() > 0) {
+		//	boxDirection = Serial.read();
+		//}
+
+		//boxValues::returnData info = assessBox.interrogateBox(boxNumber, boxDirection);
 	
 };
