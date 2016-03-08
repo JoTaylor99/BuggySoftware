@@ -151,7 +151,6 @@ void navigation::navigate() {
 			delay(50);
 		}
 	}
-}
 
 //Bool function to indicate if the destination intersection has reached. True if the middle sensors are in the intersection or if perfect intersection achieved
 
