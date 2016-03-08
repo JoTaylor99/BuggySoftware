@@ -3,7 +3,9 @@
 // 
 
 #include "Sensor.h"
+
 static TSL2561 tsl;
+static QTRSensorsRC rc[2];
 
 const byte Sensor::DefaultOrder[6] = { 1, 2, 3, 4, 5, 6 };
 const byte Sensor::Front[2] = { 1, 2 };
@@ -47,9 +49,9 @@ void Sensor::ReadRaw() {
 		Raw = lum & 0xFFFF;
 	}
 	else {
-		//unsigned int *a;
-		//RC[_pin].readCalibrated(a);
-		//Raw = (uint16_t)a;
+		unsigned int *a;
+		rc[_pin].readCalibrated(a);
+		Raw = (uint16_t)a;
 	}
 }
 
