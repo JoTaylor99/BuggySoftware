@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "buggyMotion.h"
 #include "Sensor.h"
+#include "box.h"
 
 class navigation : private buggyMotion {
 
@@ -25,7 +26,7 @@ public:
 	* return type is byte
 	*
 	*/
-	void navigate();
+	void navigate(String str);
 
 	Sensor Sensors[7] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, { (unsigned int)7, sensorConfig::QTR } };
 
@@ -90,6 +91,8 @@ private:
 
 };
 
+#endif
+
 /* UNUSED VARIABLES
 *
 *	bool MoveComplete was declared as a global variable but never set or referenced
@@ -141,5 +144,5 @@ private:
 
 
 
-#endif
+
 

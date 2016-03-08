@@ -21,7 +21,10 @@ void navigation::initNavigation() {
 	//-------Setup Pins used for sensor select as outputs---------------
 	Sensor::initSensors();
 	initMotion();
-	
+
+	box assessBox;
+	assessBox.init();
+
 	Serial.print("Setup Complete!");
 
 	//if (SMode == USB) {
@@ -32,9 +35,8 @@ void navigation::initNavigation() {
 	//}
 };
 
-void navigation::navigate() {
+void navigation::navigate(String str) {
 
-	while (1) {
 		/*
 		for (int i = 0; i < 6; i++) {
 		Sensor::SelectSensor(i);
@@ -51,8 +53,6 @@ void navigation::navigate() {
 		//Serial.println("---------------------");
 		//delay(50);
 
-		if (Serial.available() > 0) { // If a command has been sent
-			String str = Serial.readString();
 			if (str == "F") {
 				sensor0_event = false;
 				sensor1_event = false;
@@ -61,8 +61,7 @@ void navigation::navigate() {
 				start();
 				MoveForward();
 				smartAlignmentForward();
-			}
-			if (str == "B") {
+			} else if (str == "B") {
 				sensor4_event = false;
 				sensor5_event = false;
 				flag4 = false;
@@ -70,27 +69,17 @@ void navigation::navigate() {
 				start();
 				MoveBackward();
 				SmartAlignmentB();
-			}
-			if (str == "R") {
+			} else if (str == "R") {
 				start();
 				//RotateR();
 				TurnRight();
 				smartAlignmentRotation();
-			}
-			if (str == "L") {
+			} else if (str == "L") {
 				start();
 				//RotateL();
 				TurnLeft();
 				smartAlignmentRotation();
-			}
-			if (str == "S") {
-
-			}
-			if (str == "N") {
-				break;
-			}
-
-			/*if (str == "D") {
+			} 		/*if (str == "D") {
 			where_am_i();
 			sensor0_event = false;
 			sensor1_event = false;
@@ -104,12 +93,18 @@ void navigation::navigate() {
 			if (str == "A") {
 			smart_alignment();
 			}*/
-			if (str == "G") {
+			else if (str == "G") {
 				BoxApproach();
+				box assessBox;
+				byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
+				if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
+			} else if (str == "S") {
+				drive(motorConfig::S, motorConfig::S);
 			}
-		}
-	}
-	return;
+			else {
+				drive(motorConfig::S, motorConfig::S);
+			}
+	
 };
 
 	void navigation::BoxApproach() {

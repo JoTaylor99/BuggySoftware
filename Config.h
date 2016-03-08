@@ -44,6 +44,9 @@
 #define FIVEVOLTOUTPUTPIN 1
 #define ADCINPUTPIN	   2
 
+#define BOXNUM		   4
+#define BOXINV		   0
+
 #define P1BCPIN        3
 #define P15VPIN        8
 #define P1ADCPIN       9
@@ -83,6 +86,10 @@ namespace boxConfig {
 		box7a = 12,
 		box7b = 13
 	};
+
+	//temporary variables to be removed when comms between buggy and PC are finalised.
+	const byte boxNumber = BOXNUM;
+	const bool boxInverted = BOXINV;
 }
 
 	namespace sensorConfig {
