@@ -1,3 +1,5 @@
+
+
 #include <QTRSensors.h>
 #include <Adafruit_MCP23017.h>
 #include <NewPing.h>
@@ -739,8 +741,8 @@ void setup(void) {
 
 void BoxApproach() {
 	int Distance = 0;
-	LeftSpeed = 60;
-	RightSpeed = 60;
+	LeftSpeed = 70;
+	RightSpeed = 70;
 	MotorControl(Direction::F, Direction::F, LeftSpeed, RightSpeed);
 	while (true) {
 		Distance = Ultrasonic.ping_cm();
@@ -817,13 +819,13 @@ void loop(void) {
 			start();
 			//RotateR();
 			TurnRight();
-			smartAlignmentRotation();
+			//smartAlignmentRotation();
 		}
 		if (str == "L") {
 			start();
 			//RotateL();
 			TurnLeft();
-			smartAlignmentRotation();
+			//smartAlignmentRotation();
 		}
 		if (str == "S") {
 
@@ -1423,7 +1425,7 @@ void TurnRight() {
 	//analogWrite(E1, 65);
 	//analogWrite(E2, 65);
 	Sensor::PollSensors(Sensors, DefaultOrder, 6);
-	MotorControl(Direction::F, Direction::B, 70, 70);
+	MotorControl(Direction::F, Direction::B, 75, 75);
 	while (true) {
 		Sensor::PollSensors(Sensors, Front, 2);
 		if (Sensors[0].Boolian != starting_intersection[0]) {
