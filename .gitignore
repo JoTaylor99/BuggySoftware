@@ -20,3 +20,5 @@ buggyCode/buggyCode/__vm/.buggyCode.vsarduino.h
 __vm/.buggyCode.vsarduino.h
 *.sln
 __vm/
+Debug/
+ClassDiagram.cd
