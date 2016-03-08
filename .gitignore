@@ -21,3 +21,4 @@ __vm/.buggyCode.vsarduino.h
 *.sln
 __vm/
 Debug/
+Sensors2.ino

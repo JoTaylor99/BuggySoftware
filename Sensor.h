@@ -4,7 +4,7 @@
 #define _SENSOR_H
 
 #include "Config.h"
-#include<TSL2561.h>
+#include <TSL2561.h>
 #include <NewPing.h>
 #include <QTRSensors.h>
 #include <Wire.h>

@@ -182,7 +182,8 @@ bool navigation::LineCorrect() {
 		return false;
 	}
 }
-
+//Function to define whether or not the destination node has been reached.
+//If so it returns true and prints "Destination Reached" to the terminal, if not returns false.
 //Based on the quadrant the buggy rotates in a backward motion to get back to the motion line with sesnors 4 and 5
 bool navigation::reachedDestination() {
 	if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
@@ -442,7 +443,7 @@ void navigation::reachNote() {
 	}
 }
 
-
+//Smart Alignment Function for Forward movement.
 void navigation::smartAlignmentForward() {
 	bool perfect_intersection = false;
 	whereAmI();
@@ -522,7 +523,7 @@ void navigation::forwardAlignmentOnRotation() {
 }
 
 
-//Kick back until s2s3 are behind the note
+//Kick back until S2 and S3 are behind the note
 void navigation::backwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
@@ -558,7 +559,7 @@ void navigation::forwardsToIntersection() {
 }
 
 
-
+//Function to align the buggy upon rotation.
 void navigation::smartAlignmentRotation() {
 	bool alignmentComplete = false;
 	while (alignmentComplete == false) {
@@ -590,6 +591,7 @@ void navigation::smartAlignmentRotation() {
 
 
 //------BACKWARD ALIGNMENT---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Function to flag sensor events during backwards alignment.
 void navigation::sensorEventsB() {
 	if (Sensors[4].Boolian != starting_intersection[4]) {
 		sensor4_event = true;
@@ -601,7 +603,10 @@ void navigation::sensorEventsB() {
 	}
 }
 
-
+//Function to define whether or not the buggy has passed an interesction backwards.
+//It currently does a serial print to define whether or not it has.
+//May be better to change this function to a bool type and then print to the terminal if the return is true/false.
+//Also the the variable passed_intersection_lineb may then not need to be alive for as long?
 void navigation::didIPassIntersectionLineB() {
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 	//ideal-case Both sensors have passed the intersection line normally
@@ -669,7 +674,8 @@ void navigation::reachedNoteB() {
 	}
 }
 
-
+//Funtion to figure out if passed the node backwards.
+//If it has reached the node it will stop. If gone past it, it will kick forwards until reached.
 void navigation::passedNoteB() {
 	bool passed_s23 = false;
 	while (passed_s23 == false) {
@@ -691,6 +697,8 @@ void navigation::passedNoteB() {
 	}
 }
 
+
+//Function to run the smart alignment when traveling backwards.
 void navigation::SmartAlignmentB() {
 	bool perfect_intersection = false;
 	whereAmIB();
@@ -722,7 +730,7 @@ void navigation::SmartAlignmentB() {
 	}
 }
 
-
+//Function to turn left
 void navigation::TurnLeft() {
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 	drive(motorConfig::B, motorConfig::F, 70, 70);
@@ -749,6 +757,8 @@ void navigation::TurnLeft() {
 		}
 	}
 }
+
+//Function to turn right.
 void navigation::TurnRight() {
 	//digitalWrite(M1, LOW);
 	//digitalWrite(M2, HIGH);
@@ -770,6 +780,7 @@ void navigation::TurnRight() {
 	}
 }
 
+//Function to move forwards one node
 void navigation::MoveForward() {
 	Serial.println("Moving Now!");
 	int RCnt = 0;
