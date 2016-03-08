@@ -25,7 +25,7 @@ void motor::initMotors() {
 	_motorInitComplete = true;
 };
 
-void motor::MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed, int RSpeed){
+void motor::MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed = 0, int RSpeed = 0){
 	if (LSpeed < 0) {
 		LSpeed = 0;
 	}

@@ -33,7 +33,7 @@ protected:
 	void Kick(KickDirection dir, int LeftMagnitude, int RightMagnitude);
 	void Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightMag);
 
-	void drive(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed, int RSpeed);
+	void drive(motorConfig::Direction LDir, motorConfig::Direction RDir, byte LSpeed = 0, byte RSpeed = 0);
 private:
 	static bool _motionInitComplete;
 	

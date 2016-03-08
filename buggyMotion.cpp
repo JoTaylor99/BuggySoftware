@@ -127,6 +127,6 @@ void buggyMotion::initMotion() {
 	_motionInitComplete = true;
 }
 
-void buggyMotion::drive(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed, int RSpeed) {
+void buggyMotion::drive(motorConfig::Direction LDir, motorConfig::Direction RDir, byte LSpeed, byte RSpeed) {
 	MotorControl(LDir, RDir, LSpeed, RSpeed);
 }
