@@ -5,7 +5,7 @@ namespace boxValues{
 
 	struct returnData {
 		double v1;
-		short r1, r2, r3;
+		short r1, r2;
 		short c1;
 		double f;
 		byte error;

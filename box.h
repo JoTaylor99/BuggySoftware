@@ -5,7 +5,6 @@
 #include "boxControl.h"
 #include "Config.h"
 #include "boxValues.h"
-//#include "Conversions.h"
 
 class box : private boxControl {
 
@@ -69,7 +68,7 @@ public:
 	*		Turn input off via boxControl::setInput
 	*		return box values to calling function
 	*/
-	boxValues::returnData interrogateBox(byte boxNumber, bool boxInverted);
+	byte interrogateBox(byte boxNumber, bool boxInverted);
 
 	using boxControl::inputStatus;
 
@@ -77,6 +76,8 @@ private:
 		//ADC in pin
 		const byte _adcInPin = ADCINPUTPIN;
 		static bool _boxinitComplete;
+
+		boxValues::returnData presentationData;
 		
 		/* Capacitance measurement function
 		 * returns double representing measured capacitance in nanofarads
@@ -122,7 +123,23 @@ private:
 		*	Returns true if sucessful
 		*/
 		bool docked();
+
+
+		/* calculateResistorValue function
+		*	return type double
+		*	@param rawValue type double, average value recorded from repeated ADC reads
+		*	@param boxNumber type byte, passes boxNumber, if MSB is set perform stage 2 assesment, else perform stage 1 assesment
+		*	Takes measured voltage and calculated desired resistor value to be converted to preferred.
+		*/
+		double calculateResistorValue(double rawValue, byte boxNumber);
+
+		short PrefResistor(double OResistor, byte BoxNo);
+
+		short PrefCapactitor(double OCap, byte BoxNo);
+
+		double calculateFrequency(byte boxNumber);
 };
+
 
 
 
