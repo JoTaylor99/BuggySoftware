@@ -16,3 +16,8 @@ BuggyCode/BuggyCode/Debug/vc140.pdb
 *.opendb
 buggyCode/buggyCode/__vm/.buggyCode.vsarduino.h
 .gitattributes
+*.vcxproj
+__vm/.buggyCode.vsarduino.h
+*.sln
+__vm/
+Debug/
