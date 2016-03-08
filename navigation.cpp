@@ -33,115 +33,123 @@ void navigation::initNavigation() {
 };
 
 void navigation::navigate() {
-	/*
-	for (int i = 0; i < 6; i++) {
-	Sensor::SelectSensor(i);
-	values[i] = Sensors[i].GetReading();
-	//Serial.println(Sensors[i].Normalised);
-	}*/
-	//int DefaultOrder[6] = { 1,2,3,4,5,6 };
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 
-	//printbw(values);
-	//sensor_events();
-	//Serial.println();
+	while (1) {
+		/*
+		for (int i = 0; i < 6; i++) {
+		Sensor::SelectSensor(i);
+		values[i] = Sensors[i].GetReading();
+		//Serial.println(Sensors[i].Normalised);
+		}*/
+		//int DefaultOrder[6] = { 1,2,3,4,5,6 };
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 
-	//Serial.println("---------------------");
-	//delay(50);
+		//printbw(values);
+		//sensor_events();
+		//Serial.println();
 
-	if (Serial.available() > 0) { // If a command has been sent
-		String str = Serial.readString();
-		if (str == "F") {
+		//Serial.println("---------------------");
+		//delay(50);
+
+		if (Serial.available() > 0) { // If a command has been sent
+			String str = Serial.readString();
+			if (str == "F") {
+				sensor0_event = false;
+				sensor1_event = false;
+				flag0 = false;
+				flag1 = false;
+				start();
+				MoveForward();
+				smartAlignmentForward();
+			}
+			if (str == "B") {
+				sensor4_event = false;
+				sensor5_event = false;
+				flag4 = false;
+				flag5 = false;
+				start();
+				MoveBackward();
+				SmartAlignmentB();
+			}
+			if (str == "R") {
+				start();
+				//RotateR();
+				TurnRight();
+				smartAlignmentRotation();
+			}
+			if (str == "L") {
+				start();
+				//RotateL();
+				TurnLeft();
+				smartAlignmentRotation();
+			}
+			if (str == "S") {
+
+			}
+			if (str == "N") {
+				break;
+			}
+
+			/*if (str == "D") {
+			where_am_i();
 			sensor0_event = false;
 			sensor1_event = false;
-			flag0 = false;
-			flag1 = false;
-			start();
-			MoveForward();
-			smartAlignmentForward();
-		}
-		if (str == "B") {
 			sensor4_event = false;
 			sensor5_event = false;
-			flag4 = false;
-			flag5 = false;
-			start();
-			MoveBackward();
-			SmartAlignmentB();
-		}
-		if (str == "R") {
-			start();
-			//RotateR();
-			TurnRight();
-			smartAlignmentRotation();
-		}
-		if (str == "L") {
-			start();
-			//RotateL();
-			TurnLeft();
-			smartAlignmentRotation();
-		}
-		if (str == "S") {
-
-		}
-
-		/*if (str == "D") {
-		where_am_i();
-		sensor0_event = false;
-		sensor1_event = false;
-		sensor4_event = false;
-		sensor5_event = false;
-		bool flag0 = false;
-		bool flag1 = false;
-		bool flag4 = false;
-		bool flag5 = false;
-		}
-		if (str == "A") {
-		smart_alignment();
-		}*/
-		if (str == "G") {
-			BoxApproach();
+			bool flag0 = false;
+			bool flag1 = false;
+			bool flag4 = false;
+			bool flag5 = false;
+			}
+			if (str == "A") {
+			smart_alignment();
+			}*/
+			if (str == "G") {
+				BoxApproach();
+			}
 		}
 	}
+	return;
 };
 
-void navigation::BoxApproach() {
-	int Distance = 0;
-	LeftSpeed = 60;
-	RightSpeed = 60;
-	NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
-	drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
-	while (true) {
-		Distance = Ultrasonic.ping_cm();
-		Serial.println(Distance);
-		if (Distance > 3) {
-			Serial.println("Approaching Box");
-			Sensor::PollSensors(Sensors, Sensor::Front, 2);
-			if (Sensors[0].Boolian == Sensors[1].Boolian) {
-				Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
-				if (Dir == Sensor::DriftDirection::DRight) {
-					Serial.println("Drifting Right");
-					LeftSpeed -= CORRECTION_MAG;
-					//RightSpeed += CORRECTION_MAG;
-					drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
-				}
-				else if (Dir == Sensor::DriftDirection::DLeft) {
-					Serial.println("Drifting Left");
-					//LeftSpeed += CORRECTION_MAG;
-					RightSpeed -= CORRECTION_MAG;
-					drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+	void navigation::BoxApproach() {
+		int Distance = 0;
+		LeftSpeed = 60;
+		RightSpeed = 60;
+		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
+		drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+		while (true) {
+			Distance = Ultrasonic.ping_cm();
+			Serial.println(Distance);
+			if (Distance > 3) {
+				Serial.println("Approaching Box");
+				Sensor::PollSensors(Sensors, Sensor::Front, 2);
+				if (Sensors[0].Boolian == Sensors[1].Boolian) {
+					Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
+					if (Dir == Sensor::DriftDirection::DRight) {
+						Serial.println("Drifting Right");
+						LeftSpeed -= CORRECTION_MAG;
+						//RightSpeed += CORRECTION_MAG;
+						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+					}
+					else if (Dir == Sensor::DriftDirection::DLeft) {
+						Serial.println("Drifting Left");
+						//LeftSpeed += CORRECTION_MAG;
+						RightSpeed -= CORRECTION_MAG;
+						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+					}
 				}
 			}
-		}
-		else {
-			Serial.println("I Have Reached the box");
-			drive(motorConfig::S, motorConfig::S, 0, 0);
-			if (Distance == 0) {
-				Serial.println("Either too far or too close");
+			else {
+				Serial.println("I Have Reached the box");
+				drive(motorConfig::S, motorConfig::S, 0, 0);
+				if (Distance == 0) {
+					Serial.println("Either too far or too close");
+				}
+				return;
 			}
-			return;
+			delay(50);
 		}
-		delay(50);
 	}
 }
 
