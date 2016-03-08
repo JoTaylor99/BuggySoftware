@@ -4,7 +4,7 @@
 #define _SENSOR_H
 
 #include "Config.h"
-#include<TSL2561.h>
+#include <TSL2561.h>
 #include <NewPing.h>
 #include <QTRSensors.h>
 #include <Wire.h>
@@ -48,10 +48,6 @@ private:
 	uint16_t Min;
 	uint16_t Raw;
 	sensorConfig::SensorType _s;
-
-	
-
-	static QTRSensorsRC RC[2];
 	
 
 	bool GetReading();

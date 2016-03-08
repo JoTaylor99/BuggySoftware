@@ -3,7 +3,9 @@
 // 
 
 #include "Sensor.h"
+
 static TSL2561 tsl;
+static QTRSensorsRC rc[2];
 
 const byte Sensor::DefaultOrder[6] = { 1, 2, 3, 4, 5, 6 };
 const byte Sensor::Front[2] = { 1, 2 };
@@ -37,6 +39,7 @@ Sensor::~Sensor(){};
 
 bool Sensor::_sensorInitComplete = false;
 
+//Reads the Raw value from whichever sensor is enabled
 void Sensor::ReadRaw() {
 	if (_s == sensorConfig::SensorType::TSL) {
 		tsl.begin();
@@ -47,20 +50,20 @@ void Sensor::ReadRaw() {
 		Raw = lum & 0xFFFF;
 	}
 	else {
-		//unsigned int *a;
-		//RC[_pin].readCalibrated(a);
-		//Raw = (uint16_t)a;
+		unsigned int *a;
+		rc[_pin].readCalibrated(a);
+		Raw = (uint16_t)a;
 	}
 }
 
-//Update's the sensor's maximum value for correct scaling
+//Updates the sensor's maximum value for correct scaling
 void Sensor::UpdateMaximum() {
 	if (Raw >= Max) {
 		Max = Raw;
 	}
 }
 
-//Update's the sensor's minimum value for correct scaling
+//Updates the sensor's minimum value for correct scaling
 void Sensor::UpdateMinimum() {
 	if (Raw <= Min) {
 		Min = Raw;
@@ -75,7 +78,7 @@ void Sensor::Normalise() {
 	Normalised = m;
 }
 
-
+//Checks the given sensor values and returns and array of bools.
 bool Sensor::GetReading() {
 	PreviousBool = Boolian;
 	ReadRaw();
@@ -148,7 +151,7 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 	}
 }
 
-//Determins weither a detacted sensor reading is Black or White
+//Determines whether a detacted sensor reading is Black or White
 void Sensor::NormalToBool() {
 	ThresholdCheck();
 }
@@ -169,7 +172,7 @@ void Sensor::ThresholdCheck() {
 }
 
 
-//Checks the Calculated boolian value and returns weither it is valid
+//Checks the Calculated boolian value and returns whether it is valid
 void Sensor::LogicCheck(Sensor *sens) {
 	if (abs(sens[0].Normalised - sens[1].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
@@ -337,8 +340,10 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 		}
 	}
 }
-
-//Prints boolean values, presently there is no material difference between the conditions, so one has been commented out until such time as communication code is finalised.
+//Being called by PollSensors & loop1
+//This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
+//Prints boolean values, presently there is no material difference between the conditions,
+//so one has been commented out until such time as communication code is finalised.
 void Sensor::printbw(bool *values) {
 	//Print via USB
 	//if (communications::SMode == communications::SerialMode::USB) {
