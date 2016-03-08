@@ -21,8 +21,9 @@ __vm/.buggyCode.vsarduino.h
 *.sln
 __vm/
 Debug/
-<<<<<<< HEAD
 ClassDiagram.cd
-=======
 Sensors2.ino
->>>>>>> 80209384600782d4f9fe89ee621f3eb03ca76008
+BuggyCode/BuggyCode/Debug/board.buildinfo
+BuggyCode/BuggyCode/Debug/buggyCode.ino.hex
+*.elf
+Sensors2.ino

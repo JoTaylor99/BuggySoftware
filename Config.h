@@ -1,6 +1,6 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
-
+#include <Arduino.h>
 //Sensor Defines
 //Change these depending on what pins each sensor's address pin is connected to9
 #define SENSOR1 8                                                                                 /*       _ _front _ _    */
@@ -14,6 +14,7 @@
 #define TRIGGER A0
 #define ECHO A1
 #define MAXDISTANCE 100
+
 
 #define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
@@ -62,7 +63,7 @@
 
 
 
-#include <Arduino.h>
+
 
 
 namespace boxConfig {
