@@ -1,0 +1,59 @@
+Do Once:
+
+Configure Arduino:
+	Create sensor object
+	create gpio object
+	attach gpio interrupt
+
+Select each sensor in turn and configure:
+	integration time (variable from PC with default value)
+	gain (variable from PC with default value)
+	interrupt persistence (variable from PC with default value)
+	initial interrupt theshold (variable from PC with default value)
+
+Configure GPIO expander
+	set pin modes
+	enable interrupts
+
+Do Repeatedly:
+
+IF GPIO interrupt
+	byte numSensorsActive = 0;
+	for (i = 0; i<8; i++) {
+		if (digitalRead(i) == HIGH)
+		numSensorsActive++;
+	}
+	
+	while (numSensorsActive != 0) {
+		IF junctionsensors
+			IF junctionsensor1
+				timestamp t1
+				toggle threshold values
+				clear interrupt
+			ELSE IF junctionsensor2
+				timestamp t2
+				toggle threshold values
+				clear interrupt
+			ENDIF
+
+			IF (bool fired)
+				IF abs(t2-t1) < X
+					Declare junction reached
+					fired = false
+				ELSE
+					Drift occured
+					fired still equals true
+				ENDIF
+			ELSE
+				fired = true
+			ENDIF
+			
+		ELSE othersensors
+
+			select correct sensor
+			toggle threshold value
+			clear interrupt
+		ENDIF
+
+		numSensorsActive--;
+			}

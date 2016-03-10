@@ -24,10 +24,10 @@ public:
 	void init();
 
 	/* interrogateBox function
-	* return type is boxValues::return data
+	* return type is boxValues::return data (currently byte)
 	* @param byte boxNumber, a byte with range 1-7 containing the number of the box to interrogate.  Function will Coms an error message if boxNumber is out of range and set an error flag in the return type.
 	* @param bool boxInverted, a bool set to false if box is approached from knob side, true otherwise.
-	* Depends on communications class for sending error codes or debug statements 
+	* Depends on communications namespace for sending error codes or debug statements and (currently) results.
 	* 
 	* Box analysis control flow:
 	*		Call checkconfigCorrect to ensure all required init functions have been called.

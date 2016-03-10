@@ -25,8 +25,6 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 	checkconfigCorrect();		//ensure init functions sucessfully called
 	setInput(OFF);				//ensure all circuit stimulis are off
 
-	byte stageTwoBoxNumber = boxNumber;
-
 	//select correct switch configuration
 	switchControl((retrieveSettings(boxNumber)));
 	//sets approach direction relay
@@ -88,7 +86,7 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 		(boxNumber == 7) ? (Serial.print("Resonant Frequency = ")) : (Serial.print("Corner Frequency = "));
 		Serial.println(presentationData.f);
 	}
-
+	return 0;
 
 };
 
@@ -142,9 +140,18 @@ boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
 	}
 }
 
-bool box::docked(){};
+bool box::docked() {
+	bool connected = false;
+	if (getReading() == 0) {
+		connected = true;
+	}
+	return connected;
+};
 
-double box::getReading(){};
+double box::getReading() {
+	
+
+};
 
 double calculateResistorValue(double rawValue, byte boxNumber){};
 
