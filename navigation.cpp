@@ -108,7 +108,7 @@ void navigation::navigate(String str) {
 };
 
 	void navigation::BoxApproach() {
-		int Distance = 0;
+		uint8_t Distance = 0;
 		LeftSpeed = 60;
 		RightSpeed = 60;
 		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
@@ -206,7 +206,7 @@ bool navigation::reachedDestination() {
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-	for (int n = 0; n < 6; n++) {
+	for (uint8_t n = 0; n < 6; n++) {
 		starting_intersection[n] = Sensor::values[n];
 	}
 	Serial.println("I have the starting POSITION");
@@ -245,7 +245,7 @@ void navigation::didIPassIntersectionLine() {
 //Quadrants Description
 //Forward  S0.S2 are in Q4, S1 and S3 are inQ1              //Backwards
 //S4 Q3 and S5 Q2                            S4 at Q4, S5 at Q1, S3S1 at Q2, S2S0 at Q3
-/* Destination Note                            Destination Note
+/* Destination Node                            Destination Node
 Q2|Q1                                            Q1|Q2
 ----|-----     Q0 is the on line case              --|--
 Q3|Q4                                            Q4 Q3
@@ -785,8 +785,8 @@ void navigation::TurnRight() {
 //Function to move forwards one node
 void navigation::MoveForward() {
 	Serial.println("Moving Now!");
-	int RCnt = 0;
-	int LCnt = 0;
+	uint8_t RCnt = 0;
+	uint8_t LCnt = 0;
 	//int cnt = 0;
 	//LeftSpeed = 100;
 	//RightSpeed = 100;
@@ -867,8 +867,8 @@ void navigation::MoveForward() {
 }
 
 void navigation::MoveBackward() {
-	int RCnt = 0;
-	int LCnt = 0;
+	uint8_t RCnt = 0;
+	uint8_t LCnt = 0;
 	//int cnt = 0;
 	//LeftSpeed = 100;
 	//RightSpeed = 100;

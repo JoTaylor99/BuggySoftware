@@ -44,7 +44,7 @@ private:
 
 	static bool _navInitComplete;
 
-	int Counter = 0;
+	uint8_t Counter = 0;
 
 	byte LeftSpeed = 70;
 	byte RightSpeed = 70;
