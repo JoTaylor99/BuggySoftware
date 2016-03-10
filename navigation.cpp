@@ -228,19 +228,38 @@ void navigation::sensorEvents() {
 }
 
 //Checks if the buggy has passed the line of the destination intersection
-bool navigation::didIPassIntersectionLine() {
+bool navigation::didIPassIntersectionLine(Direction Dir) {
 	bool passed_intersection_line = false;
-	//ideal-case Both sensors have passed the intersection line normally
-	if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
-	{
-		passed_intersection_line = true;
-		Serial.println("Yes I passed the intersection line");
+	if (Dir == Forward) {
+		//ideal-case Both sensors have passed the intersection line normally
+		if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
+		{
+			passed_intersection_line = true;
+			Serial.println("Yes I passed the intersection line");
+		}
+		else {
+			passed_intersection_line = false;
+			Serial.println("No I havent passed intersection line");
+		}
 	}
-	else {
-		passed_intersection_line = false;
-		Serial.println("No I havent passed intersection line");
+	else {//Backward
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		//ideal-case Both sensors have passed the intersection line normally
+		if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
+		{
+			passed_intersection_line = true;
+			Serial.println("Yes I passed the intersection line");
+		}
+		else {
+			passed_intersection_line = false;
+			Serial.println("No I havent passed intersection line");
+		}
 	}
+
+
 }
+
+
 
 
 //Quadrants Description
@@ -254,15 +273,13 @@ Q3|Q4                                            Q4 Q3
 // Function to identify the quadrant where the buggy is at the moment
 uint8_t navigation::whereAmI(Direction Dir) {
 	uint8_t i;
-	bool passed_intersection;
+	bool passed_intersection = didIPassIntersectionLine(Dir);
 	uint8_t quadrant;
 	if (Dir == Backward) {
 		i = 4;
-		passed_intersection = didIPassIntersectionLineB();
 	}
 	else {
 		i = 0;
-		passed_intersection = didIPassIntersectionLine();
 	}
 
 	if (Sensor::values[i] == Sensor::values[i+1]) {
@@ -617,23 +634,6 @@ void navigation::sensorEventsB() {
 	if (Sensors[5].Boolian != starting_intersection[5]) {
 		sensor5_event = true;
 		flag5 = true;
-	}
-}
-
-//Function to define whether or not the buggy has passed an interesction backwards.
-//It currently does a serial print to define whether or not it has. It also returns a boolean.
-bool navigation::didIPassIntersectionLineB() {
-	bool passed_intersection_lineb = false;
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-	//ideal-case Both sensors have passed the intersection line normally
-	if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
-	{
-		passed_intersection_lineb = true;
-		Serial.println("Yes I passed the intersection line");
-	}
-	else {
-		passed_intersection_lineb = false;
-		Serial.println("No I havent passed intersection line");
 	}
 }
 
