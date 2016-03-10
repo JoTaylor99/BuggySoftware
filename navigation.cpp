@@ -228,7 +228,8 @@ void navigation::sensorEvents() {
 }
 
 //Checks if the buggy has passed the line of the destination intersection
-void navigation::didIPassIntersectionLine() {
+bool navigation::didIPassIntersectionLine() {
+	bool passed_intersection_line = false;
 	//ideal-case Both sensors have passed the intersection line normally
 	if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
 	{
@@ -257,12 +258,11 @@ uint8_t navigation::whereAmI(Direction Dir) {
 	uint8_t quadrant;
 	if (Dir == Backward) {
 		i = 4;
-		didIPassIntersectionLineB();
-		passed_intersection = passed_intersection_lineb;
+		passed_intersection = didIPassIntersectionLineB();
 	}
 	else {
 		i = 0;
-		passed_intersection = passed_intersection_line;
+		passed_intersection = didIPassIntersectionLine();
 	}
 
 	if (Sensor::values[i] == Sensor::values[i+1]) {
@@ -621,10 +621,9 @@ void navigation::sensorEventsB() {
 }
 
 //Function to define whether or not the buggy has passed an interesction backwards.
-//It currently does a serial print to define whether or not it has.
-//May be better to change this function to a bool type and then print to the terminal if the return is true/false.
-//Also the the variable passed_intersection_lineb may then not need to be alive for as long?
-void navigation::didIPassIntersectionLineB() {
+//It currently does a serial print to define whether or not it has. It also returns a boolean.
+bool navigation::didIPassIntersectionLineB() {
+	bool passed_intersection_lineb = false;
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 	//ideal-case Both sensors have passed the intersection line normally
 	if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
