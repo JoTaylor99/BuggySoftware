@@ -38,6 +38,11 @@ public:
 	void navigate(String str);
 
 	Sensor Sensors[7] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, { (unsigned int)7, sensorConfig::QTR } };
+protected:
+	enum Direction {
+		Forward, Backward
+	};
+
 
 private:
 	using buggyMotion::KickDirection;
@@ -79,7 +84,7 @@ private:
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 	void sensorEvents(); //Checks if there was an event in the values of the first two sensors during the forward motion
 	void didIPassIntersectionLine(); //Chcks if the buggy has passed the line of the destination intersection
-	uint8_t whereAmI(); // Function to identify the quadrant where the buggy is at the moment
+	uint8_t whereAmI(Direction Dir); // Function to identify the quadrant where the buggy is at the moment
 	void findLineS23(uint8_t quadrant);
 	void findLineS01(uint8_t quadrant);  /* Based on the quadrant the buggy rotates left or right to get back to the motion
 						line with sensors 1 and 2*/
@@ -100,7 +105,7 @@ private:
 //It currently does a serial print to define whether or not it has.
 //May be better to change this function to a bool type and then print to the terminal if the return is true/false.
 //Also the the variable passed_intersection_lineb may then not need to be alive for as long?*/
-	uint8_t whereAmIB(); //This may be later merged into whereAmI
+	//uint8_t whereAmIB(); //This may be later merged into whereAmI
 	void reachedNoteB(); //Same as previous, but backwards
 	void passedNoteB(); //Same as previous, but backwards
 	void SmartAlignmentB(); //Same as previous, but backwards
