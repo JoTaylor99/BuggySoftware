@@ -17,6 +17,7 @@ Configure GPIO expander
 
 Do Repeatedly:
 
+without interrupts
 IF GPIO interrupt
 	byte numSensorsActive = 0;
 	for (i = 0; i<8; i++) {
@@ -51,7 +52,7 @@ IF GPIO interrupt
 		ELSE othersensors
 
 			select correct sensor
-			toggle threshold value
+			toggle threshold values
 			clear interrupt
 		ENDIF
 
