@@ -108,7 +108,7 @@ void navigation::navigate(String str) {
 };
 
 	void navigation::BoxApproach() {
-		int Distance = 0;
+		uint8_t Distance = 0;
 		LeftSpeed = 60;
 		RightSpeed = 60;
 		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
@@ -206,7 +206,7 @@ bool navigation::reachedDestination() {
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-	for (int n = 0; n < 6; n++) {
+	for (uint8_t n = 0; n < 6; n++) {
 		starting_intersection[n] = Sensor::values[n];
 	}
 	Serial.println("I have the starting POSITION");
@@ -228,7 +228,8 @@ void navigation::sensorEvents() {
 }
 
 //Checks if the buggy has passed the line of the destination intersection
-void navigation::didIPassIntersectionLine() {
+bool navigation::didIPassIntersectionLine() {
+	bool passed_intersection_line = false;
 	//ideal-case Both sensors have passed the intersection line normally
 	if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
 	{
@@ -245,16 +246,28 @@ void navigation::didIPassIntersectionLine() {
 //Quadrants Description
 //Forward  S0.S2 are in Q4, S1 and S3 are inQ1              //Backwards
 //S4 Q3 and S5 Q2                            S4 at Q4, S5 at Q1, S3S1 at Q2, S2S0 at Q3
-/* Destination Note                            Destination Note
+/* Destination Node                            Destination Node
 Q2|Q1                                            Q1|Q2
 ----|-----     Q0 is the on line case              --|--
 Q3|Q4                                            Q4 Q3
 */
 // Function to identify the quadrant where the buggy is at the moment
-void navigation::whereAmI() {
-	if (Sensor::values[0] == Sensor::values[1]) {
-		if (passed_intersection_line == true) {
-			if (Sensor::values[0] != starting_intersection[0]) {
+uint8_t navigation::whereAmI(Direction Dir) {
+	uint8_t i;
+	bool passed_intersection;
+	uint8_t quadrant;
+	if (Dir == Backward) {
+		i = 4;
+		passed_intersection = didIPassIntersectionLineB();
+	}
+	else {
+		i = 0;
+		passed_intersection = didIPassIntersectionLine();
+	}
+
+	if (Sensor::values[i] == Sensor::values[i+1]) {
+		if (passed_intersection == true) {
+			if (Sensor::values[i] != starting_intersection[i]) {
 				Serial.println("I am at Q4");
 				quadrant = 4;
 			}
@@ -264,7 +277,7 @@ void navigation::whereAmI() {
 			}
 		}
 		else {
-			if (Sensor::values[0] != starting_intersection[0]) {
+			if (Sensor::values[i] != starting_intersection[i]) {
 				Serial.println("I am at Q2");
 				quadrant = 2;
 			}
@@ -275,12 +288,14 @@ void navigation::whereAmI() {
 		}
 	}
 	else {
-		quadrant = 0; //S0 and S1 on line
+		quadrant = 0; //Relevant sensors on line (S0 & S1 if forwards, S4 & S5 if backwards). 
+
 	}
+	return quadrant;
 }
 
 
-void navigation::findLineS23() {
+void navigation::findLineS23(uint8_t quadrant) {
 	bool smart_line_s45 = false;
 	switch (quadrant) {
 	case 1: while (smart_line_s45 == false) {
@@ -342,7 +357,7 @@ void navigation::findLineS23() {
 
 
 // Based on the quadrant the buggy rotates left or right to get back to the motion line with sesnors 1 and 2
-void navigation::findLineS01() {
+void navigation::findLineS01(uint8_t quadrant) {
 	bool smart_line_s01 = false;
 	switch (quadrant) {
 	case 1: while (smart_line_s01 == false) {
@@ -448,7 +463,7 @@ void navigation::reachNote() {
 //Smart Alignment Function for Forward movement.
 void navigation::smartAlignmentForward() {
 	bool perfect_intersection = false;
-	whereAmI();
+	uint8_t quadrant = whereAmI(Forward);
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
@@ -457,8 +472,8 @@ void navigation::smartAlignmentForward() {
 			Serial.println(" FINISHED");
 		}
 		else {
-			findLineS23();
-			findLineS01();
+			findLineS23(quadrant);
+			findLineS01(quadrant);
 			// on_line_all();
 			if (reachedDestination() == true) {
 				return;
@@ -606,10 +621,9 @@ void navigation::sensorEventsB() {
 }
 
 //Function to define whether or not the buggy has passed an interesction backwards.
-//It currently does a serial print to define whether or not it has.
-//May be better to change this function to a bool type and then print to the terminal if the return is true/false.
-//Also the the variable passed_intersection_lineb may then not need to be alive for as long?
-void navigation::didIPassIntersectionLineB() {
+//It currently does a serial print to define whether or not it has. It also returns a boolean.
+bool navigation::didIPassIntersectionLineB() {
+	bool passed_intersection_lineb = false;
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 	//ideal-case Both sensors have passed the intersection line normally
 	if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
@@ -620,36 +634,6 @@ void navigation::didIPassIntersectionLineB() {
 	else {
 		passed_intersection_lineb = false;
 		Serial.println("No I havent passed intersection line");
-	}
-}
-
-void navigation::whereAmIB() {
-	didIPassIntersectionLineB();
-	if (Sensors[4].Boolian == Sensors[5].Boolian) {
-		if (passed_intersection_lineb == true) {
-			if (Sensors[4].Boolian != starting_intersection[4]) {
-				Serial.println("I am at Q4");
-				quadrant = 4;
-			}
-			else {
-				Serial.println(" I am at Q1");
-				quadrant = 1;
-			}
-
-		}
-		else {
-			if (Sensors[4].Boolian != starting_intersection[4]) {
-				Serial.println("I am at Q2");
-				quadrant = 2;
-			}
-			else {
-				Serial.println("I am at Q3");
-				quadrant = 3;
-			}
-		}
-	}
-	else {
-		quadrant = 0; //S4 and S5 on line
 	}
 }
 
@@ -703,7 +687,7 @@ void navigation::passedNoteB() {
 //Function to run the smart alignment when traveling backwards.
 void navigation::SmartAlignmentB() {
 	bool perfect_intersection = false;
-	whereAmIB();
+	uint8_t quadrant = whereAmI(Backward);
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
@@ -712,11 +696,11 @@ void navigation::SmartAlignmentB() {
 			Serial.println(" FINISHED");
 		}
 		else {
-			findLineS23();
+			findLineS23(quadrant);
 			if (reachedDestination() == true) {
 				return;
 			}
-			findLineS01();
+			findLineS01(quadrant);
 			if (reachedDestination() == true) {
 				return;
 			}
@@ -785,8 +769,8 @@ void navigation::TurnRight() {
 //Function to move forwards one node
 void navigation::MoveForward() {
 	Serial.println("Moving Now!");
-	int RCnt = 0;
-	int LCnt = 0;
+	uint8_t RCnt = 0;
+	uint8_t LCnt = 0;
 	//int cnt = 0;
 	//LeftSpeed = 100;
 	//RightSpeed = 100;
@@ -867,8 +851,8 @@ void navigation::MoveForward() {
 }
 
 void navigation::MoveBackward() {
-	int RCnt = 0;
-	int LCnt = 0;
+	uint8_t RCnt = 0;
+	uint8_t LCnt = 0;
 	//int cnt = 0;
 	//LeftSpeed = 100;
 	//RightSpeed = 100;
