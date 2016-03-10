@@ -66,7 +66,7 @@ private:
 	bool flag4 = false;
 	bool flag5 = false;
 
-	byte quadrant = 0;
+	//byte quadrant = 0;
 
 	void BoxApproach();
 	bool LineCorrect();	/*Bool function to indicate if the destination intersection has reached. True if the middle sensors are in the intersection or if perfect intersection achieved
@@ -79,9 +79,9 @@ private:
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 	void sensorEvents(); //Checks if there was an event in the values of the first two sensors during the forward motion
 	void didIPassIntersectionLine(); //Chcks if the buggy has passed the line of the destination intersection
-	void whereAmI(); // Function to identify the quadrant where the buggy is at the moment
-	void findLineS23();
-	void findLineS01();  /* Based on the quadrant the buggy rotates left or right to get back to the motion
+	uint8_t whereAmI(); // Function to identify the quadrant where the buggy is at the moment
+	void findLineS23(uint8_t quadrant);
+	void findLineS01(uint8_t quadrant);  /* Based on the quadrant the buggy rotates left or right to get back to the motion
 						line with sensors 1 and 2*/
 	void passedNote();  //Identifies whether sensors 0 and 1 have passed the node in the forward motion
 	void reachNote();
@@ -100,7 +100,7 @@ private:
 //It currently does a serial print to define whether or not it has.
 //May be better to change this function to a bool type and then print to the terminal if the return is true/false.
 //Also the the variable passed_intersection_lineb may then not need to be alive for as long?*/
-	void whereAmIB(); //This may be later merged into whereAmI
+	uint8_t whereAmIB(); //This may be later merged into whereAmI
 	void reachedNoteB(); //Same as previous, but backwards
 	void passedNoteB(); //Same as previous, but backwards
 	void SmartAlignmentB(); //Same as previous, but backwards
