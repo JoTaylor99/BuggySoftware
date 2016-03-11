@@ -3,8 +3,9 @@
 #ifndef _SENSOR_H
 #define _SENSOR_H
 
+
+#include "TSL2561NR.h"
 #include "Config.h"
-#include <TSL2561.h>
 #include <NewPing.h>
 #include <QTRSensors.h>
 #include <Wire.h>

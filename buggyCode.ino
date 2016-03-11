@@ -5,6 +5,7 @@
 */
 
 
+#include "TSL2561NR.h"
 #include "buggyTop.h"
 #include <Adafruit_MCP23017.h>
 #include <SoftwareSerial.h>
