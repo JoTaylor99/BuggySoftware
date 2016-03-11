@@ -458,22 +458,37 @@ void navigation::passedNote() {
 	}
 }
 
-
-void navigation::reachNote() {
-	bool passed_s23 = false;
-	while (passed_s23 == false) {
+//Function to tell if have reached the node or not yet.
+//Optimised
+void navigation::reachedNode(Direction Dir) {
+	//If forward, S2 &S3, if backward, S4&S5
+	bool passed = false;
+	while (passed == false) {
 		//Sensor::PollSensors(Sensors, FrontM, 2);
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if (reachedDestination() == true) {
 			return;
 		}
-		if ((Sensors[2].Boolian != starting_intersection[0]) && (Sensors[3].Boolian != starting_intersection[1])) {
-			passed_s23 = true;
+		if (Dir == Forward) {
+			if ((Sensors[2].Boolian != starting_intersection[0]) && (Sensors[3].Boolian != starting_intersection[1])) {
+				passed = true;
+			}
+			else {
+				Serial.println("Need to kick steadily forward on reach_node");
+				if (LineCorrect() == false) {
+					Kick(KickDirection::Forward, KICK_MAGNITUDE);
+				}
+			}
 		}
 		else {
-			Serial.println("Need to kick forward on reach_node");
-			if (LineCorrect() == false) {
-				Kick(KickDirection::Forward, KICK_MAGNITUDE);
+			if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
+				passed = true;
+			}
+			else {
+				Serial.println("Need to kick steadily backward");
+				if (LineCorrect() == false) {
+					Kick(KickDirection::Backward, KICK_MAGNITUDE);
+				}
 			}
 		}
 	}
@@ -505,7 +520,7 @@ void navigation::smartAlignmentForward() {
 			if (reachedDestination() == true) {
 				return;
 			}
-			reachNote();
+			reachedNode(Forward);
 			if (reachedDestination() == true) {
 				return;
 			}
@@ -640,28 +655,6 @@ void navigation::sensorEventsB() {
 }
 
 
-//Identifies whether sensors 4 and 5 have passed the node in the backward motion
-void navigation::reachedNoteB() {
-	bool passed_s45 = false;
-	while (passed_s45 == false) {
-		//Sensor::PollSensors(Sensors, Front, 2);
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-		if (reachedDestination() == true) {
-			return;
-		}
-		if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
-			passed_s45 = true;
-		}
-		else {
-			Serial.println("Need to kick steadily backward");
-			if (LineCorrect() == false) {
-				Kick(KickDirection::Backward, KICK_MAGNITUDE);
-			}
-
-		}
-	}
-}
-
 //Funtion to figure out if passed the node backwards.
 //If it has reached the node it will stop. If gone past it, it will kick forwards until reached.
 void navigation::passedNoteB() {
@@ -706,7 +699,7 @@ void navigation::SmartAlignmentB() {
 			if (reachedDestination() == true) {
 				return;
 			}
-			reachedNoteB();
+			reachedNode(Backward);
 			if (reachedDestination() == true) {
 				return;
 			}

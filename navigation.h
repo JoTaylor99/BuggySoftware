@@ -91,7 +91,7 @@ private:
 	void findLineS01(uint8_t quadrant);  /* Based on the quadrant the buggy rotates left or right to get back to the motion
 						line with sensors 1 and 2*/
 	void passedNote();  //Identifies whether sensors 0 and 1 have passed the node in the forward motion
-	void reachNote();
+	void reachedNode(Direction Dir);
 	void smartAlignmentForward();  //Smart Alignment Function for Forward movement.
 	/*Rotation strategy
 	1) Get back to the line with s0 and s1
@@ -103,7 +103,7 @@ private:
 	void forwardsToIntersection(); //Kick forward until s2 and s3 have passed the intersection
 	void smartAlignmentRotation();  //Function to align the buggy upon rotation.
 	void sensorEventsB(); //Function to flag sensor events during backwards alignment.
-	void reachedNoteB(); //Same as previous, but backwards
+	//void reachedNoteB(); //Same as previous, but backwards
 	void passedNoteB(); //Same as previous, but backwards
 	void SmartAlignmentB(); //Same as previous, but backwards
 	void TurnLeft();
