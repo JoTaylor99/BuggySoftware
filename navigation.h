@@ -92,7 +92,8 @@ private:
 						line with sensors 1 and 2*/
 	void passedNote();  //Identifies whether sensors 0 and 1 have passed the node in the forward motion
 	void reachedNode(Direction Dir); //Optimised; Merged forward & backward versions.
-	void smartAlignmentForward();  //Smart Alignment Function for Forward movement.
+	void smartAlignment(Direction Dir);  /*Smart Alignment Function for Forward/Backward movement.
+									Optimised by merging forward & backward versions.*/
 	/*Rotation strategy
 	1) Get back to the line with s0 and s1
 	2) Follow the line by going forwards  to align the entire buggy with it
@@ -104,7 +105,7 @@ private:
 	void smartAlignmentRotation();  //Function to align the buggy upon rotation.
 	void sensorEventsB(); //Function to flag sensor events during backwards alignment.
 	void passedNoteB(); //Same as previous, but backwards
-	void SmartAlignmentB(); //Same as previous, but backwards
+	//void SmartAlignmentB(); //Same as previous, but backwards
 	void TurnLeft();
 	void TurnRight();
 	void MoveForward();

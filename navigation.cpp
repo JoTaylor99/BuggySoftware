@@ -60,7 +60,7 @@ void navigation::navigate(String str) {
 				flag1 = false;
 				start();
 				MoveForward();
-				smartAlignmentForward();
+				smartAlignment(Forward);
 			} else if (str == "B") {
 				sensor4_event = false;
 				sensor5_event = false;
@@ -68,7 +68,7 @@ void navigation::navigate(String str) {
 				flag5 = false;
 				start();
 				MoveBackward();
-				SmartAlignmentB();
+				smartAlignment(Backward);
 			} else if (str == "R") {
 				start();
 				//RotateR();
@@ -494,10 +494,11 @@ void navigation::reachedNode(Direction Dir) {
 	}
 }
 
-//Smart Alignment Function for Forward movement.
-void navigation::smartAlignmentForward() {
+//Smart Alignment Function for Forward/Backward movement.
+//Optimised
+void navigation::smartAlignment(Direction Dir) {
 	bool perfect_intersection = false;
-	uint8_t quadrant = whereAmI(Forward);
+	uint8_t quadrant = whereAmI(Dir);
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
@@ -507,26 +508,31 @@ void navigation::smartAlignmentForward() {
 		}
 		else {
 			findLineS23(quadrant);
+			if (reachedDestination() == true) {
+				return;
+			}
 			findLineS01(quadrant);
 			// on_line_all();
 			if (reachedDestination() == true) {
 				return;
 			}
-			passedNote();
+			if (Dir == Forward) {
+				passedNote();
+			}
+			else {
+				passedNoteB();
+			}
 			if (reachedDestination() == true) {
 				return;
 			}
-			//reached_destination()
-			if (reachedDestination() == true) {
-				return;
-			}
-			reachedNode(Forward);
+			reachedNode(Dir);
 			if (reachedDestination() == true) {
 				return;
 			}
 		}
 	}
 }
+
 
 //----------------ROTATION ALIGNMENT----------------------------------------------------------------------------------------------------------------------------------------------------
 //Rotation strategy
@@ -678,38 +684,6 @@ void navigation::passedNoteB() {
 	}
 }
 
-
-//Function to run the smart alignment when traveling backwards.
-void navigation::SmartAlignmentB() {
-	bool perfect_intersection = false;
-	uint8_t quadrant = whereAmI(Backward);
-	while (perfect_intersection == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
-			(Sensors[3].Boolian != starting_intersection[3]) && (Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
-			perfect_intersection = true;
-			Serial.println(" FINISHED");
-		}
-		else {
-			findLineS23(quadrant);
-			if (reachedDestination() == true) {
-				return;
-			}
-			findLineS01(quadrant);
-			if (reachedDestination() == true) {
-				return;
-			}
-			reachedNode(Backward);
-			if (reachedDestination() == true) {
-				return;
-			}
-			passedNoteB();
-			if (reachedDestination() == true) {
-				return;
-			}
-		}
-	}
-}
 
 //Function to turn left
 void navigation::TurnLeft() {
