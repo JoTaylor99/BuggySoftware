@@ -228,6 +228,7 @@ void navigation::sensorEvents() {
 }
 
 //Checks if the buggy has passed the line of the destination intersection
+//Optimised
 bool navigation::didIPassIntersectionLine(Direction Dir) {
 	bool passed_intersection_line = false;
 	if (Dir == Forward) {
@@ -271,6 +272,7 @@ Q2|Q1                                            Q1|Q2
 Q3|Q4                                            Q4 Q3
 */
 // Function to identify the quadrant where the buggy is at the moment
+//Optimised
 uint8_t navigation::whereAmI(Direction Dir) {
 	uint8_t i;
 	bool passed_intersection = didIPassIntersectionLine(Dir);

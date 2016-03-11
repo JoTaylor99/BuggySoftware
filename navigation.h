@@ -80,8 +80,13 @@ private:
 								to the motion line with sensors 4 and 5*/
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 	void sensorEvents(); //Checks if there was an event in the values of the first two sensors during the forward motion
-	bool didIPassIntersectionLine(Direction Dir); //Chcks if the buggy has passed the line of the destination intersection
-	uint8_t whereAmI(Direction Dir); // Function to identify the quadrant where the buggy is at the moment
+	bool didIPassIntersectionLine(Direction Dir); /*Checks if the buggy has passed the line of the destination intersection
+								This function has been optimised by having it return the passed_line variable as a bool.
+								Also, the backwards version has been merged with the forwards version.*/
+	uint8_t whereAmI(Direction Dir); /* Function to identify the quadrant where the buggy is at the moment
+								This function has been optimised to return a uint8_t with the value of the quadrant variable.
+								Also, the backwards version has been merged with the forward version through the use of
+								an indentification variable "Dir"*/
 	void findLineS23(uint8_t quadrant);
 	void findLineS01(uint8_t quadrant);  /* Based on the quadrant the buggy rotates left or right to get back to the motion
 						line with sensors 1 and 2*/
