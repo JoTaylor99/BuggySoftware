@@ -32,11 +32,12 @@ public:
 	bool PreviousBool;
 	static bool values[6];
 
-	static const byte DefaultOrder[6];
+	static const byte DefaultOrder[8];
 	static const byte Front[2];
 	static const byte Back[2];
 	static const byte FrontM[2];
 	static const byte FrontNMiddle[4];
+
 
 	static void initSensors();
 	

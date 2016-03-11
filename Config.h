@@ -9,12 +9,23 @@
 #define SENSOR4 11                                                                                 /*      |_ s3_|_s2_ |*/
 #define SENSOR5 12                                                                                 /*      |  s5 | s4  |*/
 #define SENSOR6 13                                                                                /*       \_____|_____/*/
+#define SENSOR7 2
+#define SENSOR8 3
+
 #define UPPER_THRESHOLD 55     //In percent
 #define LOWER_THRESHOLD 20
 #define TRIGGER A0
 #define ECHO A1
 #define MAXDISTANCE 100
 
+#define SENSOR1INTPIN 8                                                                                 /*       _ _front _ _    */
+#define SENSOR2INTPIN 9                                                                              /*       / s1 | s0 \ */
+#define SENSOR3INTPIN 10                                                                                 /*      |     |     |*/
+#define SENSOR4INTPIN 11                                                                                 /*      |_ s3_|_s2_ |*/
+#define SENSOR5INTPIN 12                                                                                 /*      |  s5 | s4  |*/
+#define SENSOR6INTPIN 13   
+#define SENSOR7INTPIN 14
+#define SENSOR8INTPIN 15
 
 #define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000

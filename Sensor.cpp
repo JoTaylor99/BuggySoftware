@@ -4,14 +4,17 @@
 
 #include "Sensor.h"
 
-static TSL2561 tsl;
-static QTRSensorsRC rc[2];
 
-const byte Sensor::DefaultOrder[6] = { 1, 2, 3, 4, 5, 6 };
+static QTRSensorsRC rc[2];
+TSL2561NR tsl;
+Adafruit_MCP23017 sensGPIO;
+
+const byte Sensor::DefaultOrder[6] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 const byte Sensor::Front[2] = { 1, 2 };
 const byte Sensor::Back[2] = { 5, 6 };
 const byte Sensor::FrontM[2] = { 3, 4 };
 const byte Sensor::FrontNMiddle[4] = { 1, 2, 3, 4 };
+
 
 bool Sensor::values[6] = { false, false, false, false, false, false };
 
@@ -99,6 +102,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	case 1:
 		digitalWrite(SENSOR1, HIGH);
@@ -107,6 +112,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	case 2:
 		digitalWrite(SENSOR1, HIGH);
@@ -115,6 +122,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	case 3:
 		digitalWrite(SENSOR1, HIGH);
@@ -123,6 +132,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, LOW);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	case 4:
 		digitalWrite(SENSOR1, HIGH);
@@ -131,6 +142,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, LOW);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	case 5:
 		digitalWrite(SENSOR1, HIGH);
@@ -139,6 +152,28 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, LOW);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
+		break;
+	case 6:
+		digitalWrite(SENSOR1, HIGH);
+		digitalWrite(SENSOR2, HIGH);
+		digitalWrite(SENSOR3, HIGH);
+		digitalWrite(SENSOR4, HIGH);
+		digitalWrite(SENSOR5, HIGH);
+		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, LOW);
+		digitalWrite(SENSOR8, HIGH);
+		break;
+	case 7:
+		digitalWrite(SENSOR1, HIGH);
+		digitalWrite(SENSOR2, HIGH);
+		digitalWrite(SENSOR3, HIGH);
+		digitalWrite(SENSOR4, HIGH);
+		digitalWrite(SENSOR5, HIGH);
+		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, LOW);
 		break;
 	default:
 		digitalWrite(SENSOR1, HIGH);
@@ -147,6 +182,8 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 		digitalWrite(SENSOR4, HIGH);
 		digitalWrite(SENSOR5, HIGH);
 		digitalWrite(SENSOR6, HIGH);
+		digitalWrite(SENSOR7, HIGH);
+		digitalWrite(SENSOR8, HIGH);
 		break;
 	}
 }
@@ -393,13 +430,18 @@ void Sensor::PollSensors(Sensor *sens, const byte *order, byte OrderLength){
 
 
 void Sensor::initSensors() {
+	
+	//Address pins
 	pinMode(SENSOR1, OUTPUT);
 	pinMode(SENSOR2, OUTPUT);
 	pinMode(SENSOR3, OUTPUT);
 	pinMode(SENSOR4, OUTPUT);
 	pinMode(SENSOR5, OUTPUT);
 	pinMode(SENSOR6, OUTPUT);
+	pinMode(SENSOR7, OUTPUT);
+	pinMode(SENSOR8, OUTPUT);
 
+	//Ultrasonic pins
 	pinMode(A0, OUTPUT);
 	pinMode(A1, INPUT);
 
