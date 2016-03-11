@@ -3,7 +3,6 @@ Do Once:
 Configure Arduino:
 	Create sensor object
 	create gpio object
-	attach gpio interrupt
 
 Select each sensor in turn and configure:
 	integration time (variable from PC with default value)
