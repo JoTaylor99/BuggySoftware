@@ -30,13 +30,15 @@ public:
 	double Normalised;
 	bool Boolian;
 	bool PreviousBool;
-	static bool values[6];
+	static bool values[8];
 
 	static const byte DefaultOrder[8];
 	static const byte Front[2];
 	static const byte Back[2];
 	static const byte FrontM[2];
 	static const byte FrontNMiddle[4];
+	static const byte Junction[2];
+
 
 
 	static void initSensors();

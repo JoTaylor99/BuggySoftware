@@ -9,14 +9,16 @@ static QTRSensorsRC rc[2];
 TSL2561NR tsl;
 Adafruit_MCP23017 sensGPIO;
 
-const byte Sensor::DefaultOrder[6] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+const byte Sensor::DefaultOrder[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 const byte Sensor::Front[2] = { 1, 2 };
 const byte Sensor::Back[2] = { 5, 6 };
 const byte Sensor::FrontM[2] = { 3, 4 };
 const byte Sensor::FrontNMiddle[4] = { 1, 2, 3, 4 };
+const byte Sensor::Junction[2] = { 7, 8 };
 
 
-bool Sensor::values[6] = { false, false, false, false, false, false };
+
+bool Sensor::values[8] = { false, false, false, false, false, false };
 
 Sensor::Sensor(uint16_t Pin) {
 	_pin = Pin;
@@ -45,7 +47,6 @@ bool Sensor::_sensorInitComplete = false;
 //Reads the Raw value from whichever sensor is enabled
 void Sensor::ReadRaw() {
 	if (_s == sensorConfig::SensorType::TSL) {
-		tsl.begin();
 		uint32_t lum = 0;
 		uint16_t ir = 0;
 		lum = tsl.getFullLuminosity();
@@ -440,11 +441,7 @@ void Sensor::initSensors() {
 	pinMode(SENSOR6, OUTPUT);
 	pinMode(SENSOR7, OUTPUT);
 	pinMode(SENSOR8, OUTPUT);
-
-	//Ultrasonic pins
-	pinMode(A0, OUTPUT);
-	pinMode(A1, INPUT);
-
+	
 	//-------Set all sensor select pins to high---------------
 	digitalWrite(SENSOR1, HIGH);
 	digitalWrite(SENSOR2, HIGH);
@@ -452,10 +449,19 @@ void Sensor::initSensors() {
 	digitalWrite(SENSOR4, HIGH);
 	digitalWrite(SENSOR5, HIGH);
 	digitalWrite(SENSOR6, HIGH);
-	
-	//---------Setip Gains and Intergration time for all sensors
-	tsl.setGain(TSL2561_GAIN_16X);
-	tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
+	digitalWrite(SENSOR7, HIGH);
+	digitalWrite(SENSOR8, HIGH);
+		
+	//Ultrasonic pins
+	pinMode(A0, OUTPUT);
+	pinMode(A1, INPUT);
+
+
+
+
+	//---------Setup Gains and Intergration time for all sensors
+	//tsl.setGain(TSL2561_GAIN_16X);
+	//tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
 	//tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
 	//tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
 
