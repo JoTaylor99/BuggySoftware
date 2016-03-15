@@ -81,14 +81,20 @@ private:
 								to the motion line with sensors 4 and 5*/
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 	void sensorEvents(); //Checks if there was an event in the values of the first two sensors during the forward motion
-	bool didIPassIntersectionLine(); //Chcks if the buggy has passed the line of the destination intersection
-	uint8_t whereAmI(Direction Dir); // Function to identify the quadrant where the buggy is at the moment
+	bool didIPassIntersectionLine(Direction Dir); /*Checks if the buggy has passed the line of the destination intersection
+								This function has been optimised by having it return the passed_line variable as a bool.
+								Also, the backwards version has been merged with the forwards version.*/
+	uint8_t whereAmI(Direction Dir); /* Function to identify the quadrant where the buggy is at the moment
+								This function has been optimised to return a uint8_t with the value of the quadrant variable.
+								Also, the backwards version has been merged with the forward version through the use of
+								an indentification variable "Dir"*/
 	void findLineS23(uint8_t quadrant);
 	void findLineS01(uint8_t quadrant);  /* Based on the quadrant the buggy rotates left or right to get back to the motion
 						line with sensors 1 and 2*/
 	void passedNote();  //Identifies whether sensors 0 and 1 have passed the node in the forward motion
-	void reachNote();
-	void smartAlignmentForward();  //Smart Alignment Function for Forward movement.
+	void reachedNode(Direction Dir); //Optimised; Merged forward & backward versions.
+	void smartAlignment(Direction Dir);  /*Smart Alignment Function for Forward/Backward movement.
+									Optimised by merging forward & backward versions.*/
 	/*Rotation strategy
 	1) Get back to the line with s0 and s1
 	2) Follow the line by going forwards  to align the entire buggy with it
@@ -99,12 +105,8 @@ private:
 	void forwardsToIntersection(); //Kick forward until s2 and s3 have passed the intersection
 	void smartAlignmentRotation();  //Function to align the buggy upon rotation.
 	void sensorEventsB(); //Function to flag sensor events during backwards alignment.
-	bool didIPassIntersectionLineB(); /*Function to define whether or not the buggy has passed an interesction backwards.
-//It currently does a serial print to define whether or not it has. Also returns true/false?*/
-	//uint8_t whereAmIB(); //This may be later merged into whereAmI
-	void reachedNoteB(); //Same as previous, but backwards
 	void passedNoteB(); //Same as previous, but backwards
-	void SmartAlignmentB(); //Same as previous, but backwards
+	//void SmartAlignmentB(); //Same as previous, but backwards
 	void TurnLeft();
 	void TurnRight();
 	void MoveForward();
