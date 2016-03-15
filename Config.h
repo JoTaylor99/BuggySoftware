@@ -1,6 +1,34 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 #include <Arduino.h>
+
+//Mode defines
+#define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_PRINTLN(x)  Serial.println (x)
+#define DEBUG_PRINT(x)	Serial.print(x)
+#define COMPILE_DATE Serial.println(__DATE__)
+#define COMPILE_TIME Serial.println(__TIME__)
+#else
+#define DEBUG_PRINTLN(x)
+#define DEBUG_PRINT(x)
+#define COMPILE_DATE
+#define COMPILE_TIME
+#endif
+
+//Sensor Mode
+
+//#define SENSORINTMODE
+//#define POLLALLSENSORS
+#ifndef SENSORINTMODE
+//	#ifndef POLLALLSENSORS
+//#define POLL_SENSORS(sensors, sensorPos, numberOfSensors)
+	#define POLL_SENSORS(sensors, sensorPos, numberOfSensors) Sensor::PollSensors(Sensors, sensorPos, numberOfSensors);
+#else
+	#define POLL_SENSORS(sensors)
+#endif
+
 //Sensor Defines
 //Change these depending on what pins each sensor's address pin is connected to9
 #define SENSOR1 8                                                                                 /*       _ _front _ _    */
