@@ -6,11 +6,32 @@
 
 #include "TSL2561NR.h"
 #include "Config.h"
-#include <NewPing.h>
-#include <QTRSensors.h>
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include "Comms.h"
+
+/*Sensor mode setup flow control:
+*	Create one sensor object per sensor, passing the address select pin as an argument
+*	Set all address pinModes as output
+*	Write all address pins high
+*	Declare 1 analog pin mode in and 1 analog pin mode out for ultrasonic
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*/
+
 
 class Sensor {
 
@@ -22,6 +43,18 @@ public:
 	
 	/* Sensor destructor*/
 	~Sensor();
+
+	typedef enum sensorNumber {
+		junctRight = 0,
+		junctLeft = 1,
+		frontRight = 2,
+		frontLeft = 3,
+		middleRight = 4,
+		middleLeft = 5,
+		backRight = 6,
+		backLeft = 7,
+		invalid = 8
+	};
 
 	enum DriftDirection {
 		DLeft, DRight, None, NotInTransition, Stop
@@ -39,12 +72,18 @@ public:
 	static const byte FrontNMiddle[4];
 	static const byte Junction[2];
 
-
+	/*static const sensorNumber DefaultOrder[8];
+	static const sensorNumber Front[2];
+	static const sensorNumber Back[2];
+	static const sensorNumber FrontM[2];
+	static const sensorNumber FrontNMiddle[4];
+	static const sensorNumber Junction[2];*/
 
 	static void initSensors();
 	
 	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
 	static void PollSensors(Sensor *sens, const byte *order, byte OrderLength);
+	static void PollSensors(Sensor *sens);
 
 private:
 	uint16_t _pin;

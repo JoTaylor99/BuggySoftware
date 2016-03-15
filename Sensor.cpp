@@ -16,7 +16,14 @@ const byte Sensor::FrontM[2] = { 3, 4 };
 const byte Sensor::FrontNMiddle[4] = { 1, 2, 3, 4 };
 const byte Sensor::Junction[2] = { 7, 8 };
 
+//-------Defines for when we move to sensor enumeration rather than call by index-------
 
+/*const Sensor::sensorNumber Sensor::DefaultOrder[8] = { junct Right, junct Left frontRight, frontLeft, middleRight, middleLeft, backRight, backLeft };
+const Sensor::sensorNumber Sensor::Front[2] = { frontRight, frontLeft };
+const Sensor::sensorNumber Sensor::Back[2] = { backRight, backLeft };
+const Sensor::sensorNumber Sensor::FrontM[2] = { middleRight, middleLeft };
+const Sensor::sensorNumber Sensor::FrontNMiddle[4] = { frontRight, frontLeft, middleRight, middleLeft };
+const Sensor::sensorNumber Sensor::Junction[2] = { junctRight, junctLeft };*/
 
 bool Sensor::values[8] = { false, false, false, false, false, false };
 
@@ -458,6 +465,66 @@ void Sensor::initSensors() {
 
 
 
+	//-------Sensor interrupt setups-------
+
+	//Setup GPIO with address 21
+	sensGPIO.begin(1);
+
+	//setup GPIO pinModes
+	sensGPIO.pinMode(SENSOR1INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR2INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR3INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR4INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR5INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR6INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR7INTPIN, INPUT);
+	sensGPIO.pinMode(SENSOR8INTPIN, INPUT);
+	
+	//Sensor::sensorNumber i;
+	//for (i = Sensor::frontRight; i < Sensor::invalid; i = Sensor::sensorNumber(i+1)) {
+	//	SelectSensor(sensorNumber(i));
+	//	tsl.begin();
+	//	//Gain and integration times set by default, if alternate values need to be provided then they can be passed as parameters in tsl.begin()
+	//	byte blackTileLowLow = BLACKLOWTHRESHOLDLOWBYTE;
+	//	byte blackTileLowHigh = BLACKLOWTHRESHOLDHIGHBYTE;
+	//	byte blackTileHighLow = BLACKHIGHTHRESHOLDLOWBYTE;
+	//	byte blackTileHighHigh = BLACKHIGHTHRESHOLDLOWBYTE;
+
+	//	byte whiteTileLowLow = WHITELOWTHRESHOLDLOWBYTE;
+	//	byte whiteTileLowHigh = WHITELOWTHRESHOLDHIGHBYTE;
+	//	byte whiteTileHighLow = WHITEHIGHTHRESHOLDLOWBYTE;
+	//	byte whiteTileHighHigh = WHITEHIGHTHRESHOLDHIGHBYTE;
+	//	
+	//	
+	//	//Set interrupt thesholds
+	//	//RIGHT starts as black, black, black, white
+	//	//LEFT starts as white, white, white, black
+	//	//Thresholds set such that value will remain inside bound until change of tile.
+	//	if ((i == junctRight) || (i == frontRight) || (i == middleRight) || (i == backLeft)) {
+	//		//set thresholds for over black tile
+	//		//set low threshold
+	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
+	//		//set high threshold
+	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
+	//	}
+	//	else if ((i == junctLeft) || (i == frontLeft) || (i == middleLeft) || (i == backRight)) {
+	//		//set thresholds for over white tile
+
+	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);
+	//		//set high threshold
+	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, whiteTileHighLow, whiteTileHighHigh);
+
+	//	}
+
+
+	//	uint8_t _interruptPersistence = TSL2561_INTERRUPT_PERSISTENCE_ONE;
+
+	//	//Set interrupt control register with mode and persistence;
+	//	tsl.write8bits(TSL2561_COMMAND_BIT | TSL2561_REGISTER_INTERRUPT, _interruptPersistence | TSL2561_INTERRUPT_LEVELMODE);
+
+	//	//
+
+	//}
 
 	//---------Setup Gains and Intergration time for all sensors
 	//tsl.setGain(TSL2561_GAIN_16X);
