@@ -8,8 +8,10 @@ navigation buggy;
 
 void buggyTop::init(){
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
-
+	COMPILE_DATE;
+	COMPILE_TIME;
 	buggy.initNavigation();
+
 };
 
 void buggyTop::go(){
