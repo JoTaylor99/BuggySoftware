@@ -79,7 +79,7 @@
 
 
 
-
+//change to bC
 namespace boxConfig {
 
 	enum boxSettings {
@@ -103,6 +103,7 @@ namespace boxConfig {
 	const bool boxInverted = BOXINV;
 }
 
+//change to sC
 	namespace sensorConfig {
 	
 		enum SensorType {
@@ -111,6 +112,7 @@ namespace boxConfig {
 
 	};
 
+//change to mC
 	namespace motorConfig {
 
 		enum Direction {
@@ -118,4 +120,8 @@ namespace boxConfig {
 		};
 
 	};
+
+//change to nC
+	namespace navigationConfig{};
+
 #endif
