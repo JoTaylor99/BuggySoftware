@@ -90,7 +90,9 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 
 };
 
-double box::getReadingOnce(){};
+double box::getOneReading(){
+	return analogRead(_adcInPin);
+};
 
 void box::setupADC(){
 	pinMode(_adcInPin, INPUT);
@@ -103,7 +105,7 @@ void box::setupADC(){
 
 	ADCSRA |= PS_16; //20us
 
-	double setup = getReadingOnce();
+	double setup = getOneReading();
 };
 
 void box::checkconfigCorrect() {
@@ -148,12 +150,14 @@ bool box::docked() {
 	return connected;
 };
 
+
 double box::getReading() {
 	
 
 };
 
-double calculateResistorValue(double rawValue, byte boxNumber){};
+double calculateResistorValue(double rawValue, byte boxNumber){
+};
 
 //Function to pick the prefered resistor from a given resistor value range.
 short PrefResistor(double OResistor, byte BoxNo) {

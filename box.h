@@ -82,17 +82,17 @@ private:
 		/* Capacitance measurement function
 		 * returns double representing measured capacitance in nanofarads
 		 * Depends on communications class for sending error codes or debug statements 
-		 * Calls SetInput and getReadingOnce function.
-			*/
+		 * Calls SetInput and getOneReading function.
 		double measureCapacitance();
 
 		/* getReading function 
 		 * returns double containing the average of N ADC readings, where N is defined as a const variable in config.h
-		 * Calls getReadingOnce function for each reading
-		 */
+		 * Calls getOneReading function for each reading
+		 */		//ALEX
 		double getReading();
-
-		double getReadingOnce();
+		
+		
+		double getOneReading();
 
 		/*setupADC function
 		*  Sets ADC pinMode
