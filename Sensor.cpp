@@ -4,8 +4,9 @@
 
 #include "Sensor.h"
 
-
+#ifdef QTRSINUSE
 static QTRSensorsRC rc[2];
+#endif
 TSL2561NR tsl;
 Adafruit_MCP23017 sensGPIO;
 
@@ -53,7 +54,10 @@ bool Sensor::_sensorInitComplete = false;
 
 //Reads the Raw value from whichever sensor is enabled
 void Sensor::ReadRaw() {
-	if (_s == sensorConfig::SensorType::TSL) {
+#ifdef QTRSINUSE
+
+#endif
+	if(_s == sensorConfig::SensorType::TSL) {
 		uint32_t lum = 0;
 		uint16_t ir = 0;
 		lum = tsl.getFullLuminosity();
@@ -61,10 +65,12 @@ void Sensor::ReadRaw() {
 		Raw = lum & 0xFFFF;
 	}
 	else {
+		#ifdef QTRSINUSE
 		unsigned int *a;
 		rc[_pin].readCalibrated(a);
 		Raw = (uint16_t)a;
-	}
+		#endif
+		}
 }
 
 //Updates the sensor's maximum value for correct scaling

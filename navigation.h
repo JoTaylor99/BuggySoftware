@@ -35,9 +35,11 @@ public:
 	* return type is byte
 	*
 	*/
-	void navigate(String str);
+	void navigate(String str); 
 
-	//Sensor Sensors[7] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, { (unsigned int)7, sensorConfig::QTR } };
+	#ifdef QTRSINUSE
+	Sensor Sensors[7] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, { (unsigned int)7, sensorConfig::QTR } };
+	#endif
 	Sensor Sensors[8] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, SENSOR7, SENSOR8 };
 protected:
 	enum Direction {

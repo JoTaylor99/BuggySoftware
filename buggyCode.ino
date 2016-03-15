@@ -3,8 +3,11 @@
  Created:	2/25/2016 4:20:15 PM
  Author:	Henry
 */
-
-
+#include <Wire.h>
+#include "Config.h"
+#ifdef QTRSINUSE
+	#include <QTRSensors.h>
+#endif
 #include "TSL2561NR.h"
 #include "buggyTop.h"
 #include <Adafruit_MCP23017.h>

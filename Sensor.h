@@ -5,6 +5,9 @@
 
 
 #include "TSL2561NR.h"
+#ifdef QTRSINUSE
+#include <QTRSensors.h>
+#endif
 #include "Config.h"
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>

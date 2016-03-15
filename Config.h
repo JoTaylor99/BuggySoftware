@@ -29,6 +29,8 @@
 	#define POLL_SENSORS(sensors)
 #endif
 
+//#define QTRSINUSE
+
 //Sensor Defines
 //Change these depending on what pins each sensor's address pin is connected to9
 #define SENSOR1 8                                                                                 /*       _ _front _ _    */
