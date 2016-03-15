@@ -10,26 +10,51 @@
 
 class boxControl {
 
-public:
+//All functions of boxControl are protected as they should only be accessible to a box object
+protected:
 
+	/*boxControl constructor*/
 	boxControl();
 
+	/*boxControl destructor*/
 	~boxControl();
 
-	enum bcState
-	{
-		ON = 1,
-		OFF = 0
-	};
 
+//enum for box driving voltage control
+	enum inputStatus {
+		OFF = 0,
+		ON = 1
+	};
+	/* initControl function
+	*  Void return type
+	*  Depends on communications class for sending error codes or debug statements
+	*  Create switcher object and calls initSwitcher to setup GPIO expander
+	*  Sets pinMode for 5V stimulus pin
+	*  Sets static bool initComplete to true.
+	*/
 	void initControl();
 
 	bool switchControl(boxConfig::boxSettings boxSetting);
 
+	/* setInput function
+	*	Return type void
+	*	@param boxControl::inputStatus position is an enumeration with options ON or OFF
+	*	OVERLOADED function: @param short boxNumber, this function should only ever be called for the case of boxNumber = 1;  Error should be coms if called with boxNumber != 1
+	*	The off option will always turn off both the Boost converter and 5V supplies in both the regular and overloaded function
+	*	The on option will turn on the 5V supply in the normal function or the boost converter in the overloaded function.
+	*	*/
+	void setInput(boxControl::inputStatus position);
+	void setInput(boxControl::inputStatus position, byte boxNumber);
 
-	bool setBC(boxControl::bcState setState);
+	/* setDirection function
+	*	void return type
+	*	@param bool inverted
+	*	configures the P1P2switch relay according to the direction the buggy has docked with the box
+	*	DOES NOT directly interface with the GPIO expander, simply sets a boolean member variable to be checked and if necessary actioned as part of the switchControl function
+	*/
+	void setDirection(bool inverted);
 
-	bool setDirection(bool inverted);
+	bool checkboxcontrolInit();
 
 private:
 	class switcher {
@@ -41,39 +66,47 @@ private:
 
 		bool actuateRelays(unsigned short command);
 
+		bool checkswitchercontrolInit();
+
 	private:
 
+		static bool _switcherinitComplete;
+
 		static Adafruit_MCP23017 switchingUnit;
-		static unsigned short _currentRelayState;
-		static bool initComplete;
+
 
 		bool setRelay(short relayPin);
 
 		short retrievePinNumber(short relayName);
 
 		bool compareRelayAssignments(unsigned short validSet);
+
+		bool _inverted = false;
 	};
 
+	static bool _boxcontrolinitComplete;
+	bool _boxInverted = 0;
 	bool assignmentValid = 0;
 	const byte _fiveVoltOutPin = FIVEVOLTOUTPUTPIN;
 	bool checkRelayAssignments(unsigned short setting);
 	bool switchRelays();
 
-	const byte _pinP1BC = pinP1BC;
-	const byte _pinP15V = pinP15V;
-	const byte _pinP1ADC = pinP1ADC;
-	const byte _pinP2GND = pinP2GND;
-	const byte _pinP25V = pinP25V;
-	const byte _pinP2Rd = pinP2Rd;
-	const byte _pinP2Rk = pinP2Rk;
-	const byte _pinP2ADC = pinP2ADC;
-	const byte _pinGNDADC = pinGNDADC;
-	const byte _pinGNDGND = pinGNDGND;
-	const byte _pinGND5V = pinGND5V;
-	const byte _pinP1P2switch = pinP1P2switch;
-	const byte _pinBC = pinBC;
-	const byte _pinADCswitch = pinADCswitch;
+	const byte _pinP1BC = P1BCPIN;
+	const byte _pinP15V = P15VPIN;
+	const byte _pinP1ADC = P1ADCPIN;
+	const byte _pinP2GND = P2GNDPIN;
+	const byte _pinP25V = P25VPIN;
+	const byte _pinP2Rd = P2RdPIN;
+	const byte _pinP2Rk = P2RkPIN;
+	const byte _pinP2ADC = P2ADCPIN;
+	const byte _pinGNDADC = GNDADCPIN;
+	const byte _pinGNDGND = GNDGNDPIN;
+	const byte _pinGND5V = GND5VPIN;
+	const byte _pinP1P2switch = P1P2SWITCHPIN;
+	const byte _pinBC = BCPIN;
+	const byte _pinADCswitch = ADCSWITCHPIN;
 };
+
 
 
 #endif

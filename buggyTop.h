@@ -3,6 +3,8 @@
 
 #include "box.h"
 #include "Config.h"
+#include "navigation.h"
+#include "Comms.h"
 
 class buggyTop {
 
@@ -15,6 +17,9 @@ public:
 	void init();
 
 	void go();
+
+
+
 };
 
 #endif
