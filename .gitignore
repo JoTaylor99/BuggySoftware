@@ -22,3 +22,8 @@ __vm/.buggyCode.vsarduino.h
 __vm/
 Debug/
 ClassDiagram.cd
+TODO.txt
+src/_micro-api/libraries/TSL2561NR/library.properties
+src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.cpp
+src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.h
+Release/
