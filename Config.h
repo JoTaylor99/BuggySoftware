@@ -58,6 +58,22 @@
 #define BOXNUM		   4
 #define BOXINV		   0
 
+#define P1BC		0x01
+#define P15V        0x02
+#define P1ADC       0x04
+#define P2GND       0x08
+#define P25V        0x10
+#define P2Rd        0x20
+#define P2Rk        0x40
+#define P2ADC       0x80
+#define GNDADC		0x100
+#define GNDGND      0x200
+#define GND5V       0x400
+#define P1P2SWITCH  0x800
+#define BC          0x1000    //both ADCswitch and BC to be put on 1 pin in next circuit rev
+#define ADCSWITCH   0x2000
+
+
 #define P1BCPIN        3
 #define P15VPIN        8
 #define P1ADCPIN       9
