@@ -82,7 +82,7 @@ private:
 		/* Capacitance measurement function
 		 * returns double representing measured capacitance in nanofarads
 		 * Depends on communications class for sending error codes or debug statements 
-		 * Calls SetInput and getOneReading function.
+		 * Calls SetInput and getOneReading function.*/
 		double measureCapacitance();
 
 		/* getReading function 
