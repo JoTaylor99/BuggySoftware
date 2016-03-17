@@ -42,14 +42,14 @@
 
 //Sensor Defines
 //Change these depending on what pins each sensor's address pin is connected to9
-#define SENSOR1 8                                                                                 /*       _ _front _ _    */
-#define SENSOR2 9                                                                              /*       / s1 | s0 \ */
-#define SENSOR3 10                                                                                 /*      |     |     |*/
-#define SENSOR4 11                                                                                 /*      |_ s3_|_s2_ |*/
-#define SENSOR5 12                                                                                 /*      |  s5 | s4  |*/
-#define SENSOR6 13                                                                                /*       \_____|_____/*/
-#define SENSOR7 2
-#define SENSOR8 3
+#define OUTERFRONTRIGHTPIN 7                                                                                 /*       _ _front _ _    */
+#define FRONTRIGHTPIN 6                                                                              /*       / s1 | s0 \ */
+#define FRONTLEFTPIN 5                                                                                 /*      |     |     |*/
+#define OUTERFRONTLEFTPIN 4                                                                                 /*      |_ s3_|_s2_ |*/
+#define MIDDLERIGHTPIN 3                                                                                 /*      |  s5 | s4  |*/
+#define MIDDLELEFTPIN 2                                                                                /*       \_____|_____/*/
+#define BACKRIGHTPIN 1
+#define BACKLEFTPIN 0
 
 #define UPPER_THRESHOLD 55     //In percent
 #define LOWER_THRESHOLD 20
