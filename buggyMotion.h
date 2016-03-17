@@ -24,7 +24,7 @@ public:
 
 protected:
 
-	enum KickDirection {
+	enum KickDirection :uint8_t {
 		Forward, Backward, Left, Right
 	};
 
