@@ -188,6 +188,18 @@ namespace boxConfig {
 		};
 		#endif		
 
+		enum sensorNumber : uint8_t {
+			oFrontRight = 0,
+			frontRight = 1,
+			frontLeft = 2,
+			oFrontLeft = 3,
+			middleRight = 4,
+			middleLeft = 5,
+			backRight = 6,
+			backLeft = 7,
+			invalid = 8
+		};
+
 	};
 
 //change to mC

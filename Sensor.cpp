@@ -7,44 +7,38 @@
 #ifdef QTRSINUSE
 static QTRSensorsRC rc[2];
 #endif
-TSL2561NR tsl;
+
+SFE_TSL2561 tsl;
 Adafruit_MCP23017 sensGPIO;
 
-const byte Sensor::DefaultOrder[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-const byte Sensor::Front[2] = { 1, 2 };
-const byte Sensor::Back[2] = { 5, 6 };
-const byte Sensor::FrontM[2] = { 3, 4 };
-const byte Sensor::FrontNMiddle[4] = { 1, 2, 3, 4 };
-const byte Sensor::Junction[2] = { 7, 8 };
 
-//-------Defines for when we move to sensor enumeration rather than call by index-------
+const sC::sensorNumber Sensor::DefaultOrder[8] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft, sC::middleRight, sC::middleLeft, sC::backRight, sC::backLeft };
+const sC::sensorNumber Sensor::Front[4] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft };
+const sC::sensorNumber Sensor::Back[2] = { sC::backRight, sC::backLeft };
+const sC::sensorNumber Sensor::Middle[2] = { sC::middleRight, sC::middleLeft };
+const sC::sensorNumber Sensor::FrontNMiddle[6] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft, sC::middleRight, sC::middleLeft };
 
-/*const Sensor::sensorNumber Sensor::DefaultOrder[8] = { junct Right, junct Left frontRight, frontLeft, middleRight, middleLeft, backRight, backLeft };
-const Sensor::sensorNumber Sensor::Front[2] = { frontRight, frontLeft };
-const Sensor::sensorNumber Sensor::Back[2] = { backRight, backLeft };
-const Sensor::sensorNumber Sensor::FrontM[2] = { middleRight, middleLeft };
-const Sensor::sensorNumber Sensor::FrontNMiddle[4] = { frontRight, frontLeft, middleRight, middleLeft };
-const Sensor::sensorNumber Sensor::Junction[2] = { junctRight, junctLeft };*/
 
-bool Sensor::values[8] = { false, false, false, false, false, false };
+//uint8_t Sensor::values = 0x00;
+bool Sensor::values[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 Sensor::Sensor(uint16_t Pin) {
 	_pin = Pin;
 	Max = MAX_DEFAULT;
 	Min = MIN_DEFAULT;
 	Normalised = 0;
-	Boolian = false;
-	PreviousBool = false;
-	_s = sensorConfig::SensorType::TSL;
+	tileWhite = false;
+	previoustileWhite = false;
+	_s = sC::SensorType::TSL;
 }; 
 
-Sensor::Sensor(uint16_t index, sensorConfig::SensorType S) {
+Sensor::Sensor(uint16_t index, sC::SensorType S) {
 	_pin = index;
 	Max = MAX_DEFAULT;
 	Min = MIN_DEFAULT;
 	Normalised = 0;
-	Boolian = false;
-	PreviousBool = false;
+	tileWhite = false;
+	previoustileWhite = false;
 	_s = S;
 };
 
@@ -73,16 +67,12 @@ void Sensor::ReadRaw() {
 		}
 }
 
-//Updates the sensor's maximum value for correct scaling
-void Sensor::UpdateMaximum() {
+//Updates the sensor's range of values for correct scaling
+void Sensor::UpdateRange() {
 	if (Raw >= Max) {
 		Max = Raw;
 	}
-}
-
-//Updates the sensor's minimum value for correct scaling
-void Sensor::UpdateMinimum() {
-	if (Raw <= Min) {
+	else if (Raw <= Min) {
 		Min = Raw;
 	}
 }
@@ -97,13 +87,12 @@ void Sensor::Normalise() {
 
 //Checks the given sensor values and returns and array of bools.
 bool Sensor::GetReading() {
-	PreviousBool = Boolian;
+	previoustileWhite = tileWhite;
 	ReadRaw();
-	UpdateMaximum();
-	UpdateMinimum();
+	UpdateRange();
 	Normalise();
-	NormalToBool();
-	return Boolian;
+	toTileColour();
+	return tileWhite;
 }
 
 //Switches the I2C address of the desired sensor and removes others
@@ -418,13 +407,13 @@ void Sensor::printbw(bool *values) {
 }
 
 //Polls all given sensors in the order specified.
-void Sensor::PollSensors(Sensor *sens, const byte *order, byte OrderLength){
-	int CurrentSensorIndex = 0;
+void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte OrderLength){
+	byte CurrentSensorIndex = 0;
 
-	for (int n = 0; n < OrderLength; n++) {
+	for (byte n = 0; n < OrderLength; n++) {
 		CurrentSensorIndex = order[n] - 1;
 		//  Serial.print("Current Index"); Serial.println(CurrentSensorIndex);
-		Sensor::SelectSensor(CurrentSensorIndex);
+		Sensor::SelectSensor(static_cast<sC::sensorNumber>(CurrentSensorIndex));
 		sens[CurrentSensorIndex].GetReading();
 		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
 		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
