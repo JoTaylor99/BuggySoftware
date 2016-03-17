@@ -17,6 +17,15 @@
 #define COMPILE_TIME
 #endif
 
+#define DISPLAYERRORS
+
+#ifdef DISPLAYERRORS
+#define ERROR_PRINTLN(x)  Serial.println (x)
+#define ERROR_PRINT(x)	Serial.print(x)
+#else
+#define ERROR_PRINTLN(x)
+#define ERROR_PRINT(x)
+#endif
 //Sensor Mode
 
 //#define SENSORINTMODE
