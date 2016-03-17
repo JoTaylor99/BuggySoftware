@@ -1,3 +1,74 @@
+Log 17/03
+
+	00:50	Code init code for cases 1 and 2 and check for speed differences.
+	
+
+
+
+
+
+
+
+
+MUST APPLY POLL_SENSORS macro before release.
+
+Cases:
+
+DONE	1.	Poll all sensors with Sparkfun TSL library (does not turn sensors off) on call to pollSensors
+REJ	2.	Poll all sensors with DMA on call to pollSensors (does turn sensors off to get reading)
+DONE	3.	Poll selected sensors with TSL library (does not turn sensors off) on call to pollSensors
+REJ	4.	Poll selected sensors with DMA on call to pollSensors (does turn sensors off to get reading)
+	5.	On call to pollSensors, read GPIO to see if any sensors have asserted an end of conversion interrupt, 		if they have, poll the relevant sensors using TSL libary and clear the sensor interrupt, finally read 			GPIO to clear interrupt(s).
+	6.	On call to pollSensors, read GPIO to see if any sensors have asserted an end of conversion interrupt, 		if they have, poll the relevant sensors using DMA and clear the sensor interrupt, finally read GPIO to 			clear interupts(s)
+	7.	On call to pollSensors, read GPIO to see if any sensors have asserted an threshold change interrupt, if 		they have, send the new threshold to the relevant sensors using the TSL library and clear the sensor 			interrupt, finally read GPIO to clear interrupt(s).
+	8.	On call to pollSensors, read GPIO to see if any sensors have asserted a threshold change interrupt, if 		they have, send the new threshold to the relevant sensors using DMA and clear the sensor interrupt, 			finally read GPIO to clear interrupts(s).
+	9.	On external interrupt, read GPIO using bit bashing to see which sensors have asserted an end of 		conversion interrupt, poll the relevant sensors using bit bashing, clear the sensor interrupt using bit 		bashing, finally read GPIO using bit bashing to clear interrupt.
+	10.	On external interrupt, read GPIO using bit bashing to see which sensor has asserted a threshold change 		interrupt, send the new threshold to the relevant sensor using bit bashing and clear the interrupt bit 			using bit bashing, finally read GPIO to clear interrupt using bit bashing.
+
+
+if arduinoInterruptMode
+	9
+	10
+	POLL_SENSORS(Sensors, _VAARGS_)
+else
+	
+	if sensorInterruptModeThres
+		POLL_SENSORS(Sensors, _VARGS_)	Sensors::pollSensors(Sensors)
+		if SparkTSL
+			7
+		else
+			8
+	elif sensorInterruptModeConv
+		POLL_SENSORS(Sensors, _VARGS_)	Sensors::pollSensors(Sensors)
+		if SparkTSL
+			5
+		else
+			6
+	elif pollSelected
+		POLL_SENSORS(Sensors, _VARGS_)	Sensors::pollSensors(Sensors, sensorGroup, sensorGroupSize)
+		if SparkTSL
+			3
+		else
+			4
+	else //pollAll
+		POLL_SENSORS(Sensors, _VARGS_)	Sensors::pollSensors(Sensors)
+		if SparkTSL
+			1
+		else
+			2
+	endif
+endif
+
+
+
+
+
+
+
+
+
+
+
 Do Once:
 
 Configure Arduino:
