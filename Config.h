@@ -145,7 +145,7 @@
 //change to bC
 namespace boxConfig {
 
-	enum boxSettings {
+	enum boxSettings : uint16_t {
 		box1 = 1,
 		box2a = 2,
 		box2b = 3,
@@ -167,18 +167,24 @@ namespace boxConfig {
 }
 
 //change to sC
-	namespace sensorConfig {
-	
-		enum SensorType {
+	namespace sC {
+		
+		#ifdef QTRSINUSE
+		enum SensorType : unint8_t {
 			TSL, QTR
 		};
+		#else
+		enum SensorType : uint8_t {
+			TSL
+		};
+		#endif		
 
 	};
 
 //change to mC
 	namespace motorConfig {
 
-		enum Direction {
+		enum Direction : uint8_t {
 			F, B, S
 		};
 
