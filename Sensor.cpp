@@ -48,15 +48,11 @@ bool Sensor::_sensorInitComplete = false;
 
 //Reads the Raw value from whichever sensor is enabled
 void Sensor::ReadRaw() {
-#ifdef QTRSINUSE
-
-#endif
-	if(_s == sensorConfig::SensorType::TSL) {
-		uint32_t lum = 0;
-		uint16_t ir = 0;
-		lum = tsl.getFullLuminosity();
-		ir = lum >> 16;
-		Raw = lum & 0xFFFF;
+	if(_s == sC::SensorType::TSL) {
+		Raw = 0;
+		if (!tsl.getData(Raw)) {
+			ERROR_PRINTLN("I2C ERROR");
+		}
 	}
 	else {
 		#ifdef QTRSINUSE
@@ -96,98 +92,19 @@ bool Sensor::GetReading() {
 }
 
 //Switches the I2C address of the desired sensor and removes others
-void Sensor::SelectSensor(uint8_t sensor_number) {
-	switch (sensor_number) {
-	case 0:
-		digitalWrite(SENSOR1, LOW);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 1:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, LOW);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 2:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, LOW);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 3:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, LOW);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 4:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, LOW);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 5:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, LOW);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 6:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, LOW);
-		digitalWrite(SENSOR8, HIGH);
-		break;
-	case 7:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, LOW);
-		break;
-	default:
-		digitalWrite(SENSOR1, HIGH);
-		digitalWrite(SENSOR2, HIGH);
-		digitalWrite(SENSOR3, HIGH);
-		digitalWrite(SENSOR4, HIGH);
-		digitalWrite(SENSOR5, HIGH);
-		digitalWrite(SENSOR6, HIGH);
-		digitalWrite(SENSOR7, HIGH);
-		digitalWrite(SENSOR8, HIGH);
-		break;
+void Sensor::SelectSensor(sC::sensorNumber sensorNumber) {
+	if (sensorNumber == sC::oFrontRight) {sensGPIO.writeGPIOA(0x7F);}
+	else if (sensorNumber == sC::frontRight) {sensGPIO.writeGPIOA(0xBF);}
+	else if (sensorNumber == sC::frontLeft) { sensGPIO.writeGPIOA(0xDF);}
+	else if (sensorNumber == sC::oFrontLeft) {sensGPIO.writeGPIOA(0xEF);}
+	else if (sensorNumber == sC::middleRight) {sensGPIO.writeGPIOA(0xF7);}
+	else if (sensorNumber == sC::middleLeft) {sensGPIO.writeGPIOA(0xFB);}
+	else if (sensorNumber == sC::backRight) {sensGPIO.writeGPIOA(0xFD);}
+	else if (sensorNumber == sC::backLeft) {sensGPIO.writeGPIOA(0xFE);}
+	else {
+		ERROR_PRINTLN("Sensor Select Error");
+		ERROR_PRINTLN("All address lines returned to default");
+		sensGPIO.writeGPIOA(0xFF);
 	}
 }
 
@@ -418,110 +335,101 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte Order
 		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
 		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
 	}
-	Sensor::LogicCheck(sens);
+	//Sensor::LogicCheck(sens);
 
-	printbw(values);
-	// Serial.println();
+
 }
 
 
 void Sensor::initSensors() {
-	
+	sensGPIO.begin(1);
+
 	//Address pins
-	pinMode(SENSOR1, OUTPUT);
-	pinMode(SENSOR2, OUTPUT);
-	pinMode(SENSOR3, OUTPUT);
-	pinMode(SENSOR4, OUTPUT);
-	pinMode(SENSOR5, OUTPUT);
-	pinMode(SENSOR6, OUTPUT);
-	pinMode(SENSOR7, OUTPUT);
-	pinMode(SENSOR8, OUTPUT);
-	
+	sensGPIO.pinMode(OUTERFRONTRIGHTPIN, OUTPUT);
+	sensGPIO.pinMode(FRONTRIGHTPIN, OUTPUT);
+	sensGPIO.pinMode(FRONTLEFTPIN, OUTPUT);
+	sensGPIO.pinMode(OUTERFRONTLEFTPIN, OUTPUT);
+	sensGPIO.pinMode(MIDDLERIGHTPIN, OUTPUT);
+	sensGPIO.pinMode(MIDDLELEFTPIN, OUTPUT);
+	sensGPIO.pinMode(BACKRIGHTPIN, OUTPUT);
+	sensGPIO.pinMode(BACKLEFTPIN, OUTPUT);
+
 	//-------Set all sensor select pins to high---------------
-	digitalWrite(SENSOR1, HIGH);
-	digitalWrite(SENSOR2, HIGH);
-	digitalWrite(SENSOR3, HIGH);
-	digitalWrite(SENSOR4, HIGH);
-	digitalWrite(SENSOR5, HIGH);
-	digitalWrite(SENSOR6, HIGH);
-	digitalWrite(SENSOR7, HIGH);
-	digitalWrite(SENSOR8, HIGH);
-		
+	sensGPIO.writeGPIOA(0xFF);
+
 	//Ultrasonic pins
 	pinMode(A0, OUTPUT);
 	pinMode(A1, INPUT);
-
-
-
-	//-------Sensor interrupt setups-------
-
-	//Setup GPIO with address 21
-	sensGPIO.begin(1);
-
-	//setup GPIO pinModes
-	sensGPIO.pinMode(SENSOR1INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR2INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR3INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR4INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR5INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR6INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR7INTPIN, INPUT);
-	sensGPIO.pinMode(SENSOR8INTPIN, INPUT);
 	
-	//Sensor::sensorNumber i;
-	//for (i = Sensor::frontRight; i < Sensor::invalid; i = Sensor::sensorNumber(i+1)) {
-	//	SelectSensor(sensorNumber(i));
-	//	tsl.begin();
-	//	//Gain and integration times set by default, if alternate values need to be provided then they can be passed as parameters in tsl.begin()
-	//	byte blackTileLowLow = BLACKLOWTHRESHOLDLOWBYTE;
-	//	byte blackTileLowHigh = BLACKLOWTHRESHOLDHIGHBYTE;
-	//	byte blackTileHighLow = BLACKHIGHTHRESHOLDLOWBYTE;
-	//	byte blackTileHighHigh = BLACKHIGHTHRESHOLDLOWBYTE;
+	////-------Sensor interrupt setups-------
 
-	//	byte whiteTileLowLow = WHITELOWTHRESHOLDLOWBYTE;
-	//	byte whiteTileLowHigh = WHITELOWTHRESHOLDHIGHBYTE;
-	//	byte whiteTileHighLow = WHITEHIGHTHRESHOLDLOWBYTE;
-	//	byte whiteTileHighHigh = WHITEHIGHTHRESHOLDHIGHBYTE;
-	//	
-	//	
-	//	//Set interrupt thesholds
-	//	//RIGHT starts as black, black, black, white
-	//	//LEFT starts as white, white, white, black
-	//	//Thresholds set such that value will remain inside bound until change of tile.
-	//	if ((i == junctRight) || (i == frontRight) || (i == middleRight) || (i == backLeft)) {
-	//		//set thresholds for over black tile
-	//		//set low threshold
-	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
-	//		//set high threshold
-	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
-	//	}
-	//	else if ((i == junctLeft) || (i == frontLeft) || (i == middleLeft) || (i == backRight)) {
-	//		//set thresholds for over white tile
+	////setup GPIO pinModes
+	//sensGPIO.pinMode(SENSOR1INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR2INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR3INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR4INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR5INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR6INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR7INTPIN, INPUT);
+	//sensGPIO.pinMode(SENSOR8INTPIN, INPUT);
 
-	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);
-	//		//set high threshold
-	//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, whiteTileHighLow, whiteTileHighHigh);
+	 for (sC::sensorNumber i = sC::oFrontRight; i < sC::invalid; i + 1) {
+		SelectSensor(i);
+		tsl.begin(TSL2561_ADDR_0);
+		tsl.setTiming(TSL2561_GAIN_16X, TSL2561_INTEGRATIONTIME_14MS);
+		tsl.setPowerUp();
 
-	//	}
-
-
-	//	uint8_t _interruptPersistence = TSL2561_INTERRUPT_PERSISTENCE_ONE;
-
-	//	//Set interrupt control register with mode and persistence;
-	//	tsl.write8bits(TSL2561_COMMAND_BIT | TSL2561_REGISTER_INTERRUPT, _interruptPersistence | TSL2561_INTERRUPT_LEVELMODE);
-
-	//	//
-
-	//}
-
-	//---------Setup Gains and Intergration time for all sensors
-	//tsl.setGain(TSL2561_GAIN_16X);
-	//tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
-	//tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
-	//tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
-
+	}
+	delay(14);
 	_sensorInitComplete = true;
 }
+		/*const byte blackTileLowLow = BLACKLOWTHRESHOLDLOWBYTE;
+		const byte blackTileLowHigh = BLACKLOWTHRESHOLDHIGHBYTE;
+		const byte blackTileHighLow = BLACKHIGHTHRESHOLDLOWBYTE;
+		const byte blackTileHighHigh = BLACKHIGHTHRESHOLDLOWBYTE;
+
+		const byte whiteTileLowLow = WHITELOWTHRESHOLDLOWBYTE;
+		const byte whiteTileLowHigh = WHITELOWTHRESHOLDHIGHBYTE;
+		const byte whiteTileHighLow = WHITEHIGHTHRESHOLDLOWBYTE;
+		const byte whiteTileHighHigh = WHITEHIGHTHRESHOLDHIGHBYTE;*/
+
+
+		//Set interrupt thesholds
+		//RIGHT starts as black, black, black, white
+		//LEFT starts as white, white, white, black
+		//Thresholds set such that value will remain inside bound until change of tile.
+		//if ((i == sensorNumber::junctRight) || (i == frontRight) || (i == middleRight) || (i == backLeft)) {
+		//	//set thresholds for over black tile
+		//	//set low threshold
+		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
+		//	//set high threshold
+		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
+		//}
+		//else if ((i == junctLeft) || (i == frontLeft) || (i == middleLeft) || (i == backRight)) {
+		//set thresholds for over white tile
+
+		//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);
+		//		//set high threshold
+		//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, whiteTileHighLow, whiteTileHighHigh);
+
+		//	}
+
+
+		//	uint8_t _interruptPersistence = TSL2561_INTERRUPT_PERSISTENCE_ONE;
+
+		//	//Set interrupt control register with mode and persistence;
+		//	tsl.write8bits(TSL2561_COMMAND_BIT | TSL2561_REGISTER_INTERRUPT, _interruptPersistence | TSL2561_INTERRUPT_LEVELMODE);
+
+		//	//
+
+		//}
+
+		//---------Setup Gains and Intergration time for all sensors
+		//tsl.setGain(TSL2561_GAIN_16X);
+		//tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
+		//tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
+		//tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
+//}
 
 
 
@@ -532,23 +440,23 @@ void Sensor::initSensors() {
 *bool Sensor::OnIntersection(Sensor *sens) {
 *	//---------------------------------------------re-write
 *	//If Sensor 3 = Sensor 6 OR Sensor 4 = Sensor 5
-*	if (sens[2].Boolian == sens[5].Boolian && sens[3].Boolian == sens[4].Boolian) {
+*	if (sens[2].tileWhite == sens[5].tileWhite && sens[3].tileWhite == sens[4].tileWhite) {
 *		return true;
 *	}
 *
 *	//Over Intersection Perfectly
-*	if (sens[0].Boolian == sens[2].Boolian && sens[0].Boolian != sens[4].Boolian ||
-*		sens[1].Boolian == sens[3].Boolian && sens[1].Boolian != sens[5].Boolian) {
+*	if (sens[0].tileWhite == sens[2].tileWhite && sens[0].tileWhite != sens[4].tileWhite ||
+*		sens[1].tileWhite == sens[3].tileWhite && sens[1].tileWhite != sens[5].tileWhite) {
 *		return true;
 *	}
 *
 *	//Transition Change -- Ommited for now as it requied extra variables to be passed in
 *
 *	//One Bit error
-*	if (sens[2].Boolian != sens[3].Boolian || sens[2].Boolian != sens[4].Boolian ||
-*		sens[5].Boolian != sens[3].Boolian || sens[5].Boolian != sens[4].Boolian ||
-*		sens[3].Boolian != sens[2].Boolian || sens[3].Boolian != sens[5].Boolian ||
-*		sens[4].Boolian != sens[2].Boolian || sens[4].Boolian != sens[5].Boolian
+*	if (sens[2].tileWhite != sens[3].tileWhite || sens[2].tileWhite != sens[4].tileWhite ||
+*		sens[5].tileWhite != sens[3].tileWhite || sens[5].tileWhite != sens[4].tileWhite ||
+*		sens[3].tileWhite != sens[2].tileWhite || sens[3].tileWhite != sens[5].tileWhite ||
+*		sens[4].tileWhite != sens[2].tileWhite || sens[4].tileWhite != sens[5].tileWhite
 *		) {
 *		//return true;
 *	}
@@ -558,10 +466,10 @@ void Sensor::initSensors() {
 *	
 *public static function declared in scope Sensors but never called:
 *bool Sensor::OnInitialIntersection(Sensor *sens, bool *start) {
-*	if (sens[2].Boolian == start[2] &&
-*		sens[3].Boolian == start[3] &&
-*		sens[4].Boolian == start[4] &&
-*		sens[5].Boolian == start[5]
+*	if (sens[2].tileWhite == start[2] &&
+*		sens[3].tileWhite == start[3] &&
+*		sens[4].tileWhite == start[4] &&
+*		sens[5].tileWhite == start[5]
 *		) {
 *		return true;
 *	}
@@ -571,7 +479,7 @@ void Sensor::initSensors() {
 *
 *public static function declared in scope Sensors but never called:
 *bool Sensor::OnLine(Sensor *sens) {
-*if ((sens[0].Boolian != sens[1].Boolian)) {
+*if ((sens[0].tileWhite != sens[1].tileWhite)) {
 *return true;
 *}
 *else {
@@ -586,8 +494,8 @@ void Sensor::initSensors() {
 *	bool RightTarget = !start[0];
 *	Serial.println("In SensorCheck");
 *	Serial.print(LeftTarget); Serial.print("\t"); Serial.println(RightTarget);
-*	Serial.print(sens[1].Boolian); Serial.print("\t"); Serial.println(sens[0].Boolian);
-*	if (sens[0].Boolian == RightTarget && sens[1].Boolian == LeftTarget && sens[0].Boolian != sens[1].Boolian) {
+*	Serial.print(sens[1].tileWhite); Serial.print("\t"); Serial.println(sens[0].tileWhite);
+*	if (sens[0].tileWhite == RightTarget && sens[1].tileWhite == LeftTarget && sens[0].tileWhite != sens[1].tileWhite) {
 *		Serial.println("In if");
 *
 *		//passed_intersection_line = true;
