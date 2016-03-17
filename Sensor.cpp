@@ -202,38 +202,31 @@ void Sensor::SelectSensor(uint8_t sensor_number) {
 	}
 }
 
-//Determines whether a detacted sensor reading is Black or White
-void Sensor::NormalToBool() {
-	ThresholdCheck();
-}
 
 //Checks the Normalised sensor readings against their thresholds
-void Sensor::ThresholdCheck() {
+void Sensor::toTileColour() {
 	double WhiteThreshold = NORMALISED_MAX * (double)(1 - (double)((double)UPPER_THRESHOLD / 100)); //Default threshold values of 200 and 800, They can be cahnegd by editing the definitions in the header file
 	double BlackThreshold = NORMALISED_MAX * (double)((double)LOWER_THRESHOLD / 100);
 	if (Normalised >= WhiteThreshold) {
-		Boolian = true;
+		tileWhite = true;
 	}
 	else if (Normalised <= BlackThreshold) {
-		Boolian = false;
-	}
-	else {
-		Boolian = Boolian;
+		tileWhite = false;
 	}
 }
 
 
-//Checks the Calculated boolian value and returns whether it is valid
+//Checks the Calculated tileWhite value and returns whether it is valid
 void Sensor::LogicCheck(Sensor *sens) {
 	if (abs(sens[0].Normalised - sens[1].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
 		if (sens[0].Normalised < sens[1].Normalised) {
-			sens[0].Boolian = false;
-			sens[1].Boolian = true;
+			sens[0].tileWhite = false;
+			sens[1].tileWhite = true;
 		}
 		else {
-			sens[0].Boolian = true;
-			sens[1].Boolian = false;
+			sens[0].tileWhite = true;
+			sens[1].tileWhite = false;
 		}
 	}
 	else if (abs((double)sens[0].Normalised - (double)sens[1].Normalised) < LOGIC_THRESHOLD) {
@@ -241,12 +234,12 @@ void Sensor::LogicCheck(Sensor *sens) {
 	if (abs(sens[2].Normalised - sens[3].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
 		if (sens[2].Normalised < sens[3].Normalised) {
-			sens[2].Boolian = false;
-			sens[3].Boolian = true;
+			sens[2].tileWhite = false;
+			sens[3].tileWhite = true;
 		}
 		else {
-			sens[2].Boolian = true;
-			sens[3].Boolian = false;
+			sens[2].tileWhite = true;
+			sens[3].tileWhite = false;
 		}
 	}
 	else if (abs(sens[2].Normalised - sens[3].Normalised) < LOGIC_THRESHOLD) {
@@ -255,12 +248,12 @@ void Sensor::LogicCheck(Sensor *sens) {
 	if (abs(sens[4].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
 		if (sens[4].Normalised < sens[5].Normalised) {
-			sens[4].Boolian = false;
-			sens[5].Boolian = true;
+			sens[4].tileWhite = false;
+			sens[5].tileWhite = true;
 		}
 		else {
-			sens[4].Boolian = true;
-			sens[5].Boolian = false;
+			sens[4].tileWhite = true;
+			sens[5].tileWhite = false;
 		}
 	}
 	else if (abs(sens[4].Normalised - sens[5].Normalised) < LOGIC_THRESHOLD) {
@@ -269,23 +262,23 @@ void Sensor::LogicCheck(Sensor *sens) {
 	if (abs(sens[2].Normalised - sens[4].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
 		if (sens[2].Normalised < sens[4].Normalised) {
-			sens[2].Boolian = false;
-			sens[4].Boolian = true;
+			sens[2].tileWhite = false;
+			sens[4].tileWhite = true;
 		}
 		else {
-			sens[4].Boolian = true;
-			sens[2].Boolian = false;
+			sens[4].tileWhite = true;
+			sens[2].tileWhite = false;
 		}
 	}
 	if (abs(sens[3].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
 		//Should be different values
 		if (sens[3].Normalised < sens[5].Normalised) {
-			sens[3].Boolian = false;
-			sens[5].Boolian = true;
+			sens[3].tileWhite = false;
+			sens[5].tileWhite = true;
 		}
 		else {
-			sens[5].Boolian = true;
-			sens[3].Boolian = false;
+			sens[5].tileWhite = true;
+			sens[3].tileWhite = false;
 		}
 	}
 }
@@ -295,11 +288,11 @@ void Sensor::LogicCheck(Sensor *sens) {
 Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight) {
 	Serial.println("Checking for drift");
 	//DriftDirection CurrentDrift = DriftDirection::None;
-	//if (sens[0].Boolian == sens[1].Boolian) {
+	//if (sens[0].tileWhite == sens[1].tileWhite) {
 	//	//Front Sensors are the same therefor the buggy is drifting
-	//	if (sens[2].Boolian != sens[3].Boolian) {
+	//	if (sens[2].tileWhite != sens[3].tileWhite) {
 	//		//The middle two sensors are not mis-aligned and therefor can be used for determining which direction to turn
-	//		if (sens[2].Boolian == sens[0].Boolian) {
+	//		if (sens[2].tileWhite == sens[0].tileWhite) {
 	//			//Drifting to the Right
 	//			return DriftDirection::DRight;
 	//		}
@@ -308,14 +301,14 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 	//			return DriftDirection::DLeft;
 	//		}
 	//	}
-	//	else if (sens[4].Boolian != sens[5].Boolian) {
+	//	else if (sens[4].tileWhite != sens[5].tileWhite) {
 	//		//The Middle two sensors are the same and therefore fallback to the back two sensors for alignment
-	//		if (sens[4].Boolian == sens[0].Boolian) {
+	//		if (sens[4].tileWhite == sens[0].tileWhite) {
 	//			//Drifitng to the right
 	//			return DriftDirection::DRight;
 	DriftDirection CurrentDrift = DriftDirection::None;
-	if (sens[0].Boolian == sens[1].Boolian) { // If they are the same
-		if (lastCorrectLeft != sens[1].Boolian) {
+	if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
+		if (lastCorrectLeft != sens[1].tileWhite) {
 
 			// Dirfiting right
 			return DRight;
@@ -323,7 +316,7 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 		else {
 			//No Dirft
 		}
-		if (lastCorrectRight != sens[0].Boolian) {
+		if (lastCorrectRight != sens[0].tileWhite) {
 			//Drift Left
 			return DLeft;
 		}
@@ -365,15 +358,15 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 
 	{
 		//DriftDirection CurrentDrift = DriftDirection::None;
-		if (sens[0].Boolian == sens[1].Boolian) { // If they are the same
-			if (lastCorrectLeft != sens[1].Boolian) {
+		if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
+			if (lastCorrectLeft != sens[1].tileWhite) {
 				// Dirfiting right
 				return DRight;
 			}
 			else {
 				//No Dirft
 			}
-			if (lastCorrectRight != sens[0].Boolian) {
+			if (lastCorrectRight != sens[0].tileWhite) {
 				//Drift Left
 				return DLeft;
 			}
@@ -433,8 +426,8 @@ void Sensor::PollSensors(Sensor *sens, const byte *order, byte OrderLength){
 		//  Serial.print("Current Index"); Serial.println(CurrentSensorIndex);
 		Sensor::SelectSensor(CurrentSensorIndex);
 		sens[CurrentSensorIndex].GetReading();
-		values[CurrentSensorIndex] = sens[CurrentSensorIndex].Boolian;
-		// Serial.print(sens[CurrentSensorIndex].Boolian); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
+		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
+		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
 	}
 	Sensor::LogicCheck(sens);
 

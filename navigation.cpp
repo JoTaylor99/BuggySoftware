@@ -16,8 +16,6 @@ navigation::~navigation() {
 }
 
 void navigation::initNavigation() {
-	Serial.begin(115200); //Setup serial conenction over USB
-	//Serial.begin(112500); // Setup serial connection over Xbee
 	//-------Setup Pins used for sensor select as outputs---------------
 	Sensor::initSensors();
 	initMotion();
@@ -119,7 +117,7 @@ void navigation::navigate(String str) {
 			if (Distance > 3) {
 				Serial.println("Approaching Box");
 				Sensor::PollSensors(Sensors, Sensor::Front, 2);
-				if (Sensors[0].Boolian == Sensors[1].Boolian) {
+				if (Sensors[sC::frontRight].tileWhite == Sensors[sC::frontLeft].tileWhite) {
 					Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
 					if (Dir == Sensor::DriftDirection::DRight) {
 						Serial.println("Drifting Right");
@@ -175,8 +173,8 @@ bool navigation::LineCorrect() {
 	}
 	else if (Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight) == Sensor::DriftDirection::None) {
 		Counter = 0;
-		LastCorrectLeft = Sensors[1].Boolian;
-		LastCorrectRight = Sensors[0].Boolian;
+		LastCorrectLeft = Sensors[1].tileWhite;
+		LastCorrectRight = Sensors[0].tileWhite;
 		return false;
 	}
 	else {
@@ -188,13 +186,13 @@ bool navigation::LineCorrect() {
 //If so it returns true and prints "Destination Reached" to the terminal, if not returns false.
 //Based on the quadrant the buggy rotates in a backward motion to get back to the motion line with sesnors 4 and 5
 bool navigation::reachedDestination() {
-	if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
+	if (((Sensor::values[sC::oFrontRight]) != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
 		(Sensor::values[3] != starting_intersection[3]) && (Sensor::values[4] != starting_intersection[4]) && (Sensor::values[5] != starting_intersection[5])) {
 		Serial.println("Destination Reached");
 		return true;
 	}
-	//  else if ((Sensors[2].Boolian != starting_intersection[2]) && (Sensors[3].Boolian != starting_intersection[3])
-	//           && (Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
+	//  else if ((Sensors[2].tileWhite != starting_intersection[2]) && (Sensors[3].tileWhite != starting_intersection[3])
+	//           && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
 	//    Serial.println("Destination Reached2");
 	//    return true;
 	//  }
@@ -246,7 +244,7 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 	else {//Backward
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		//ideal-case Both sensors have passed the intersection line normally
-		if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
+		if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
 		{
 			passed_intersection_line = true;
 			Serial.println("Yes I passed the intersection line");
@@ -320,7 +318,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 	case 1: while (smart_line_s45 == false) {
 				//Sensor::PollSensors(Sensors, Back, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[2].Boolian != (Sensors[3].Boolian)) {
+				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
 				else {
@@ -332,7 +330,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 	case 2: while (smart_line_s45 == false) {
 				// Sensor::PollSensors(Sensors, Back, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[2].Boolian != (Sensors[3].Boolian)) {
+				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
 				else {
@@ -345,7 +343,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 	case 3:  while (smart_line_s45 == false) {
 				 // Sensor::PollSensors(Sensors, Back, 2);
 				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				 if (Sensors[2].Boolian != (Sensors[3].Boolian)) {
+				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					 smart_line_s45 = true;
 				 }
 				 else {
@@ -358,7 +356,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 	case 4:  while (smart_line_s45 == false) {
 				 // Sensor::PollSensors(Sensors, Back, 2);
 				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				 if (Sensors[2].Boolian != (Sensors[3].Boolian)) {
+				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					 smart_line_s45 = true;
 				 }
 				 else {
@@ -382,7 +380,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 	case 1: while (smart_line_s01 == false) {
 				//   Sensor::PollSensors(Sensors, Front, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[0].Boolian != (Sensors[1].Boolian)) {
+				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
 				else {
@@ -395,7 +393,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 	case 2: while (smart_line_s01 == false) {
 				//Sensor::PollSensors(Sensors, Front, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[0].Boolian != (Sensors[1].Boolian)) {
+				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
 				else {
@@ -408,7 +406,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 	case 3: while (smart_line_s01 == false) {
 				//Sensor::PollSensors(Sensors, Front, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[0].Boolian != (Sensors[1].Boolian)) {
+				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
 				else {
@@ -421,7 +419,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 	case 4: while (smart_line_s01 == false) {
 				//  Sensor::PollSensors(Sensors, Front, 2);
 				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-				if (Sensors[0].Boolian != (Sensors[1].Boolian)) {
+				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
 				else {
@@ -446,7 +444,7 @@ void navigation::passedNote() {
 		if (reachedDestination() == true) {
 			return;
 		}
-		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1])) {
+		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1])) {
 			passed_s01 = true;
 		}
 		else {
@@ -470,7 +468,7 @@ void navigation::reachedNode(Direction Dir) {
 			return;
 		}
 		if (Dir == Forward) {
-			if ((Sensors[2].Boolian != starting_intersection[0]) && (Sensors[3].Boolian != starting_intersection[1])) {
+			if ((Sensors[2].tileWhite != starting_intersection[0]) && (Sensors[3].tileWhite != starting_intersection[1])) {
 				passed = true;
 			}
 			else {
@@ -481,7 +479,7 @@ void navigation::reachedNode(Direction Dir) {
 			}
 		}
 		else {
-			if ((Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
+			if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
 				passed = true;
 			}
 			else {
@@ -501,8 +499,8 @@ void navigation::smartAlignment(Direction Dir) {
 	uint8_t quadrant = whereAmI(Dir);
 	while (perfect_intersection == false) {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
-		if ((Sensors[0].Boolian != starting_intersection[0]) && (Sensors[1].Boolian != starting_intersection[1]) && (Sensors[2].Boolian != starting_intersection[2]) &&
-			(Sensors[3].Boolian != starting_intersection[3]) && (Sensors[4].Boolian != starting_intersection[4]) && (Sensors[5].Boolian != starting_intersection[5])) {
+		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1]) && (Sensors[2].tileWhite != starting_intersection[2]) &&
+			(Sensors[3].tileWhite != starting_intersection[3]) && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
 			perfect_intersection = true;
 			Serial.println(" FINISHED");
 		}
@@ -650,11 +648,11 @@ void navigation::smartAlignmentRotation() {
 //------BACKWARD ALIGNMENT---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Function to flag sensor events during backwards alignment.
 void navigation::sensorEventsB() {
-	if (Sensors[4].Boolian != starting_intersection[4]) {
+	if (Sensors[4].tileWhite != starting_intersection[4]) {
 		sensor4_event = true;
 		flag4 = true;
 	}
-	if (Sensors[5].Boolian != starting_intersection[5]) {
+	if (Sensors[5].tileWhite != starting_intersection[5]) {
 		sensor5_event = true;
 		flag5 = true;
 	}
@@ -672,7 +670,7 @@ void navigation::passedNoteB() {
 			return;
 		}
 	}
-	if ((Sensors[2].Boolian != starting_intersection[0]) && (Sensors[3].Boolian != starting_intersection[1])) {
+	if ((Sensors[2].tileWhite != starting_intersection[0]) && (Sensors[3].tileWhite != starting_intersection[1])) {
 		passed_s23 = true;
 	}
 	else {
@@ -699,9 +697,9 @@ void navigation::TurnLeft() {
 
 		//Sensor::SelectSensor(1);
 		//Sensors[1].GetReading();
-		//Serial.println(Sensors[1].Boolian);
+		//Serial.println(Sensors[1].tileWhite);
 		//Sensor::LogicCheck(Sensors);
-		if (Sensors[1].Boolian != Sensors[1].PreviousBool) {
+		if (Sensors[1].tileWhite != Sensors[1].previoustileWhite) {
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 
 			//analogWrite(E1, 0);
@@ -723,7 +721,7 @@ void navigation::TurnRight() {
 	drive(motorConfig::F, motorConfig::B, 70, 70);
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::Front, 2);
-		if (Sensors[0].Boolian != starting_intersection[0]) {
+		if (Sensors[0].tileWhite != starting_intersection[0]) {
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 
 			//analogWrite(E1, 0);
@@ -751,7 +749,7 @@ void navigation::MoveForward() {
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::FrontNMiddle, 4);
 		sensorEvents();
-		if ((Sensors[2].Boolian != starting_intersection[2] && Sensors[3].Boolian != starting_intersection[3])
+		if ((Sensors[2].tileWhite != starting_intersection[2] && Sensors[3].tileWhite != starting_intersection[3])
 			)
 		{
 			//Don't kick
@@ -760,10 +758,10 @@ void navigation::MoveForward() {
 			return;
 		}
 		else {
-			if (Sensors[0].Boolian != Sensors[1].Boolian) {
+			if (Sensors[0].tileWhite != Sensors[1].tileWhite) {
 				//On line
-				LastCorrectLeft = Sensors[1].Boolian;
-				LastCorrectRight = Sensors[0].Boolian;
+				LastCorrectLeft = Sensors[1].tileWhite;
+				LastCorrectRight = Sensors[0].tileWhite;
 				Kick(KickDirection::Forward, 200);//Kick forward but with a long kick
 				RCnt = 0;
 				LCnt = 0;
@@ -772,8 +770,8 @@ void navigation::MoveForward() {
 			//LeftSpeed++;
 			//RightSpeed++;
 		}
-		if (Sensors[0].Boolian == Sensors[1].Boolian) {
-			if (Sensors[2].Boolian == Sensors[3].Boolian) {
+		if (Sensors[0].tileWhite == Sensors[1].tileWhite) {
+			if (Sensors[2].tileWhite == Sensors[3].tileWhite) {
 				//Following wrong line case
 				//LastCorrectLeft = !LastCorrectLeft;
 				//LastCorrectRight = !LastCorrectRight;
@@ -833,7 +831,7 @@ void navigation::MoveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::FrontNMiddle, 4);
 		sensorEventsB();
-		if ((Sensors[2].Boolian != starting_intersection[2] && Sensors[3].Boolian != starting_intersection[3])
+		if ((Sensors[2].tileWhite != starting_intersection[2] && Sensors[3].tileWhite != starting_intersection[3])
 			)
 		{
 			//Don't kick
@@ -842,10 +840,10 @@ void navigation::MoveBackward() {
 			return;
 		}
 		else {
-			if (Sensors[0].Boolian != Sensors[1].Boolian) {
+			if (Sensors[0].tileWhite != Sensors[1].tileWhite) {
 				//On line
-				LastCorrectLeft = Sensors[1].Boolian;
-				LastCorrectRight = Sensors[0].Boolian;
+				LastCorrectLeft = Sensors[1].tileWhite;
+				LastCorrectRight = Sensors[0].tileWhite;
 				Kick(KickDirection::Backward, 200);//Kick Backward but with a long kick
 				RCnt = 0;
 				LCnt = 0;
@@ -854,8 +852,8 @@ void navigation::MoveBackward() {
 			//LeftSpeed++;
 			//RightSpeed++;
 		}
-		if (Sensors[0].Boolian == Sensors[1].Boolian) {
-			if (Sensors[2].Boolian == Sensors[3].Boolian) {
+		if (Sensors[0].tileWhite == Sensors[1].tileWhite) {
+			if (Sensors[2].tileWhite == Sensors[3].tileWhite) {
 				//Following wrong line case
 				//LastCorrectLeft = !LastCorrectLeft;
 				//LastCorrectRight = !LastCorrectRight;
