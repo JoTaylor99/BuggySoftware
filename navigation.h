@@ -38,16 +38,15 @@ public:
 	void navigate(String str); 
 
 	#ifdef QTRSINUSE
-	Sensor Sensors[7] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, { (unsigned int)7, sensorConfig::QTR } };
+	Sensor Sensors[9] = { OUTERFRONTRIGHTPIN, FRONTRIGHTPIN, FRONTLEFTPIN, OUTERFRONTLEFTPIN, MIDDLERIGHTPIN, MIDDLELEFTPIN, BACKRIGHTPIN, BACKLEFTPIN, { (unsigned int)7, sensorConfig::QTR } };
 	#endif
-	Sensor Sensors[8] = { SENSOR1, SENSOR2, SENSOR3, SENSOR4, SENSOR5, SENSOR6, SENSOR7, SENSOR8 };
-protected:
-	enum Direction {
+	Sensor Sensors[8] = { OUTERFRONTRIGHTPIN, FRONTRIGHTPIN, FRONTLEFTPIN, OUTERFRONTLEFTPIN, MIDDLERIGHTPIN, MIDDLELEFTPIN, BACKRIGHTPIN, BACKLEFTPIN };
+private:
+	enum Direction : uint8_t {
 		Forward, Backward
 	};
 
 
-private:
 	using buggyMotion::KickDirection;
 
 	static bool _navInitComplete;
