@@ -5,6 +5,7 @@
 #include "buggyMotion.h"
 #include "Sensor.h"
 #include "box.h"
+#include <NewPing.h>
 
 /*Quadrants Description
 * Forward  S0.S2 are in Q4, S1 and S3 are inQ1              //Backwards
@@ -46,9 +47,8 @@ private:
 		Forward, Backward
 	};
 
-
 	using buggyMotion::KickDirection;
-
+	
 	static bool _navInitComplete;
 
 	uint8_t Counter = 0;
