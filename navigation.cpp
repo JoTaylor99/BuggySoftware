@@ -23,7 +23,7 @@ void navigation::initNavigation() {
 	box assessBox;
 	assessBox.init();
 
-	Serial.print("Setup Complete!");
+	Serial.print(F("Setup Complete!"));
 
 	//if (SMode == USB) {
 	//	Serial.print("Setup Complete!");
@@ -113,20 +113,20 @@ void navigation::navigate(String str) {
 		drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
 		while (true) {
 			Distance = Ultrasonic.ping_cm();
-			Serial.println(Distance);
+			DEBUG_VPRINTLN(Distance);
 			if (Distance > 3) {
-				Serial.println("Approaching Box");
+				DEBUG_PRINTLN("Approaching Box");
 				Sensor::PollSensors(Sensors, Sensor::Front, 2);
-				if (Sensors[sC::frontRight].tileWhite == Sensors[sC::frontLeft].tileWhite) {
+				if (Sensors[sC::LTR].tileWhite == Sensors[sC::LTL].tileWhite) {
 					Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
 					if (Dir == Sensor::DriftDirection::DRight) {
-						Serial.println("Drifting Right");
+						DEBUG_PRINTLN("Drifting Right");
 						LeftSpeed -= CORRECTION_MAG;
 						//RightSpeed += CORRECTION_MAG;
 						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
 					}
 					else if (Dir == Sensor::DriftDirection::DLeft) {
-						Serial.println("Drifting Left");
+						DEBUG_PRINTLN("Drifting Left");
 						//LeftSpeed += CORRECTION_MAG;
 						RightSpeed -= CORRECTION_MAG;
 						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
@@ -134,10 +134,10 @@ void navigation::navigate(String str) {
 				}
 			}
 			else {
-				Serial.println("I Have Reached the box");
+				DEBUG_PRINTLN("I Have Reached the box");
 				drive(motorConfig::S, motorConfig::S, 0, 0);
 				if (Distance == 0) {
-					Serial.println("Either too far or too close");
+					DEBUG_PRINTLN("Either too far or too close");
 				}
 				return;
 			}
@@ -188,7 +188,7 @@ bool navigation::LineCorrect() {
 bool navigation::reachedDestination() {
 	if (((Sensor::values[sC::oFrontRight]) != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
 		(Sensor::values[3] != starting_intersection[3]) && (Sensor::values[4] != starting_intersection[4]) && (Sensor::values[5] != starting_intersection[5])) {
-		Serial.println("Destination Reached");
+		DEBUG_PRINTLN("Destination Reached");
 		return true;
 	}
 	//  else if ((Sensors[2].tileWhite != starting_intersection[2]) && (Sensors[3].tileWhite != starting_intersection[3])
@@ -201,13 +201,17 @@ bool navigation::reachedDestination() {
 	}
 }
 
+
+//POLL
+
+
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
 	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 	for (uint8_t n = 0; n < 6; n++) {
 		starting_intersection[n] = Sensor::values[n];
 	}
-	Serial.println("I have the starting POSITION");
+	DEBUG_PRINTLN("I have the starting POSITION");
 }
 
 //----------------FORWARD ALIGNMENT----------------------------------------------------------------
@@ -234,11 +238,11 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 		if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
 		{
 			passed_intersection_line = true;
-			Serial.println("Yes I passed the intersection line");
+			DEBUG_PRINTLN("Yes I passed the intersection line");
 		}
 		else {
 			passed_intersection_line = false;
-			Serial.println("No I havent passed intersection line");
+			DEBUG_PRINTLN("No I havent passed intersection line");
 		}
 	}
 	else {//Backward
@@ -247,11 +251,11 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 		if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
 		{
 			passed_intersection_line = true;
-			Serial.println("Yes I passed the intersection line");
+			DEBUG_PRINTLN("Yes I passed the intersection line");
 		}
 		else {
 			passed_intersection_line = false;
-			Serial.println("No I havent passed intersection line");
+			DEBUG_PRINTLN("No I havent passed intersection line");
 		}
 	}
 
@@ -285,21 +289,21 @@ uint8_t navigation::whereAmI(Direction Dir) {
 	if (Sensor::values[i] == Sensor::values[i+1]) {
 		if (passed_intersection == true) {
 			if (Sensor::values[i] != starting_intersection[i]) {
-				Serial.println("I am at Q4");
+				DEBUG_PRINTLN("I am at Q4");
 				quadrant = 4;
 			}
 			else {
-				Serial.println(" I am at Q1");
+				DEBUG_PRINTLN(" I am at Q1");
 				quadrant = 1;
 			}
 		}
 		else {
 			if (Sensor::values[i] != starting_intersection[i]) {
-				Serial.println("I am at Q2");
+				DEBUG_PRINTLN("I am at Q2");
 				quadrant = 2;
 			}
 			else {
-				Serial.println("I am at Q3");
+				DEBUG_PRINTLN("I am at Q3");
 				quadrant = 3;
 			}
 		}
@@ -322,7 +326,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 					smart_line_s45 = true;
 				}
 				else {
-					Serial.println("Q1 NEED TO KICK BACKWARDS RIGHT");
+					DEBUG_PRINTLN("Q1 NEED TO KICK BACKWARDS RIGHT");
 					Kick(KickDirection::Backward, KickDirection::Forward, 255, 0);
 				}
 	}
@@ -334,7 +338,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 					smart_line_s45 = true;
 				}
 				else {
-					Serial.println("Q2 NEED TO KICK BACKWARDS RIGHT");
+					DEBUG_PRINTLN("Q2 NEED TO KICK BACKWARDS RIGHT");
 					Kick(KickDirection::Backward, KickDirection::Forward, KICK_MAGNITUDE, 0);
 
 				}
@@ -347,7 +351,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 					 smart_line_s45 = true;
 				 }
 				 else {
-					 Serial.println("Q3 NEED TO KICK BACKWARDS LEFT");
+					 DEBUG_PRINTLN("Q3 NEED TO KICK BACKWARDS LEFT");
 					 Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
 
 				 }
@@ -360,7 +364,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 					 smart_line_s45 = true;
 				 }
 				 else {
-					 Serial.println("Q4 NEED TO KICK BACKWARDS LEFT");
+					 DEBUG_PRINTLN("Q4 NEED TO KICK BACKWARDS LEFT");
 					 Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
 
 				 }
@@ -384,7 +388,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 					smart_line_s01 = true;
 				}
 				else {
-					Serial.println("Q1 NEED TO ROTATE RIGHT");
+					DEBUG_PRINTLN("Q1 NEED TO ROTATE RIGHT");
 					Kick(KickDirection::Right, KICK_MAGNITUDE);
 
 				}
@@ -397,7 +401,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 					smart_line_s01 = true;
 				}
 				else {
-					Serial.println("Q2 NEED TO ROTATE RIGHT");
+					DEBUG_PRINTLN("Q2 NEED TO ROTATE RIGHT");
 					Kick(KickDirection::Right, KICK_MAGNITUDE);
 
 				}
@@ -410,7 +414,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 					smart_line_s01 = true;
 				}
 				else {
-					Serial.println("Q3 NEED TO ROTATE LEFT");
+					DEBUG_PRINTLN("Q3 NEED TO ROTATE LEFT");
 					Kick(KickDirection::Left, KICK_MAGNITUDE);
 
 				}
@@ -423,7 +427,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 					smart_line_s01 = true;
 				}
 				else {
-					Serial.println("Q4 NEED TO ROTATE LEFT");
+					DEBUG_PRINTLN("Q4 NEED TO ROTATE LEFT");
 					Kick(KickDirection::Left, KICK_MAGNITUDE);
 				}
 	}
@@ -448,7 +452,7 @@ void navigation::passedNote() {
 			passed_s01 = true;
 		}
 		else {
-			Serial.println("Need to kick forward");
+			DEBUG_PRINTLN("Need to kick forward");
 			if (LineCorrect() == false) {
 				Kick(KickDirection::Forward, KICK_MAGNITUDE);
 			}
@@ -472,7 +476,7 @@ void navigation::reachedNode(Direction Dir) {
 				passed = true;
 			}
 			else {
-				Serial.println("Need to kick steadily forward on reach_node");
+				DEBUG_PRINTLN("Need to kick steadily forward on reach_node");
 				if (LineCorrect() == false) {
 					Kick(KickDirection::Forward, KICK_MAGNITUDE);
 				}
@@ -483,7 +487,7 @@ void navigation::reachedNode(Direction Dir) {
 				passed = true;
 			}
 			else {
-				Serial.println("Need to kick steadily backward");
+				DEBUG_PRINTLN("Need to kick steadily backward");
 				if (LineCorrect() == false) {
 					Kick(KickDirection::Backward, KICK_MAGNITUDE);
 				}
@@ -502,7 +506,7 @@ void navigation::smartAlignment(Direction Dir) {
 		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1]) && (Sensors[2].tileWhite != starting_intersection[2]) &&
 			(Sensors[3].tileWhite != starting_intersection[3]) && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
 			perfect_intersection = true;
-			Serial.println(" FINISHED");
+			DEBUG_PRINTLN(" FINISHED");
 		}
 		else {
 			findLineS23(quadrant);
@@ -545,11 +549,11 @@ void navigation::getBackToLineRotation() {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if (Sensor::values[0] == Sensor::values[1]) {
 			if ((Sensor::values[0] == starting_intersection[0])) {
-				Serial.println("I MUST ROTATE RIGHT_get_back_to_line");
+				DEBUG_PRINTLN("I MUST ROTATE RIGHT_get_back_to_line");
 				Kick(KickDirection::Right, KICK_MAGNITUDE);
 			}
 			else {
-				Serial.println("I MUST ROTATE LEFT");
+				DEBUG_PRINTLN("I MUST ROTATE LEFT");
 				Kick(KickDirection::Left, KICK_MAGNITUDE);
 			}
 		}
@@ -567,7 +571,7 @@ void navigation::forwardAlignmentOnRotation() {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if (Sensor::values[2] != Sensor::values[3]) {
 			s2s3aligned = true;
-			Serial.println("Back On Track!");
+			DEBUG_PRINTLN("Back On Track!");
 		}
 		else {
 			if (LineCorrect() == false) {
@@ -585,7 +589,7 @@ void navigation::backwardsToIntersection() {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] == starting_intersection[2])) {
 			s2s3aligned = true;
-			Serial.print("Need to go forward to pass the node");
+			DEBUG_PRINT("Need to go forward to pass the node");
 		}
 		else {
 			if (LineCorrect() == false) {
@@ -603,7 +607,7 @@ void navigation::forwardsToIntersection() {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] != starting_intersection[2])) {
 			s2s3aligned = true;
-			Serial.println("Finished Movement");
+			DEBUG_PRINTLN("Finished Movement");
 		}
 		else {
 			if (LineCorrect() == false) {
@@ -620,7 +624,7 @@ void navigation::smartAlignmentRotation() {
 	while (alignmentComplete == false) {
 		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
 		if (reachedDestination() == true) {
-			Serial.println("FINISHED");
+			DEBUG_PRINTLN("FINISHED");
 			alignmentComplete = true;
 		}
 		else {
@@ -674,7 +678,7 @@ void navigation::passedNoteB() {
 		passed_s23 = true;
 	}
 	else {
-		Serial.println("Need to kick forward on reach_nodeb");
+		DEBUG_PRINTLN("Need to kick forward on reach_nodeb");
 		if (LineCorrect() == false) {
 			Kick(KickDirection::Forward, KICK_MAGNITUDE);
 		}
@@ -735,7 +739,7 @@ void navigation::TurnRight() {
 
 //Function to move forwards one node
 void navigation::MoveForward() {
-	Serial.println("Moving Now!");
+	DEBUG_PRINTLN("Moving Now!");
 	uint8_t RCnt = 0;
 	uint8_t LCnt = 0;
 	//int cnt = 0;
@@ -753,7 +757,7 @@ void navigation::MoveForward() {
 			)
 		{
 			//Don't kick
-			Serial.println("I have stopped");
+			DEBUG_PRINTLN("I have stopped");
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 			return;
 		}
@@ -792,7 +796,7 @@ void navigation::MoveForward() {
 
 				if (Dir == Sensor::DriftDirection::DRight) {
 					RCnt++;
-					Serial.println("Drifting Right");
+					DEBUG_PRINTLN("Drifting Right");
 					LeftSpeed -= CORRECTION_MAG;
 					RightSpeed += CORRECTION_MAG;
 					//MotorControl(Direction::F, Direction::F, LeftSpeed,RightSpeed);
@@ -801,7 +805,7 @@ void navigation::MoveForward() {
 				}
 				else if (Dir == Sensor::DriftDirection::DLeft) {
 					LCnt++;
-					Serial.println("Drifting Left");
+					DEBUG_PRINTLN("Drifting Left");
 					LeftSpeed += CORRECTION_MAG;
 					RightSpeed -= CORRECTION_MAG;
 					//MotorControl(Direction::F, Direction::F, LeftSpeed, RightSpeed);
@@ -835,7 +839,7 @@ void navigation::MoveBackward() {
 			)
 		{
 			//Don't kick
-			Serial.println("I have stopped");
+			DEBUG_PRINTLN("I have stopped");
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 			return;
 		}
@@ -874,7 +878,7 @@ void navigation::MoveBackward() {
 
 				if (Dir == Sensor::DriftDirection::DRight) {
 					RCnt++;
-					Serial.println("Drifting Right");
+					DEBUG_PRINTLN("Drifting Right");
 					LeftSpeed -= CORRECTION_MAG;
 					RightSpeed += CORRECTION_MAG;
 					//MotorControl(Direction::F, Direction::F, LeftSpeed,RightSpeed);
@@ -883,7 +887,7 @@ void navigation::MoveBackward() {
 				}
 				else if (Dir == Sensor::DriftDirection::DLeft) {
 					LCnt++;
-					Serial.println("Drifting Left");
+					DEBUG_PRINTLN("Drifting Left");
 					LeftSpeed += CORRECTION_MAG;
 					RightSpeed -= CORRECTION_MAG;
 					//MotorControl(Direction::F, Direction::F, LeftSpeed, RightSpeed);

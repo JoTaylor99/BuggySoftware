@@ -4,15 +4,23 @@
 
 //Mode defines
 #define DEBUG
-
+/// <summary>
+/// Conditional debug defines
+/// When writing debug prints without variables (constant strings such as "Setup Complete" or "Sensor 1 value ="  then use DEBUG_PRINT or DEBUG_PRINTLN
+/// For any debug print of a variable (any time you are not using double quotes) then instead use DEBUG_VPRINT or DEBUG_VPRINTLN
+/// </summary>
 #ifdef DEBUG
-#define DEBUG_PRINTLN(x)  Serial.println (x)
-#define DEBUG_PRINT(x)	Serial.print(x)
+#define DEBUG_PRINTLN(x)  Serial.println (F(x))
+#define DEBUG_PRINT(x)	Serial.print(F(x))
+#define DEBUG_VPRINT(x)	Serial.print(x)
+#define DEBUG_VPRINTLN(x)	Serial.print(x)
 #define COMPILE_DATE Serial.println(__DATE__)
 #define COMPILE_TIME Serial.println(__TIME__)
 #else
 #define DEBUG_PRINTLN(x)
 #define DEBUG_PRINT(x)
+#define DEBUG_VPRINT(x)
+#define DEBUG_VPRINTLN(x)
 #define COMPILE_DATE
 #define COMPILE_TIME
 #endif
@@ -20,8 +28,8 @@
 #define DISPLAYERRORS
 
 #ifdef DISPLAYERRORS
-#define ERROR_PRINTLN(x)  Serial.println (x)
-#define ERROR_PRINT(x)	Serial.print(x)
+#define ERROR_PRINTLN(x)  Serial.println (F(x))
+#define ERROR_PRINT(x)	Serial.print(F(x))
 #else
 #define ERROR_PRINTLN(x)
 #define ERROR_PRINT(x)

@@ -192,7 +192,7 @@ void Sensor::LogicCheck(Sensor *sens) {
 
 //Detects if the buggy is drifting from a line
 Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight) {
-	Serial.println("Checking for drift");
+	DEBUG_PRINTLN("Checking for drift");
 	//DriftDirection CurrentDrift = DriftDirection::None;
 	//if (sens[0].tileWhite == sens[1].tileWhite) {
 	//	//Front Sensors are the same therefor the buggy is drifting
@@ -297,16 +297,15 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 void Sensor::printbw(bool *values) {
 	//Print via USB
 	//if (communications::SMode == communications::SerialMode::USB) {
-		Serial.print("S2:"); Serial.print(values[1]); Serial.print("\t");
-		Serial.print("S1:"); Serial.print(values[0]); Serial.print("\t");
-		Serial.println();
-		Serial.print("S4:"); Serial.print(values[3]); Serial.print("\t");
-		Serial.print("S3:"); Serial.print(values[2]); Serial.print("\t");
-		Serial.println();
-		Serial.print("S6:"); Serial.print(values[5]); Serial.print("\t");
-		Serial.print("S5:"); Serial.print(values[4]); Serial.print("\t");
-		Serial.println();
-		Serial.println();
+	DEBUG_PRINT("FL:"); DEBUG_VPRINT(values[sC::FL]); DEBUG_PRINT("\t");
+	DEBUG_PRINT("LTL:"); DEBUG_VPRINT(values[sC::LTL]); DEBUG_PRINT("\t");
+	DEBUG_PRINT("LTR:"); DEBUG_VPRINT(values[sC::LTR]); DEBUG_PRINT("\t");
+	DEBUG_PRINT("FR:"); DEBUG_VPRINT(values[sC::FR]); DEBUG_PRINTLN("\t");
+	DEBUG_PRINT("ML:"); DEBUG_VPRINT(values[sC::ML]); DEBUG_PRINT("\t");
+	DEBUG_PRINT("MR:"); DEBUG_VPRINT(values[sC::MR]); DEBUG_PRINTLN("\t");
+	DEBUG_PRINT("BL:"); DEBUG_VPRINT(values[sC::BL]); DEBUG_PRINT("\t");
+	DEBUG_PRINT("BR:"); DEBUG_VPRINT(values[sC::BR]); DEBUG_PRINTLN("\t");
+		
 	//}
 	////Print via wireless Xbee
 	//else if (communications::SMode == communications::SerialMode::Xbee) {
