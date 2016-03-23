@@ -17,20 +17,24 @@ navigation::~navigation() {
 
 void navigation::initNavigation() {
 	//-------Setup Pins used for sensor select as outputs---------------
+	
 	Sensor::initSensors();
 	initMotion();
+	
+	//box assessBox;
+	//assessBox.init();
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+#ifdef SENSOR_DEBUG
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+#endif
 
-	box assessBox;
-	assessBox.init();
+	DEBUG_PRINTLN("Setup Complete!");
 
-	Serial.print(F("Setup Complete!"));
-
-	//if (SMode == USB) {
-	//	Serial.print("Setup Complete!");
-	//}
-	//else {
-	//	Serial.print("Setup Complete!");
-	//}
 };
 
 void navigation::navigate(String str) {

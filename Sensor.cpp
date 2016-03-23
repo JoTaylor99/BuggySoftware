@@ -53,7 +53,7 @@ void Sensor::ReadRaw() {
 		if (!tsl.getData(Raw)) {
 			ERROR_PRINTLN("I2C ERROR");
 		}
-		INFO_VPRINTLN(Raw);
+		SEN_VPRINTLN(Raw);
 	}
 	else {
 		#ifdef QTRSINUSE
@@ -94,14 +94,14 @@ bool Sensor::GetReading() {
 
 //Switches the I2C address of the desired sensor and removes others
 void Sensor::SelectSensor(byte sensorNumber) {
-	if (sensorNumber == sC::FR) { sensGPIO.writeGPIOA(0x7F); INFO_PRINTLN("FR Selected"); }
-	else if (sensorNumber == sC::LTR) { sensGPIO.writeGPIOA(0xBF); INFO_PRINTLN("LTR Selected"); }
-	else if (sensorNumber == sC::LTL) { sensGPIO.writeGPIOA(0xDF); INFO_PRINTLN("LTL Selected"); }
-	else if (sensorNumber == sC::FL) { sensGPIO.writeGPIOA(0xEF); INFO_PRINTLN("FL Selected"); }
-	else if (sensorNumber == sC::MR) { sensGPIO.writeGPIOA(0xF7); INFO_PRINTLN("MR Selected"); }
-	else if (sensorNumber == sC::ML) { sensGPIO.writeGPIOA(0xFB); INFO_PRINTLN("ML Selected"); }
-	else if (sensorNumber == sC::BR) { sensGPIO.writeGPIOA(0xFD); INFO_PRINTLN("BR Selected"); }
-	else if (sensorNumber == sC::BL) { sensGPIO.writeGPIOA(0xFE); INFO_PRINTLN("BL Selected"); }
+	if (sensorNumber == sC::FR) { sensGPIO.writeGPIOA(0x7F); SEN_PRINTLN("FR Selected"); }
+	else if (sensorNumber == sC::LTR) { sensGPIO.writeGPIOA(0xBF); SEN_PRINTLN("LTR Selected"); }
+	else if (sensorNumber == sC::LTL) { sensGPIO.writeGPIOA(0xDF); SEN_PRINTLN("LTL Selected"); }
+	else if (sensorNumber == sC::FL) { sensGPIO.writeGPIOA(0xEF); SEN_PRINTLN("FL Selected"); }
+	else if (sensorNumber == sC::MR) { sensGPIO.writeGPIOA(0xF7); SEN_PRINTLN("MR Selected"); }
+	else if (sensorNumber == sC::ML) { sensGPIO.writeGPIOA(0xFB); SEN_PRINTLN("ML Selected"); }
+	else if (sensorNumber == sC::BR) { sensGPIO.writeGPIOA(0xFD); SEN_PRINTLN("BR Selected"); }
+	else if (sensorNumber == sC::BL) { sensGPIO.writeGPIOA(0xFE); SEN_PRINTLN("BL Selected"); }
 	else {
 		ERROR_PRINTLN("Sensor Select Error");
 		ERROR_PRINTLN("All address lines returned to default");
@@ -296,45 +296,37 @@ Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool
 //Prints boolean values, presently there is no material difference between the conditions,
 //so one has been commented out until such time as communication code is finalised.
 void Sensor::printbw(bool *values) {
-	//Print via USB
-	//if (communications::SMode == communications::SerialMode::USB) {
-	DEBUG_PRINT("FL:"); DEBUG_VPRINT(values[sC::FL]); DEBUG_PRINT("\t");
-	DEBUG_PRINT("LTL:"); DEBUG_VPRINT(values[sC::LTL]); DEBUG_PRINT("\t");
-	DEBUG_PRINT("LTR:"); DEBUG_VPRINT(values[sC::LTR]); DEBUG_PRINT("\t");
-	DEBUG_PRINT("FR:"); DEBUG_VPRINT(values[sC::FR]); DEBUG_PRINTLN("\t");
-	DEBUG_PRINT("ML:"); DEBUG_VPRINT(values[sC::ML]); DEBUG_PRINT("\t");
-	DEBUG_PRINT("MR:"); DEBUG_VPRINT(values[sC::MR]); DEBUG_PRINTLN("\t");
-	DEBUG_PRINT("BL:"); DEBUG_VPRINT(values[sC::BL]); DEBUG_PRINT("\t");
-	DEBUG_PRINT("BR:"); DEBUG_VPRINT(values[sC::BR]); DEBUG_PRINTLN("\t");
-		
-	//}
-	////Print via wireless Xbee
-	//else if (communications::SMode == communications::SerialMode::Xbee) {
-	//	Serial.print("S2:"); Serial.print(values[1]); Serial.print("\t");
-	//	Serial.print("S1:"); Serial.print(values[0]); Serial.print("\t");
-	//	Serial.println();
-	//	Serial.print("S4:"); Serial.print(values[3]); Serial.print("\t");
-	//	Serial.print("S3:"); Serial.print(values[2]); Serial.print("\t");
-	//	Serial.println();
-	//	Serial.print("S6:"); Serial.print(values[5]); Serial.print("\t");
-	//	Serial.print("S5:"); Serial.print(values[4]); Serial.print("\t");
-	//	Serial.println();
-	//	Serial.println();
-	//}
+	//Print sensor outputs
+#ifdef SENSOR_DEBUG
+	Serial.print(F("FL:")); Serial.print(values[sC::FL]); Serial.print(F("\t"));
+	Serial.print(F("LTL:")); Serial.print(values[sC::LTL]); Serial.print(F("\t"));
+	Serial.print(F("LTR:")); Serial.print(values[sC::LTR]); Serial.print(F("\t"));
+	Serial.print(F("FR:")); Serial.print(values[sC::FR]); Serial.println(F("\t"));
+	Serial.print(F("ML:")); Serial.print(values[sC::ML]); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("MR:")); Serial.print(values[sC::MR]); Serial.println(F("\t"));
+	Serial.print(F("BL:")); Serial.print(values[sC::BL]); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("BR:")); Serial.print(values[sC::BR]); Serial.println(F("\t"));
+#endif
 }
 
 //Polls all given sensors in the order specified.
 void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte OrderLength){
+	unsigned long t1, t2;
+	t1 = micros();
 	byte CurrentSensorIndex = 0;
-
 	for (byte n = 0; n < OrderLength; n++) {
-		CurrentSensorIndex = order[n] - 1;
+		CurrentSensorIndex = order[n];
 		//  Serial.print("Current Index"); Serial.println(CurrentSensorIndex);
-		Sensor::SelectSensor(static_cast<sC::sensorNumber>(CurrentSensorIndex));
+		SelectSensor(CurrentSensorIndex);
 		sens[CurrentSensorIndex].GetReading();
 		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
 		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
 	}
+	t2 = micros();
+	DEBUG_PRINTLN("SENSOR VALUES: ");
+	printbw(values);
+	DEBUG_PRINT("Time to poll 8 sensors: ");
+	DEBUG_VPRINTLN(t2 - t1);
 	//Sensor::LogicCheck(sens);
 
 

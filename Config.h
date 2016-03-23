@@ -2,8 +2,20 @@
 #define _CONFIG_H
 #include <Arduino.h>
 
-//Mode defines
+//Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
+//Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 #define DEBUG
+
+#define SENSOR_DEBUG
+//#define NAV_DEBUG
+//#define MOT_DEBUG
+//#define BOX_DEBUG
+
+//#define SEN_INFO
+//#define NAV_INFO
+//#define MOT_INFO
+//#define BOX_INFO
+
 /// <summary>
 /// Conditional debug defines
 /// When writing debug prints without variables (constant strings such as "Setup Complete" or "Sensor 1 value ="  then use DEBUG_PRINT or DEBUG_PRINTLN
@@ -35,19 +47,56 @@
 #define ERROR_PRINT(x)
 #endif
 
-#define INFO_PRINT
 
-#ifdef INFO_PRINT
-#define INFO_PRINTLN(x)  Serial.println (F(x))
-#define INFO_PRINT(x)	Serial.print(F(x))
-#define INFO_VPRINT(x)	Serial.print(x)
-#define INFO_VPRINTLN(x)	Serial.println(x)
+
+#ifdef SEN_INFO
+#define SEN_PRINTLN(x)  Serial.println (F(x))
+#define SEN_PRINT(x)	Serial.print(F(x))
+#define SEN_VPRINT(x)	Serial.print(x)
+#define SEN_VPRINTLN(x)	Serial.println(x)
 #else
-#define INFO_PRINTLN(x)
-#define INFO_PRINT(x)
-#define INFO_VPRINT(x)
-#define INFO_VPRINTLN(x)
+#define SEN_PRINTLN(x)
+#define SEN_PRINT(x)
+#define SEN_VPRINT(x)
+#define SEN_VPRINTLN(x)
 #endif
+
+#ifdef NAV_INFO
+#define NAV_PRINTLN(x)  Serial.println (F(x))
+#define NAV_PRINT(x)	Serial.print(F(x))
+#define NAV_VPRINT(x)	Serial.print(x)
+#define NAV_VPRINTLN(x)	Serial.println(x)
+#else
+#define NAV_PRINTLN(x)
+#define NAV_PRINT(x)
+#define NAV_VPRINT(x)
+#define NAV_VPRINTLN(x)
+#endif
+
+#ifdef MOT_INFO
+#define MOT_PRINTLN(x)  Serial.println (F(x))
+#define MOT_PRINT(x)	Serial.print(F(x))
+#define MOT_VPRINT(x)	Serial.print(x)
+#define MOT_VPRINTLN(x)	Serial.println(x)
+#else
+#define MOT_PRINTLN(x)
+#define MOT_PRINT(x)
+#define MOT_VPRINT(x)
+#define MOT_VPRINTLN(x)
+#endif
+
+#ifdef BOX_INFO
+#define BOX_PRINTLN(x)  Serial.println (F(x))
+#define BOX_PRINT(x)	Serial.print(F(x))
+#define BOX_VPRINT(x)	Serial.print(x)
+#define BOX_VPRINTLN(x)	Serial.println(x)
+#else
+#define BOX_PRINTLN(x)
+#define BOX_PRINT(x)
+#define BOX_VPRINT(x)
+#define BOX_VPRINTLN(x)
+#endif
+
 
 
 //Sensor Mode
