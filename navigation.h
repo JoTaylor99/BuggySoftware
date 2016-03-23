@@ -39,9 +39,12 @@ public:
 	void navigate(String str); 
 
 	#ifdef QTRSINUSE
-	Sensor Sensors[9] = { OUTERFRONTRIGHTPIN, FRONTRIGHTPIN, FRONTLEFTPIN, OUTERFRONTLEFTPIN, MIDDLERIGHTPIN, MIDDLELEFTPIN, BACKRIGHTPIN, BACKLEFTPIN, { (unsigned int)7, sensorConfig::QTR } };
+		Sensor Sensors[9] = { FRPIN, LTRPIN, LTLPIN, FLPIN, MRPIN, MLPIN, BRPIN, BLPIN, { (unsigned int)7, sensorConfig::QTR } };
+	#else
+		Sensor Sensors[8] = { FRPIN, LTRPIN, LTLPIN, FLPIN, MRPIN, MLPIN, BRPIN, BLPIN };
 	#endif
-	Sensor Sensors[8] = { OUTERFRONTRIGHTPIN, FRONTRIGHTPIN, FRONTLEFTPIN, OUTERFRONTLEFTPIN, MIDDLERIGHTPIN, MIDDLELEFTPIN, BACKRIGHTPIN, BACKLEFTPIN };
+
+
 private:
 	enum Direction : uint8_t {
 		Forward, Backward
@@ -59,7 +62,7 @@ private:
 	bool LastCorrectLeft = false;
 	bool LastCorrectRight = false;
 
-	bool starting_intersection[6] = { false, false, false, false, false, false };
+	bool starting_intersection[8] = { false, false, false, false, false, false, false, false };
 
 	bool sensor0_event = false;
 	bool sensor1_event = false;

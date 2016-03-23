@@ -42,7 +42,10 @@ void navigation::navigate(String str) {
 		//Serial.println(Sensors[i].Normalised);
 		}*/
 		//int DefaultOrder[6] = { 1,2,3,4,5,6 };
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+
+
 
 		//printbw(values);
 		//sensor_events();
@@ -186,7 +189,7 @@ bool navigation::LineCorrect() {
 //If so it returns true and prints "Destination Reached" to the terminal, if not returns false.
 //Based on the quadrant the buggy rotates in a backward motion to get back to the motion line with sesnors 4 and 5
 bool navigation::reachedDestination() {
-	if (((Sensor::values[sC::oFrontRight]) != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
+	if (((Sensor::values[sC::FR]) != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
 		(Sensor::values[3] != starting_intersection[3]) && (Sensor::values[4] != starting_intersection[4]) && (Sensor::values[5] != starting_intersection[5])) {
 		DEBUG_PRINTLN("Destination Reached");
 		return true;
@@ -207,7 +210,7 @@ bool navigation::reachedDestination() {
 
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 	for (uint8_t n = 0; n < 6; n++) {
 		starting_intersection[n] = Sensor::values[n];
 	}
@@ -246,7 +249,7 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 		}
 	}
 	else {//Backward
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		//ideal-case Both sensors have passed the intersection line normally
 		if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
 		{
@@ -321,7 +324,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 	switch (quadrant) {
 	case 1: while (smart_line_s45 == false) {
 				//Sensor::PollSensors(Sensors, Back, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
@@ -333,7 +336,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 			break;
 	case 2: while (smart_line_s45 == false) {
 				// Sensor::PollSensors(Sensors, Back, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
@@ -346,7 +349,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 			break;
 	case 3:  while (smart_line_s45 == false) {
 				 // Sensor::PollSensors(Sensors, Back, 2);
-				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					 smart_line_s45 = true;
 				 }
@@ -359,7 +362,7 @@ void navigation::findLineS23(uint8_t quadrant) {
 			 break;
 	case 4:  while (smart_line_s45 == false) {
 				 // Sensor::PollSensors(Sensors, Back, 2);
-				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					 smart_line_s45 = true;
 				 }
@@ -383,7 +386,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 	switch (quadrant) {
 	case 1: while (smart_line_s01 == false) {
 				//   Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
@@ -396,7 +399,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 			break;
 	case 2: while (smart_line_s01 == false) {
 				//Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
@@ -409,7 +412,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 			break;
 	case 3: while (smart_line_s01 == false) {
 				//Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
@@ -422,7 +425,7 @@ void navigation::findLineS01(uint8_t quadrant) {
 			break;
 	case 4: while (smart_line_s01 == false) {
 				//  Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
 					smart_line_s01 = true;
 				}
@@ -467,7 +470,7 @@ void navigation::reachedNode(Direction Dir) {
 	bool passed = false;
 	while (passed == false) {
 		//Sensor::PollSensors(Sensors, FrontM, 2);
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if (reachedDestination() == true) {
 			return;
 		}
@@ -502,7 +505,7 @@ void navigation::smartAlignment(Direction Dir) {
 	bool perfect_intersection = false;
 	uint8_t quadrant = whereAmI(Dir);
 	while (perfect_intersection == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1]) && (Sensors[2].tileWhite != starting_intersection[2]) &&
 			(Sensors[3].tileWhite != starting_intersection[3]) && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
 			perfect_intersection = true;
@@ -546,7 +549,7 @@ void navigation::smartAlignment(Direction Dir) {
 void navigation::getBackToLineRotation() {
 	bool back_to_line = false;
 	while (back_to_line == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if (Sensor::values[0] == Sensor::values[1]) {
 			if ((Sensor::values[0] == starting_intersection[0])) {
 				DEBUG_PRINTLN("I MUST ROTATE RIGHT_get_back_to_line");
@@ -568,7 +571,7 @@ void navigation::getBackToLineRotation() {
 void navigation::forwardAlignmentOnRotation() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if (Sensor::values[2] != Sensor::values[3]) {
 			s2s3aligned = true;
 			DEBUG_PRINTLN("Back On Track!");
@@ -586,7 +589,7 @@ void navigation::forwardAlignmentOnRotation() {
 void navigation::backwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] == starting_intersection[2])) {
 			s2s3aligned = true;
 			DEBUG_PRINT("Need to go forward to pass the node");
@@ -604,7 +607,7 @@ void navigation::backwardsToIntersection() {
 void navigation::forwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] != starting_intersection[2])) {
 			s2s3aligned = true;
 			DEBUG_PRINTLN("Finished Movement");
@@ -622,7 +625,7 @@ void navigation::forwardsToIntersection() {
 void navigation::smartAlignmentRotation() {
 	bool alignmentComplete = false;
 	while (alignmentComplete == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if (reachedDestination() == true) {
 			DEBUG_PRINTLN("FINISHED");
 			alignmentComplete = true;
@@ -669,7 +672,7 @@ void navigation::passedNoteB() {
 	bool passed_s23 = false;
 	while (passed_s23 == false) {
 		//Sensor::PollSensors(Sensors, FrontM, 2);
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 		if (reachedDestination() == true) {
 			return;
 		}
@@ -689,7 +692,7 @@ void navigation::passedNoteB() {
 
 //Function to turn left
 void navigation::TurnLeft() {
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 	drive(motorConfig::B, motorConfig::F, 70, 70);
 
 	//digitalWrite(M1, HIGH);
@@ -721,7 +724,7 @@ void navigation::TurnRight() {
 	//digitalWrite(M2, HIGH);
 	//analogWrite(E1, 65);
 	//analogWrite(E2, 65);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 6);
+	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 	drive(motorConfig::F, motorConfig::B, 70, 70);
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::Front, 2);
