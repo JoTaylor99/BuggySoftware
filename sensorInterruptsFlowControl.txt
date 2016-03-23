@@ -1,13 +1,3 @@
-Log 17/03
-
-	00:50	Code init code for cases 1 and 2 and check for speed differences.
-	
-
-
-
-
-
-
 
 
 MUST APPLY POLL_SENSORS macro before release.
@@ -128,3 +118,49 @@ IF GPIO interrupt
 
 		numSensorsActive--;
 			}
+
+
+
+
+
+
+
+
+
+
+According to post 10 on http://forum.arduino.cc/index.php?topic=71250.0 I2C operations in an interrupt service routine are possible
+The length of operations required likely prohibit performing them all (reading GPIO, resetting thresholds, clearing sensor interrupts, clearing gpio interrupts) in one routine.
+Using a second uno based board may be possible and bears further investigation.
+
+
+moveForward flow control proposal 1:
+	LOOP {
+	Poll all sensors
+	Check for drift
+	IF NO DRIFT {
+		motor drive function will utilise the encoders to equalise the speed of the wheels.  The equalisation maths can be done in a blocking fashion if fast enough,
+			the pulse counting will almost certainly have to be interrupt based either with external interrupt/counter (research needs doing into this)
+
+		//If this process is either too slow or requires multiple passes to maintain accuracy then it can be setup on a timer interrupt however THIS MUST BE
+		//	DETACHABLE/REATTACHABLE	WITHOUT FAILING to allow for sensor interrupt operations if implemented.
+		}
+	IF DRIFT {
+		Pass differing speeds to motor drive functions, these speeds are used to weight the speed equalisation calculation
+		}
+	}
+
+	Sensor interrupts may be implemented if required and if they are will require a single interrupt, either external (preferred) or if not
+		available one of the 2 pin change interrupts.  Note if implemented sensor interrupts will require the enabling of interrupts
+		INSIDE THE ISR and so it must be possible to explicitly deattach any interrupts used for the encoders to allow this.
+
+	Polling all sensors currently takes in the order of 3-4ms, giving a theoretical frequency of 300Hz assuming no other operations.  This will obviously be much less
+		once other nav code is in place, though is a massive improvement on the max 9Hz operations before.
+
+	IMPLEMENTATION NOTE:	micros() does INCREMENT in an ISR, BUT ONLY UP TO 1000, millis() does not, but can be used to timestamp when the ISR was entered.
+
+turnRight/Left flow control
+	LOOP {
+		Poll all sensors
+		call motor drive in opposite directions with equivalent speeds
+		motor drive functions will utilise the absolute values returned by the encoders to equalise the speed of the wheels
+		}
