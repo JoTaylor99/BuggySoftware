@@ -13,7 +13,7 @@
 #define DEBUG_PRINTLN(x)  Serial.println (F(x))
 #define DEBUG_PRINT(x)	Serial.print(F(x))
 #define DEBUG_VPRINT(x)	Serial.print(x)
-#define DEBUG_VPRINTLN(x)	Serial.print(x)
+#define DEBUG_VPRINTLN(x)	Serial.println(x)
 #define COMPILE_DATE Serial.println(__DATE__)
 #define COMPILE_TIME Serial.println(__TIME__)
 #else
@@ -34,6 +34,22 @@
 #define ERROR_PRINTLN(x)
 #define ERROR_PRINT(x)
 #endif
+
+#define INFO_PRINT
+
+#ifdef INFO_PRINT
+#define INFO_PRINTLN(x)  Serial.println (F(x))
+#define INFO_PRINT(x)	Serial.print(F(x))
+#define INFO_VPRINT(x)	Serial.print(x)
+#define INFO_VPRINTLN(x)	Serial.println(x)
+#else
+#define INFO_PRINTLN(x)
+#define INFO_PRINT(x)
+#define INFO_VPRINT(x)
+#define INFO_VPRINTLN(x)
+#endif
+
+
 //Sensor Mode
 
 //#define SENSORINTMODE

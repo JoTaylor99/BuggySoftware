@@ -53,6 +53,7 @@ void Sensor::ReadRaw() {
 		if (!tsl.getData(Raw)) {
 			ERROR_PRINTLN("I2C ERROR");
 		}
+		INFO_VPRINTLN(Raw);
 	}
 	else {
 		#ifdef QTRSINUSE
@@ -92,15 +93,15 @@ bool Sensor::GetReading() {
 }
 
 //Switches the I2C address of the desired sensor and removes others
-void Sensor::SelectSensor(sC::sensorNumber sensorNumber) {
-	if (sensorNumber == sC::oFrontRight) {sensGPIO.writeGPIOA(0x7F);}
-	else if (sensorNumber == sC::frontRight) {sensGPIO.writeGPIOA(0xBF);}
-	else if (sensorNumber == sC::frontLeft) { sensGPIO.writeGPIOA(0xDF);}
-	else if (sensorNumber == sC::oFrontLeft) {sensGPIO.writeGPIOA(0xEF);}
-	else if (sensorNumber == sC::middleRight) {sensGPIO.writeGPIOA(0xF7);}
-	else if (sensorNumber == sC::middleLeft) {sensGPIO.writeGPIOA(0xFB);}
-	else if (sensorNumber == sC::backRight) {sensGPIO.writeGPIOA(0xFD);}
-	else if (sensorNumber == sC::backLeft) {sensGPIO.writeGPIOA(0xFE);}
+void Sensor::SelectSensor(byte sensorNumber) {
+	if (sensorNumber == sC::FR) { sensGPIO.writeGPIOA(0x7F); INFO_PRINTLN("FR Selected"); }
+	else if (sensorNumber == sC::LTR) { sensGPIO.writeGPIOA(0xBF); INFO_PRINTLN("LTR Selected"); }
+	else if (sensorNumber == sC::LTL) { sensGPIO.writeGPIOA(0xDF); INFO_PRINTLN("LTL Selected"); }
+	else if (sensorNumber == sC::FL) { sensGPIO.writeGPIOA(0xEF); INFO_PRINTLN("FL Selected"); }
+	else if (sensorNumber == sC::MR) { sensGPIO.writeGPIOA(0xF7); INFO_PRINTLN("MR Selected"); }
+	else if (sensorNumber == sC::ML) { sensGPIO.writeGPIOA(0xFB); INFO_PRINTLN("ML Selected"); }
+	else if (sensorNumber == sC::BR) { sensGPIO.writeGPIOA(0xFD); INFO_PRINTLN("BR Selected"); }
+	else if (sensorNumber == sC::BL) { sensGPIO.writeGPIOA(0xFE); INFO_PRINTLN("BL Selected"); }
 	else {
 		ERROR_PRINTLN("Sensor Select Error");
 		ERROR_PRINTLN("All address lines returned to default");
