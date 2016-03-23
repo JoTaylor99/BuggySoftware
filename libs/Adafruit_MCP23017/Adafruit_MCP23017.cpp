@@ -120,7 +120,7 @@ void Adafruit_MCP23017::begin(uint8_t addr) {
 
 	// set defaults!
 	// all inputs on port A and B
-	writeRegister(MCP23017_IODIRA,0xff);
+	writeRegister(MCP23017_IODIRA,0x00);
 	writeRegister(MCP23017_IODIRB,0xff);
 }
 
