@@ -38,7 +38,7 @@ boolean SFE_TSL2561::begin(char i2c_address)
 	// Always returns true
 {
 	_i2c_address = i2c_address;
-	Wire.begin();
+	//Wire.begin();
 	return(true);
 }
 
