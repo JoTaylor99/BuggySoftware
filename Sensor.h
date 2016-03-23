@@ -5,14 +5,13 @@
 
 
 #include <SparkFunTSL2561.h>
-#ifdef QTRSINUSE
-#include <QTRSensors.h>
-#endif
 #include "Config.h"
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include "Comms.h"
-
+//#ifdef QTRSINUSE
+//#include <QTRSensors.h>
+//#endif
 /*Sensor mode setup flow control:
 *	Create one sensor object per sensor, passing the address select pin as an argument
 *	Set all address pinModes as output
@@ -71,7 +70,7 @@ public:
 	
 	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
 	static void PollSensors(Sensor *sens, const sC::sensorNumber *order, byte OrderLength);
-	static void PollSensors(Sensor *sens);
+
 
 private:
 	uint16_t _pin;
@@ -83,7 +82,7 @@ private:
 	
 
 	bool GetReading();
-	static void SelectSensor(sC::sensorNumber sensorNumber);
+	static void SelectSensor(byte sensorNumber);
 	static void LogicCheck(Sensor *sens);
 	void ReadRaw(); //Reads the Raw value from whichever sensor is enabled
 	void UpdateRange(); //Update's the sensor's range of values for correct scaling

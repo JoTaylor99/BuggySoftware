@@ -12,11 +12,12 @@ SFE_TSL2561 tsl;
 Adafruit_MCP23017 sensGPIO;
 
 
-const sC::sensorNumber Sensor::DefaultOrder[8] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft, sC::middleRight, sC::middleLeft, sC::backRight, sC::backLeft };
-const sC::sensorNumber Sensor::Front[4] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft };
-const sC::sensorNumber Sensor::Back[2] = { sC::backRight, sC::backLeft };
-const sC::sensorNumber Sensor::Middle[2] = { sC::middleRight, sC::middleLeft };
-const sC::sensorNumber Sensor::FrontNMiddle[6] = { sC::oFrontRight, sC::frontRight, sC::frontLeft, sC::oFrontLeft, sC::middleRight, sC::middleLeft };
+
+const sC::sensorNumber Sensor::DefaultOrder[8] = { sC::FR, sC::LTR, sC::LTL, sC::FL, sC::MR, sC::ML, sC::BR, sC::BL };
+const sC::sensorNumber Sensor::Front[4] = { sC::FR, sC::LTR, sC::LTL, sC::FL };
+const sC::sensorNumber Sensor::Back[2] = { sC::BR, sC::BL };
+const sC::sensorNumber Sensor::Middle[2] = { sC::MR, sC::ML };
+const sC::sensorNumber Sensor::FrontNMiddle[6] = { sC::FR, sC::LTR, sC::LTL, sC::FL, sC::MR, sC::ML };
 
 
 //uint8_t Sensor::values = 0x00;
@@ -69,7 +70,8 @@ void Sensor::UpdateRange() {
 	if (Raw >= Max) {
 		Max = Raw;
 	}
-	else if (Raw <= Min) {
+	
+	if (Raw <= Min) {
 		Min = Raw;
 	}
 }
@@ -335,16 +337,16 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte Order
 
 void Sensor::initSensors() {
 	sensGPIO.begin(1);
-
+	
 	//Address pins
-	sensGPIO.pinMode(OUTERFRONTRIGHTPIN, OUTPUT);
-	sensGPIO.pinMode(FRONTRIGHTPIN, OUTPUT);
-	sensGPIO.pinMode(FRONTLEFTPIN, OUTPUT);
-	sensGPIO.pinMode(OUTERFRONTLEFTPIN, OUTPUT);
-	sensGPIO.pinMode(MIDDLERIGHTPIN, OUTPUT);
-	sensGPIO.pinMode(MIDDLELEFTPIN, OUTPUT);
-	sensGPIO.pinMode(BACKRIGHTPIN, OUTPUT);
-	sensGPIO.pinMode(BACKLEFTPIN, OUTPUT);
+	sensGPIO.pinMode(FRPIN, OUTPUT);
+	sensGPIO.pinMode(LTRPIN, OUTPUT);
+	sensGPIO.pinMode(LTLPIN, OUTPUT);
+	sensGPIO.pinMode(FLPIN, OUTPUT);
+	sensGPIO.pinMode(MRPIN, OUTPUT);
+	sensGPIO.pinMode(MLPIN, OUTPUT);
+	sensGPIO.pinMode(BRPIN, OUTPUT);
+	sensGPIO.pinMode(BLPIN, OUTPUT);
 
 	//-------Set all sensor select pins to high---------------
 	sensGPIO.writeGPIOA(0xFF);
@@ -364,14 +366,14 @@ void Sensor::initSensors() {
 	//sensGPIO.pinMode(SENSOR6INTPIN, INPUT);
 	//sensGPIO.pinMode(SENSOR7INTPIN, INPUT);
 	//sensGPIO.pinMode(SENSOR8INTPIN, INPUT);
-
-	 for (sC::sensorNumber i = sC::oFrontRight; i < sC::invalid; i + 1) {
+	
+	 for (byte i = sC::FR; i < sC::invalid; i++) {
 		SelectSensor(i);
 		tsl.begin(TSL2561_ADDR_0);
 		tsl.setTiming(TSL2561_GAIN_16X, TSL2561_INTEGRATIONTIME_14MS);
 		tsl.setPowerUp();
-
 	}
+	 
 	delay(14);
 	_sensorInitComplete = true;
 }
@@ -390,14 +392,14 @@ void Sensor::initSensors() {
 		//RIGHT starts as black, black, black, white
 		//LEFT starts as white, white, white, black
 		//Thresholds set such that value will remain inside bound until change of tile.
-		//if ((i == sensorNumber::junctRight) || (i == frontRight) || (i == middleRight) || (i == backLeft)) {
+		//if ((i == sensorNumber::junctRight) || (i == LTR) || (i == MR) || (i == BL)) {
 		//	//set thresholds for over black tile
 		//	//set low threshold
 		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
 		//	//set high threshold
 		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
 		//}
-		//else if ((i == junctLeft) || (i == frontLeft) || (i == middleLeft) || (i == backRight)) {
+		//else if ((i == junctLeft) || (i == LTL) || (i == ML) || (i == BR)) {
 		//set thresholds for over white tile
 
 		//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);

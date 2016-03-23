@@ -115,14 +115,14 @@
 
 //Sensor Defines
 //Change these depending on what pins each sensor's address pin is connected to9
-#define OUTERFRONTRIGHTPIN 7                                                                                 /*       _ _front _ _    */
-#define FRONTRIGHTPIN 6                                                                              /*       / s1 | s0 \ */
-#define FRONTLEFTPIN 5                                                                                 /*      |     |     |*/
-#define OUTERFRONTLEFTPIN 4                                                                                 /*      |_ s3_|_s2_ |*/
-#define MIDDLERIGHTPIN 3                                                                                 /*      |  s5 | s4  |*/
-#define MIDDLELEFTPIN 2                                                                                /*       \_____|_____/*/
-#define BACKRIGHTPIN 1
-#define BACKLEFTPIN 0
+#define FRPIN 7                                                                                 /*       _ _front _ _    */
+#define LTRPIN 6                                                                              /*       / s1 | s0 \ */
+#define LTLPIN 5                                                                                 /*      |     |     |*/
+#define FLPIN 4                                                                                 /*      |_ s3_|_s2_ |*/
+#define MRPIN 3                                                                                 /*      |  s5 | s4  |*/
+#define MLPIN 2                                                                                /*       \_____|_____/*/
+#define BRPIN 1
+#define BLPIN 0
 
 #define UPPER_THRESHOLD 55     //In percent
 #define LOWER_THRESHOLD 20
@@ -187,20 +187,20 @@
 #define BOXNUM		   4
 #define BOXINV		   0
 
-#define P1BC		0x01
-#define P15V        0x02
-#define P1ADC       0x04
-#define P2GND       0x08
-#define P25V        0x10
-#define P2Rd        0x20
-#define P2Rk        0x40
-#define P2ADC       0x80
-#define GNDADC		0x100
-#define GNDGND      0x200
-#define GND5V       0x400
-#define P1P2SWITCH  0x800
-#define BC          0x1000    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define ADCSWITCH   0x2000
+#define P1BC		0x2000
+#define P15V        0x1000
+#define P1ADC       0x800
+#define P2GND       0x400
+#define P25V        0x200
+#define P2Rd        0x100
+#define P2Rk        0x80
+#define P2ADC       0x40
+#define GNDADC		0x20
+#define GNDGND      0x10
+#define GND5V       0x08
+#define P1P2SWITCH  0x04
+#define BC          0x02    //both ADCswitch and BC to be put on 1 pin in next circuit rev
+#define ADCSWITCH   0x01
 
 
 #define P1BCPIN        3
@@ -261,16 +261,16 @@ namespace boxConfig {
 		};
 		#endif		
 
-		enum sensorNumber : uint8_t {
-			oFrontRight = 0,
-			frontRight = 1,
-			frontLeft = 2,
-			oFrontLeft = 3,
-			middleRight = 4,
-			middleLeft = 5,
-			backRight = 6,
-			backLeft = 7,
-			invalid = 8
+		typedef enum sensorNumber : uint8_t {
+			FR,
+			LTR,
+			LTL,
+			FL,
+			MR,
+			ML,
+			BR,
+			BL,
+			invalid
 		};
 
 	};
