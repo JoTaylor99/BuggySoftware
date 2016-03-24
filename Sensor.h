@@ -53,14 +53,17 @@ private:
 	bool GetReading();
 	static void SelectSensor(uint8_t sensor_number);
 	static void LogicCheck(Sensor *sens);
-	void ReadRaw();
-	void UpdateMaximum();
-	void UpdateMinimum();
-	void Normalise();
-	void NormalToBool();
-	void ThresholdCheck();
-	static void printbw(bool *values);
-	static bool _sensorInitComplete;
+	void ReadRaw(); //Reads the Raw value from whichever sensor is enabled
+	void UpdateMaximum(); //Update's the sensor's maximum value for correct scaling
+	void UpdateMinimum(); //Update's the sensor's minimum value for correct scaling
+	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
+	void NormalToBool(); //Determins weither a detacted sensor reading is Black or White
+	void ThresholdCheck(); //Checks the Normalised sensor readings against their thresholds
+	static void printbw(bool *values); /*Being called by PollSensors & loop1
+This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
+Prints boolean values, presently there is no material difference between the conditions,
+so one has been commented out until such time as communication code is finalised.*/
+	static bool _sensorInitComplete;  
 
 };
 

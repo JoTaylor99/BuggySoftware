@@ -25,8 +25,6 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 	checkconfigCorrect();		//ensure init functions sucessfully called
 	setInput(OFF);				//ensure all circuit stimulis are off
 
-	byte stageTwoBoxNumber = boxNumber;
-
 	//select correct switch configuration
 	switchControl((retrieveSettings(boxNumber)));
 	//sets approach direction relay
@@ -88,7 +86,7 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 		(boxNumber == 7) ? (Serial.print("Resonant Frequency = ")) : (Serial.print("Corner Frequency = "));
 		Serial.println(presentationData.f);
 	}
-
+	return 0;
 
 };
 
@@ -142,9 +140,18 @@ boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
 	}
 }
 
-bool box::docked(){};
+bool box::docked() {
+	bool connected = false;
+	if (getReading() == 0) {
+		connected = true;
+	}
+	return connected;
+};
 
-double box::getReading(){};
+double box::getReading() {
+	
+
+};
 
 double calculateResistorValue(double rawValue, byte boxNumber){};
 
@@ -179,10 +186,10 @@ short PrefResistor(double OResistor, byte BoxNo) {
 		FinalResistor = PResistors[IMAX];
 	}
 	else {
-		for (; (i < 55) && (i < IMAX); i++) {
+		for (; (i < IMAX+1); i++) {
 			if ((OResistor <= (PResistors[i] * 1.05)) && (OResistor >= (PResistors[i] * 0.95))) {
 				FinalResistor = PResistors[i];
-				i = 55;
+				break;
 			}
 		}
 	}
@@ -212,10 +219,10 @@ byte PrefCapactitor(double OCap, byte BoxNo) {
 		FinalCap = PCapacitors[IMAX];
 	}
 	else {
-		for (; (i < 17) && (i < IMAX); i++) {
+		for (; (i < IMAX+1); i++) {
 			if ((OCap <= (PCapacitors[i] * 1.10)) && (OCap >= (PCapacitors[i] * 0.90))) {
 				FinalCap = PCapacitors[i];
-				i = 17;
+				break;
 			}
 		}
 	}

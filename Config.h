@@ -41,8 +41,8 @@
 
 
 //Box Defines
-#define FIVEVOLTOUTPUTPIN 1
-#define ADCINPUTPIN	   2
+#define FIVEVOLTOUTPUTPIN 2
+#define ADCINPUTPIN	   16
 
 #define BOXNUM		   4
 #define BOXINV		   0
