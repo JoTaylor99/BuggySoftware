@@ -69,6 +69,21 @@ public:
 	
 	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
 
+#ifdef SENSOR_MEMORY_SAVE
+	private:
+		static void setVal(sC::sensorNumber, bool tileColour);
+		static void setLastVal(sC::sensorNumber, bool lastValue);
+		static uint8_t lastValues;
+
+	public:
+		static bool valIs(sC::sensorNumber);
+		static bool lastValIs(sC::sensorNumber);
+		static uint8_t values;
+#else
+	public:
+		static bool values[8];
+		static bool lastValues[8];
+#endif
 
 private:
 	uint16_t _pin;

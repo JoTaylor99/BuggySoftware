@@ -320,6 +320,7 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte Order
 		CurrentSensorIndex = order[n];
 		//  Serial.print("Current Index"); Serial.println(CurrentSensorIndex);
 		SelectSensor(CurrentSensorIndex);
+		SLASTVAL(CurrentSensorIndex, RVAL(CurrentSensorIndex));
 		sens[CurrentSensorIndex].GetReading();
 		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
 		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
@@ -334,6 +335,21 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte Order
 
 }
 
+#ifdef SENSOR_MEMORY_SAVE
+	void setVal(sC::sensorNumber, bool tileColour){}
+		
+	bool valIs(sC::sensorNumber){}
+
+	bool lastValIs(sC::sensorNumber){}
+
+	void setLastVal(sC::sensorNumber, bool lastValue){}
+
+	uint8_t Sensor::values = 0x00;
+	static uint8_t lastValues = 0x00;
+#else
+	bool Sensor::values[8] = {};
+	bool Sensor::lastValues[8] = {};
+#endif
 
 void Sensor::initSensors() {
 	sensGPIO.begin(1);

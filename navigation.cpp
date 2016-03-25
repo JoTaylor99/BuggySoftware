@@ -4,8 +4,9 @@
 
 #include "navigation.h"
 
-
-
+//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::sC::LTL), RVAL(sC::sC::FR), etc.
+//Previous values are read using RLASTVAL(sensorNumber)
+//Starting values are read using STARTVAL(sensorNumber)
 
 
 navigation::navigation() {
@@ -118,8 +119,8 @@ bool navigation::LineCorrect() {
 	}
 	else if (Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight) == Sensor::DriftDirection::None) {
 		Counter = 0;
-		LastCorrectLeft = Sensors[1].tileWhite;
-		LastCorrectRight = Sensors[0].tileWhite;
+		LastCorrectLeft = RVAL(sC::LTR);
+		LastCorrectRight = RVAL(sC::FR);
 		return false;
 	}
 	else {
@@ -128,16 +129,16 @@ bool navigation::LineCorrect() {
 	}
 }
 //Function to define whether or not the destination node has been reached.
-//If so it returns true and prints "Destination Reached" to the terminal, if not returns false.
+//If so it returns true and prints "Destination Reached" to the terminal, if not returns falfse.
 //Based on the quadrant the buggy rotates in a backward motion to get back to the motion line with sesnors 4 and 5
 bool navigation::reachedDestination() {
-	if (((Sensor::values[sC::FR]) != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) && (Sensor::values[2] != starting_intersection[2]) &&
-		(Sensor::values[3] != starting_intersection[3]) && (Sensor::values[4] != starting_intersection[4]) && (Sensor::values[5] != starting_intersection[5])) {
+	if (((RVAL(sC::FR)) != (START_VAL(sC::FR))) && (RVAL(sC::LTR) != START_VAL(sC::LTR)) && (RVAL(sC::LTL) != START_VAL(sC::LTL)) &&
+		(RVAL(sC::FL) != START_VAL(sC::FL)) && (RVAL(sC::MR) != START_VAL(sC::MR)) && (RVAL(sC::ML) != START_VAL(sC::ML))) {
 		DEBUG_PRINTLN("Destination Reached");
 		return true;
 	}
-	//  else if ((Sensors[2].tileWhite != starting_intersection[2]) && (Sensors[3].tileWhite != starting_intersection[3])
-	//           && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
+	//  else if ((RVAL(sC::LTL) != START_VAL(sC::LTL)) && (RVAL(sC::FL) != START_VAL(sC::FL))
+	//           && (RVAL(sC::MR) != START_VAL(sC::MR)) && (RVAL(sC::ML) != START_VAL(sC::ML))) {
 	//    Serial.println("Destination Reached2");
 	//    return true;
 	//  }
@@ -145,42 +146,27 @@ bool navigation::reachedDestination() {
 		return false;
 	}
 }
-
-
-//POLL
-
-
-//captures and stores in an array all the sensor values at the initial node position
-void navigation::start() {
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	for (uint8_t n = 0; n < 6; n++) {
-		starting_intersection[n] = Sensor::values[n];
-	}
-	DEBUG_PRINTLN("I have the starting POSITION");
-}
-
 //----------------FORWARD ALIGNMENT----------------------------------------------------------------
 //Checks if there was an event in the values of the first two sensors during the forward motion
 void navigation::sensorEvents() {
 
 
-	if (Sensor::values[0] != starting_intersection[0]) {
+	if (RVAL(sC::FR) != START_VAL(sC::FR)) {
 		sensor0_event = true;
 		flag0 = true;
 	}
-	if (Sensor::values[1] != starting_intersection[1]) {
+	if (RVAL(sC::LTR) != START_VAL(sC::LTR)) {
 		sensor1_event = true;
 		flag1 = true;
 	}
 }
-
 //Checks if the buggy has passed the line of the destination intersection
 //Optimised
 bool navigation::didIPassIntersectionLine(Direction Dir) {
 	bool passed_intersection_line = false;
 	if (Dir == Forward) {
 		//ideal-case Both sensors have passed the intersection line normally
-		if ((Sensor::values[0] != starting_intersection[0]) && (Sensor::values[1] != starting_intersection[1]) || ((sensor0_event == true) && (sensor1_event == true)))
+		if ((RVAL(sC::FR) != START_VAL(sC::FR)) && (RVAL(sC::LTR) != START_VAL(sC::LTR)) || ((sensor0_event == true) && (sensor1_event == true)))
 		{
 			passed_intersection_line = true;
 			DEBUG_PRINTLN("Yes I passed the intersection line");
@@ -193,7 +179,7 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 	else {//Backward
 		Sensor::PollSensors(Sensors);
 		//ideal-case Both sensors have passed the intersection line normally
-		if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
+		if ((RVAL(sC::MR) != START_VAL(sC::MR)) && (RVAL(sC::ML) != START_VAL(sC::ML)) || ((sensor4_event == true) && (sensor5_event == true)))
 		{
 			passed_intersection_line = true;
 			DEBUG_PRINTLN("Yes I passed the intersection line");
@@ -231,9 +217,9 @@ uint8_t navigation::whereAmI(Direction Dir) {
 		i = 0;
 	}
 
-	if (Sensor::values[i] == Sensor::values[i+1]) {
+	if (RVAL(i) == RVAL(i + 1)) {
 		if (passed_intersection == true) {
-			if (Sensor::values[i] != starting_intersection[i]) {
+			if (RVAL(i) != START_VAL(i)) {
 				DEBUG_PRINTLN("I am at Q4");
 				quadrant = 4;
 			}
@@ -243,7 +229,7 @@ uint8_t navigation::whereAmI(Direction Dir) {
 			}
 		}
 		else {
-			if (Sensor::values[i] != starting_intersection[i]) {
+			if (RVAL(i) != START_VAL(i)) {
 				DEBUG_PRINTLN("I am at Q2");
 				quadrant = 2;
 			}
@@ -259,130 +245,123 @@ uint8_t navigation::whereAmI(Direction Dir) {
 	}
 	return quadrant;
 }
-
-
 void navigation::findLineS23(uint8_t quadrant) {
 	bool smart_line_s45 = false;
 	switch (quadrant) {
 	case 1: while (smart_line_s45 == false) {
-				//Sensor::PollSensors(Sensors, Back, 2);
-				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
-					smart_line_s45 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q1 NEED TO KICK BACKWARDS RIGHT");
-					Kick(KickDirection::Backward, KickDirection::Forward, 255, 0);
-				}
+		//Sensor::PollSensors(Sensors, Back, 2);
 		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::LTL) != (RVAL(sC::FL))) {
+			smart_line_s45 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q1 NEED TO KICK BACKWARDS RIGHT");
+			Kick(KickDirection::Backward, KickDirection::Forward, 255, 0);
+		}
 	}
 			break;
 	case 2: while (smart_line_s45 == false) {
-				// Sensor::PollSensors(Sensors, Back, 2);
-				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
-					smart_line_s45 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q2 NEED TO KICK BACKWARDS RIGHT");
-					Kick(KickDirection::Backward, KickDirection::Forward, KICK_MAGNITUDE, 0);
+		// Sensor::PollSensors(Sensors, Back, 2);
 		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::LTL) != (RVAL(sC::FL))) {
+			smart_line_s45 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q2 NEED TO KICK BACKWARDS RIGHT");
+			Kick(KickDirection::Backward, KickDirection::Forward, KICK_MAGNITUDE, 0);
 
-				}
+		}
 	}
 			break;
 	case 3:  while (smart_line_s45 == false) {
-				 // Sensor::PollSensors(Sensors, Back, 2);
-				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
-					 smart_line_s45 = true;
-				 }
-				 else {
-					 DEBUG_PRINTLN("Q3 NEED TO KICK BACKWARDS LEFT");
-					 Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
+		// Sensor::PollSensors(Sensors, Back, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::LTL) != (RVAL(sC::FL))) {
+			smart_line_s45 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q3 NEED TO KICK BACKWARDS LEFT");
+			Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
 
-				 }
+		}
 	}
 			 break;
 	case 4:  while (smart_line_s45 == false) {
-				 // Sensor::PollSensors(Sensors, Back, 2);
-				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
-					 smart_line_s45 = true;
-				 }
-				 else {
-					 DEBUG_PRINTLN("Q4 NEED TO KICK BACKWARDS LEFT");
-					 Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
+		// Sensor::PollSensors(Sensors, Back, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::LTL) != (RVAL(sC::FL))) {
+			smart_line_s45 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q4 NEED TO KICK BACKWARDS LEFT");
+			Kick(KickDirection::Forward, KickDirection::Backward, 0, KICK_MAGNITUDE);
 
-				 }
+		}
 	}
 			 break;
 	default:
 		break;
 	}
 }
-
-
-
 // Based on the quadrant the buggy rotates left or right to get back to the motion line with sesnors 1 and 2
 void navigation::findLineS01(uint8_t quadrant) {
 	bool smart_line_s01 = false;
 	switch (quadrant) {
 	case 1: while (smart_line_s01 == false) {
-				//   Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
-					smart_line_s01 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q1 NEED TO ROTATE RIGHT");
-					Kick(KickDirection::Right, KICK_MAGNITUDE);
+		//   Sensor::PollSensors(Sensors, Front, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::FR) != (RVAL(sC::LTR))) {
+			smart_line_s01 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q1 NEED TO ROTATE RIGHT");
+			Kick(KickDirection::Right, KICK_MAGNITUDE);
 
-				}
+		}
 	}
 			break;
 	case 2: while (smart_line_s01 == false) {
-				//Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
-					smart_line_s01 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q2 NEED TO ROTATE RIGHT");
-					Kick(KickDirection::Right, KICK_MAGNITUDE);
+		//Sensor::PollSensors(Sensors, Front, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::FR) != (RVAL(sC::LTR))) {
+			smart_line_s01 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q2 NEED TO ROTATE RIGHT");
+			Kick(KickDirection::Right, KICK_MAGNITUDE);
 
-				}
+		}
 	}
 			break;
 	case 3: while (smart_line_s01 == false) {
-				//Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
-					smart_line_s01 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q3 NEED TO ROTATE LEFT");
-					Kick(KickDirection::Left, KICK_MAGNITUDE);
+		//Sensor::PollSensors(Sensors, Front, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::FR) != (RVAL(sC::LTR))) {
+			smart_line_s01 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q3 NEED TO ROTATE LEFT");
+			Kick(KickDirection::Left, KICK_MAGNITUDE);
 
-				}
+		}
 	}
 			break;
 	case 4: while (smart_line_s01 == false) {
-				//  Sensor::PollSensors(Sensors, Front, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-				if (Sensors[0].tileWhite != (Sensors[1].tileWhite)) {
-					smart_line_s01 = true;
-				}
-				else {
-					DEBUG_PRINTLN("Q4 NEED TO ROTATE LEFT");
-					Kick(KickDirection::Left, KICK_MAGNITUDE);
-				}
+		//  Sensor::PollSensors(Sensors, Front, 2);
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::FR) != (RVAL(sC::LTR))) {
+			smart_line_s01 = true;
+		}
+		else {
+			DEBUG_PRINTLN("Q4 NEED TO ROTATE LEFT");
+			Kick(KickDirection::Left, KICK_MAGNITUDE);
+		}
 	}
 			break;
 	default:
 		break;
 	}
 }
-
-
-
 //Identifies whether sensors 0 and 1 have passed the node in the forward motion
 void navigation::passedNote() {
 	bool passed_s01 = false;
@@ -392,7 +371,7 @@ void navigation::passedNote() {
 		if (reachedDestination() == true) {
 			return;
 		}
-		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1])) {
+		if ((RVAL(sC::FR) != START_VAL(sC::FR)) && (RVAL(sC::LTR) != START_VAL(sC::LTR))) {
 			passed_s01 = true;
 		}
 		else {
@@ -415,7 +394,7 @@ void navigation::reachedNode(Direction Dir) {
 			return;
 		}
 		if (Dir == Forward) {
-			if ((Sensors[2].tileWhite != starting_intersection[0]) && (Sensors[3].tileWhite != starting_intersection[1])) {
+			if ((RVAL(sC::LTL) != START_VAL(sC::FR)) && (RVAL(sC::FL) != START_VAL(sC::LTR))) {
 				passed = true;
 			}
 			else {
@@ -426,7 +405,7 @@ void navigation::reachedNode(Direction Dir) {
 			}
 		}
 		else {
-			if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
+			if ((RVAL(sC::MR) != START_VAL(sC::MR)) && (RVAL(sC::ML) != START_VAL(sC::ML))) {
 				passed = true;
 			}
 			else {
@@ -612,11 +591,115 @@ void navigation::passedNoteB() {
 
 	}
 }
+*/
+/*
+void navigation::navigate(String str) {
 
+Sensor::PollSensors(Sensors);
+
+if (str == "F") {
+sensor0_event = false;
+sensor1_event = false;
+flag0 = false;
+flag1 = false;
+start();
+MoveForward();
+} else if (str == "B") {
+sensor4_event = false;
+sensor5_event = false;
+flag4 = false;
+flag5 = false;
+start();
+MoveBackward();
+} else if (str == "R") {
+start();
+TurnRight();
+} else if (str == "L") {
+start();
+TurnLeft();
+} 		//if (str == "D") {
+where_am_i();
+sensor0_event = false;
+sensor1_event = false;
+sensor4_event = false;
+sensor5_event = false;
+bool flag0 = false;
+bool flag1 = false;
+bool flag4 = false;
+bool flag5 = false;
+}
+if (str == "A") {
+smart_alignment();
+}//
+			else if (str == "G") {
+				BoxApproach();
+				box assessBox;
+				byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
+				if (error == 1) { //Backup and attempt re-docking unless already tried twice// }
+			}
+			else if (str == "S") {
+				//drive(motorConfig::S, motorConfig::S);
+			}
+			else {
+				//drive(motorConfig::S, motorConfig::S);
+			}
+
+};
+
+void navigation::BoxApproach() {
+	uint8_t Distance = 0;
+	LeftSpeed = 60;
+	RightSpeed = 60;
+	NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
+	drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+	while (true) {
+		Distance = Ultrasonic.ping_cm();
+		DEBUG_VPRINTLN(Distance);
+		if (Distance > 3) {
+			DEBUG_PRINTLN("Approaching Box");
+			Sensor::PollSensors(Sensors, Sensor::Front, 2);
+			if (RVAL(sC::LTR) == RVAL(sC::LTL)) {
+				Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
+				if (Dir == Sensor::DriftDirection::DRight) {
+					DEBUG_PRINTLN("Drifting Right");
+					LeftSpeed -= CORRECTION_MAG;
+					//RightSpeed += CORRECTION_MAG;
+					drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+				}
+				else if (Dir == Sensor::DriftDirection::DLeft) {
+					DEBUG_PRINTLN("Drifting Left");
+					//LeftSpeed += CORRECTION_MAG;
+					RightSpeed -= CORRECTION_MAG;
+					drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+				}
+			}
+		}
+		else {
+			DEBUG_PRINTLN("I Have Reached the box");
+			drive(motorConfig::S, motorConfig::S, 0, 0);
+			if (Distance == 0) {
+				DEBUG_PRINTLN("Either too far or too close");
+			}
+			return;
+		}
+		delay(50);
+	}
+}
+
+//captures and stores in an array all the sensor values at the initial node position
+void navigation::start() {
+	Sensor::PollSensors(Sensors);
+#ifndef SENSOR_MEMORY_SAVE
+	memcpy(starting_values, Sensor::values, NUM_SENSORS);
+#else
+	starting_values = Sensor::values;
+#endif
+	DEBUG_PRINTLN("I have the starting POSITION");
+}
 
 //Function to turn left
 void navigation::TurnLeft() {
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors);
 	drive(motorConfig::B, motorConfig::F, 70, 70);
 
 	//digitalWrite(M1, HIGH);
@@ -628,9 +711,9 @@ void navigation::TurnLeft() {
 
 		//Sensor::SelectSensor(1);
 		//Sensors[1].GetReading();
-		//Serial.println(Sensors[1].tileWhite);
+		//Serial.println(RVAL(sC::LTR));
 		//Sensor::LogicCheck(Sensors);
-		if (Sensors[1].tileWhite != Sensors[1].previoustileWhite) {
+		if (RVAL(sC::LTR) != RLASTVAL(sC::LTR)) {
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 
 			//analogWrite(E1, 0);
@@ -648,11 +731,11 @@ void navigation::TurnRight() {
 	//digitalWrite(M2, HIGH);
 	//analogWrite(E1, 65);
 	//analogWrite(E2, 65);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors);
 	drive(motorConfig::F, motorConfig::B, 70, 70);
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::Front, 2);
-		if (Sensors[0].tileWhite != starting_intersection[0]) {
+		if (RVAL(sC::sC::FR) != START_VAL(sC::FR)) {
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 
 			//analogWrite(E1, 0);
@@ -680,7 +763,7 @@ void navigation::MoveForward() {
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::FrontNMiddle, 4);
 		sensorEvents();
-		if ((Sensors[2].tileWhite != starting_intersection[2] && Sensors[3].tileWhite != starting_intersection[3])
+		if ((RVAL(sC::LTL) != START_VAL(sC::LTL) && RVAL(sC::FL) != START_VAL(sC::FL))
 			)
 		{
 			//Don't kick
@@ -689,10 +772,10 @@ void navigation::MoveForward() {
 			return;
 		}
 		else {
-			if (Sensors[0].tileWhite != Sensors[1].tileWhite) {
+			if (RVAL(sC::FR) != RVAL(sC::LTR)) {
 				//On line
-				LastCorrectLeft = Sensors[1].tileWhite;
-				LastCorrectRight = Sensors[0].tileWhite;
+				LastCorrectLeft = RVAL(sC::LTR);
+				LastCorrectRight = RVAL(sC::FR);
 				Kick(KickDirection::Forward, 200);//Kick forward but with a long kick
 				RCnt = 0;
 				LCnt = 0;
@@ -701,8 +784,8 @@ void navigation::MoveForward() {
 			//LeftSpeed++;
 			//RightSpeed++;
 		}
-		if (Sensors[0].tileWhite == Sensors[1].tileWhite) {
-			if (Sensors[2].tileWhite == Sensors[3].tileWhite) {
+		if (RVAL(sC::FR) == RVAL(sC::LTR)) {
+			if (RVAL(sC::LTL) == RVAL(sC::FL)) {
 				//Following wrong line case
 				//LastCorrectLeft = !LastCorrectLeft;
 				//LastCorrectRight = !LastCorrectRight;
@@ -713,8 +796,8 @@ void navigation::MoveForward() {
 				RCnt = 0;
 				LCnt = 0;
 				//Kick(KickDirection::Forward, 200);//Kick forward but with a long kick
-				LastCorrectLeft = !starting_intersection[1];
-				LastCorrectRight = !starting_intersection[0];
+				LastCorrectLeft = !START_VAL(sC::LTR);
+				LastCorrectRight = !START_VAL(sC::FR);
 			}
 			else {
 
@@ -762,7 +845,7 @@ void navigation::MoveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors, Sensor::FrontNMiddle, 4);
 		sensorEventsB();
-		if ((Sensors[2].tileWhite != starting_intersection[2] && Sensors[3].tileWhite != starting_intersection[3])
+		if ((RVAL(sC::LTL) != START_VAL(sC::LTL) && RVAL(sC::FL) != START_VAL(sC::FL))
 			)
 		{
 			//Don't kick
@@ -771,10 +854,10 @@ void navigation::MoveBackward() {
 			return;
 		}
 		else {
-			if (Sensors[0].tileWhite != Sensors[1].tileWhite) {
+			if (RVAL(sC::FR) != RVAL(sC::LTR)) {
 				//On line
-				LastCorrectLeft = Sensors[1].tileWhite;
-				LastCorrectRight = Sensors[0].tileWhite;
+				LastCorrectLeft = RVAL(sC::LTR);
+				LastCorrectRight = RVAL(sC::FR);
 				Kick(KickDirection::Backward, 200);//Kick Backward but with a long kick
 				RCnt = 0;
 				LCnt = 0;
@@ -783,8 +866,8 @@ void navigation::MoveBackward() {
 			//LeftSpeed++;
 			//RightSpeed++;
 		}
-		if (Sensors[0].tileWhite == Sensors[1].tileWhite) {
-			if (Sensors[2].tileWhite == Sensors[3].tileWhite) {
+		if (RVAL(sC::FR) == RVAL(sC::LTR)) {
+			if (RVAL(sC::LTL) == RVAL(sC::FL)) {
 				//Following wrong line case
 				//LastCorrectLeft = !LastCorrectLeft;
 				//LastCorrectRight = !LastCorrectRight;
@@ -795,8 +878,8 @@ void navigation::MoveBackward() {
 				RCnt = 0;
 				LCnt = 0;
 				//Kick(KickDirection::Backward, 200);//Kick Backward but with a long kick
-				LastCorrectLeft = !starting_intersection[1];
-				LastCorrectRight = !starting_intersection[0];
+				LastCorrectLeft = !START_VAL(sC::LTR);
+				LastCorrectRight = !START_VAL(sC::FR);
 			}
 			else {
 
@@ -828,4 +911,4 @@ void navigation::MoveBackward() {
 		}
 	}
 
-}
+}*/
