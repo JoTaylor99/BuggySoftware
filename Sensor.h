@@ -9,30 +9,11 @@
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include "Comms.h"
-//#ifdef QTRSINUSE
-//#include <QTRSensors.h>
-//#endif
-/*Sensor mode setup flow control:
-*	Create one sensor object per sensor, passing the address select pin as an argument
-*	Set all address pinModes as output
-*	Write all address pins high
-*	Declare 1 analog pin mode in and 1 analog pin mode out for ultrasonic
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*/
+
+#ifdef QTRSINUSE
+#include <QTRSensors.h>
+#endif
+
 
 
 class Sensor {
@@ -45,27 +26,15 @@ public:
 	
 	/* Sensor destructor*/
 	~Sensor();
-
-
-
-
-	
-	bool tileWhite;
-	bool previoustileWhite;
-
-	//static uint8_t values;
-	static bool values[8];
-
-
+		
 	static const sC::sensorNumber DefaultOrder[8];
 	static const sC::sensorNumber Front[4];
 	static const sC::sensorNumber Back[2];
 	static const sC::sensorNumber Middle[2];
 	static const sC::sensorNumber FrontNMiddle[6];
-
+	
 	static void initSensors();
 	
-	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
 	
 	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
 
@@ -85,7 +54,9 @@ public:
 		static bool lastValues[8];
 #endif
 
+
 private:
+	bool tileWhite;
 	uint16_t _pin;
 	uint16_t Max;
 	uint16_t Min;
@@ -93,10 +64,9 @@ private:
 	double Normalised;
 	sC::SensorType _s;
 	
-
+	
 	bool GetReading();
 	static void SelectSensor(byte sensorNumber);
-	static void LogicCheck(Sensor *sens);
 	void ReadRaw(); //Reads the Raw value from whichever sensor is enabled
 	void UpdateRange(); //Update's the sensor's range of values for correct scaling
 	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
@@ -116,6 +86,20 @@ enum DriftDirection : uint8_t {
 DLeft, DRight, None, NotInTransition, Stop
 };
 
+static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
+
+static void LogicCheck(Sensor *sens);
+*/
+
+
+
+
+
+
+
+
+
+//from original INO
 /* UNUSED VARIABLES
 *
 * int TransitionOrder declared in global scope and not presently referenced

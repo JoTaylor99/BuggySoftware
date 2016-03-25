@@ -12,16 +12,11 @@ SFE_TSL2561 tsl;
 Adafruit_MCP23017 sensGPIO;
 
 
-
 const sC::sensorNumber Sensor::DefaultOrder[8] = { sC::FR, sC::LTR, sC::LTL, sC::FL, sC::MR, sC::ML, sC::BR, sC::BL };
 const sC::sensorNumber Sensor::Front[4] = { sC::FR, sC::LTR, sC::LTL, sC::FL };
 const sC::sensorNumber Sensor::Back[2] = { sC::BR, sC::BL };
 const sC::sensorNumber Sensor::Middle[2] = { sC::MR, sC::ML };
 const sC::sensorNumber Sensor::FrontNMiddle[6] = { sC::FR, sC::LTR, sC::LTL, sC::FL, sC::MR, sC::ML };
-
-
-//uint8_t Sensor::values = 0x00;
-bool Sensor::values[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 Sensor::Sensor(uint16_t Pin) {
 	_pin = Pin;
@@ -29,7 +24,6 @@ Sensor::Sensor(uint16_t Pin) {
 	Min = MIN_DEFAULT;
 	Normalised = 0;
 	tileWhite = false;
-	previoustileWhite = false;
 	_s = sC::SensorType::TSL;
 }; 
 
@@ -39,7 +33,6 @@ Sensor::Sensor(uint16_t index, sC::SensorType S) {
 	Min = MIN_DEFAULT;
 	Normalised = 0;
 	tileWhite = false;
-	previoustileWhite = false;
 	_s = S;
 };
 
@@ -86,7 +79,6 @@ void Sensor::Normalise() {
 
 //Checks the given sensor values and returns and array of bools.
 bool Sensor::GetReading() {
-	previoustileWhite = tileWhite;
 	ReadRaw();
 	UpdateRange();
 	Normalise();
@@ -125,175 +117,7 @@ void Sensor::toTileColour() {
 }
 
 
-//Checks the Calculated tileWhite value and returns whether it is valid
-void Sensor::LogicCheck(Sensor *sens) {
-	if (abs(sens[0].Normalised - sens[1].Normalised) >= LOGIC_THRESHOLD) {
-		//Should be different values
-		if (sens[0].Normalised < sens[1].Normalised) {
-			sens[0].tileWhite = false;
-			sens[1].tileWhite = true;
-		}
-		else {
-			sens[0].tileWhite = true;
-			sens[1].tileWhite = false;
-		}
-	}
-	else if (abs((double)sens[0].Normalised - (double)sens[1].Normalised) < LOGIC_THRESHOLD) {
-	}
-	if (abs(sens[2].Normalised - sens[3].Normalised) >= LOGIC_THRESHOLD) {
-		//Should be different values
-		if (sens[2].Normalised < sens[3].Normalised) {
-			sens[2].tileWhite = false;
-			sens[3].tileWhite = true;
-		}
-		else {
-			sens[2].tileWhite = true;
-			sens[3].tileWhite = false;
-		}
-	}
-	else if (abs(sens[2].Normalised - sens[3].Normalised) < LOGIC_THRESHOLD) {
-		//Should be the same
-	}
-	if (abs(sens[4].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
-		//Should be different values
-		if (sens[4].Normalised < sens[5].Normalised) {
-			sens[4].tileWhite = false;
-			sens[5].tileWhite = true;
-		}
-		else {
-			sens[4].tileWhite = true;
-			sens[5].tileWhite = false;
-		}
-	}
-	else if (abs(sens[4].Normalised - sens[5].Normalised) < LOGIC_THRESHOLD) {
-		//Should be the same
-	}
-	if (abs(sens[2].Normalised - sens[4].Normalised) >= LOGIC_THRESHOLD) {
-		//Should be different values
-		if (sens[2].Normalised < sens[4].Normalised) {
-			sens[2].tileWhite = false;
-			sens[4].tileWhite = true;
-		}
-		else {
-			sens[4].tileWhite = true;
-			sens[2].tileWhite = false;
-		}
-	}
-	if (abs(sens[3].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
-		//Should be different values
-		if (sens[3].Normalised < sens[5].Normalised) {
-			sens[3].tileWhite = false;
-			sens[5].tileWhite = true;
-		}
-		else {
-			sens[5].tileWhite = true;
-			sens[3].tileWhite = false;
-		}
-	}
-}
-
-
-//Detects if the buggy is drifting from a line
-Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight) {
-	DEBUG_PRINTLN("Checking for drift");
-	//DriftDirection CurrentDrift = DriftDirection::None;
-	//if (sens[0].tileWhite == sens[1].tileWhite) {
-	//	//Front Sensors are the same therefor the buggy is drifting
-	//	if (sens[2].tileWhite != sens[3].tileWhite) {
-	//		//The middle two sensors are not mis-aligned and therefor can be used for determining which direction to turn
-	//		if (sens[2].tileWhite == sens[0].tileWhite) {
-	//			//Drifting to the Right
-	//			return DriftDirection::DRight;
-	//		}
-	//		else {
-	//			//Drifitng to the Left
-	//			return DriftDirection::DLeft;
-	//		}
-	//	}
-	//	else if (sens[4].tileWhite != sens[5].tileWhite) {
-	//		//The Middle two sensors are the same and therefore fallback to the back two sensors for alignment
-	//		if (sens[4].tileWhite == sens[0].tileWhite) {
-	//			//Drifitng to the right
-	//			return DriftDirection::DRight;
-	DriftDirection CurrentDrift = DriftDirection::None;
-	if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
-		if (lastCorrectLeft != sens[1].tileWhite) {
-
-			// Dirfiting right
-			return DRight;
-		}
-		else {
-			//No Dirft
-		}
-		if (lastCorrectRight != sens[0].tileWhite) {
-			//Drift Left
-			return DLeft;
-		}
-		else {
-			//No Drift
-			//CurrentDrift = None;
-		}
-
-
-
-		return CurrentDrift;
-
-
-	}
-
-	//		}
-	//		else {
-	//			//Drifting to the Left
-	//			return DriftDirection::DLeft;
-
-	//		}
-
-	//	}
-	//	else {
-	//		//No Idea where the buggy is
-	//	}
-
-
-
-
-
-
-	//}
-
-
-
-
-
-
-	{
-		//DriftDirection CurrentDrift = DriftDirection::None;
-		if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
-			if (lastCorrectLeft != sens[1].tileWhite) {
-				// Dirfiting right
-				return DRight;
-			}
-			else {
-				//No Dirft
-			}
-			if (lastCorrectRight != sens[0].tileWhite) {
-				//Drift Left
-				return DLeft;
-			}
-			else {
-				//No Drift
-				//CurrentDrift = None;
-
-			}
-
-			return CurrentDrift;
-
-		}
-		else {
-			return DriftDirection::None;
-		}
-	}
-}
-//Being called by PollSensors & loop1
+//Being called by PollSensors
 //This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
 //Prints boolean values, presently there is no material difference between the conditions,
 //so one has been commented out until such time as communication code is finalised.
@@ -312,26 +136,22 @@ void Sensor::printbw(bool *values) {
 }
 
 //Polls all given sensors in the order specified.
-void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, byte OrderLength){
+void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte OrderLength){
 	unsigned long t1, t2;
 	t1 = micros();
 	byte CurrentSensorIndex = 0;
 	for (byte n = 0; n < OrderLength; n++) {
 		CurrentSensorIndex = order[n];
-		//  Serial.print("Current Index"); Serial.println(CurrentSensorIndex);
 		SelectSensor(CurrentSensorIndex);
 		SLASTVAL(CurrentSensorIndex, RVAL(CurrentSensorIndex));
 		sens[CurrentSensorIndex].GetReading();
 		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
-		// Serial.print(sens[CurrentSensorIndex].tileWhite); Serial.print("\t"); Serial.print(sens[CurrentSensorIndex].Normalised); Serial.print("\t"); Serial.println(sens[CurrentSensorIndex].Raw);
 	}
 	t2 = micros();
 	DEBUG_PRINTLN("SENSOR VALUES: ");
 	printbw(values);
 	DEBUG_PRINT("Time to poll 8 sensors: ");
 	DEBUG_VPRINTLN(t2 - t1);
-	//Sensor::LogicCheck(sens);
-
 
 }
 
@@ -371,18 +191,6 @@ void Sensor::initSensors() {
 	pinMode(A0, OUTPUT);
 	pinMode(A1, INPUT);
 	
-	////-------Sensor interrupt setups-------
-
-	////setup GPIO pinModes
-	//sensGPIO.pinMode(SENSOR1INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR2INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR3INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR4INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR5INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR6INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR7INTPIN, INPUT);
-	//sensGPIO.pinMode(SENSOR8INTPIN, INPUT);
-	
 	 for (byte i = sC::FR; i < sC::invalid; i++) {
 		SelectSensor(i);
 		tsl.begin(TSL2561_ADDR_0);
@@ -393,57 +201,230 @@ void Sensor::initSensors() {
 	delay(14);
 	_sensorInitComplete = true;
 }
-		/*const byte blackTileLowLow = BLACKLOWTHRESHOLDLOWBYTE;
-		const byte blackTileLowHigh = BLACKLOWTHRESHOLDHIGHBYTE;
-		const byte blackTileHighLow = BLACKHIGHTHRESHOLDLOWBYTE;
-		const byte blackTileHighHigh = BLACKHIGHTHRESHOLDLOWBYTE;
 
-		const byte whiteTileLowLow = WHITELOWTHRESHOLDLOWBYTE;
-		const byte whiteTileLowHigh = WHITELOWTHRESHOLDHIGHBYTE;
-		const byte whiteTileHighLow = WHITEHIGHTHRESHOLDLOWBYTE;
-		const byte whiteTileHighHigh = WHITEHIGHTHRESHOLDHIGHBYTE;*/
+//functions removed 25/03
+/*
+//Checks the Calculated tileWhite value and returns whether it is valid
+void Sensor::LogicCheck(Sensor *sens) {
+if (abs(sens[0].Normalised - sens[1].Normalised) >= LOGIC_THRESHOLD) {
+//Should be different values
+if (sens[0].Normalised < sens[1].Normalised) {
+sens[0].tileWhite = false;
+sens[1].tileWhite = true;
+}
+else {
+sens[0].tileWhite = true;
+sens[1].tileWhite = false;
+}
+}
+else if (abs((double)sens[0].Normalised - (double)sens[1].Normalised) < LOGIC_THRESHOLD) {
+}
+if (abs(sens[2].Normalised - sens[3].Normalised) >= LOGIC_THRESHOLD) {
+//Should be different values
+if (sens[2].Normalised < sens[3].Normalised) {
+sens[2].tileWhite = false;
+sens[3].tileWhite = true;
+}
+else {
+sens[2].tileWhite = true;
+sens[3].tileWhite = false;
+}
+}
+else if (abs(sens[2].Normalised - sens[3].Normalised) < LOGIC_THRESHOLD) {
+//Should be the same
+}
+if (abs(sens[4].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
+//Should be different values
+if (sens[4].Normalised < sens[5].Normalised) {
+sens[4].tileWhite = false;
+sens[5].tileWhite = true;
+}
+else {
+sens[4].tileWhite = true;
+sens[5].tileWhite = false;
+}
+}
+else if (abs(sens[4].Normalised - sens[5].Normalised) < LOGIC_THRESHOLD) {
+//Should be the same
+}
+if (abs(sens[2].Normalised - sens[4].Normalised) >= LOGIC_THRESHOLD) {
+//Should be different values
+if (sens[2].Normalised < sens[4].Normalised) {
+sens[2].tileWhite = false;
+sens[4].tileWhite = true;
+}
+else {
+sens[4].tileWhite = true;
+sens[2].tileWhite = false;
+}
+}
+if (abs(sens[3].Normalised - sens[5].Normalised) >= LOGIC_THRESHOLD) {
+//Should be different values
+if (sens[3].Normalised < sens[5].Normalised) {
+sens[3].tileWhite = false;
+sens[5].tileWhite = true;
+}
+else {
+sens[5].tileWhite = true;
+sens[3].tileWhite = false;
+}
+}
+}
 
 
-		//Set interrupt thesholds
-		//RIGHT starts as black, black, black, white
-		//LEFT starts as white, white, white, black
-		//Thresholds set such that value will remain inside bound until change of tile.
-		//if ((i == sensorNumber::junctRight) || (i == LTR) || (i == MR) || (i == BL)) {
-		//	//set thresholds for over black tile
-		//	//set low threshold
-		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
-		//	//set high threshold
-		//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
-		//}
-		//else if ((i == junctLeft) || (i == LTL) || (i == ML) || (i == BR)) {
-		//set thresholds for over white tile
+//Detects if the buggy is drifting from a line
+Sensor::DriftDirection Sensor::Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight) {
+DEBUG_PRINTLN("Checking for drift");
+//DriftDirection CurrentDrift = DriftDirection::None;
+//if (sens[0].tileWhite == sens[1].tileWhite) {
+//	//Front Sensors are the same therefor the buggy is drifting
+//	if (sens[2].tileWhite != sens[3].tileWhite) {
+//		//The middle two sensors are not mis-aligned and therefor can be used for determining which direction to turn
+//		if (sens[2].tileWhite == sens[0].tileWhite) {
+//			//Drifting to the Right
+//			return DriftDirection::DRight;
+//		}
+//		else {
+//			//Drifitng to the Left
+//			return DriftDirection::DLeft;
+//		}
+//	}
+//	else if (sens[4].tileWhite != sens[5].tileWhite) {
+//		//The Middle two sensors are the same and therefore fallback to the back two sensors for alignment
+//		if (sens[4].tileWhite == sens[0].tileWhite) {
+//			//Drifitng to the right
+//			return DriftDirection::DRight;
+DriftDirection CurrentDrift = DriftDirection::None;
+if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
+if (lastCorrectLeft != sens[1].tileWhite) {
 
-		//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);
-		//		//set high threshold
-		//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, whiteTileHighLow, whiteTileHighHigh);
+// Dirfiting right
+return DRight;
+}
+else {
+//No Dirft
+}
+if (lastCorrectRight != sens[0].tileWhite) {
+//Drift Left
+return DLeft;
+}
+else {
+//No Drift
+//CurrentDrift = None;
+}
 
-		//	}
 
 
-		//	uint8_t _interruptPersistence = TSL2561_INTERRUPT_PERSISTENCE_ONE;
+return CurrentDrift;
 
-		//	//Set interrupt control register with mode and persistence;
-		//	tsl.write8bits(TSL2561_COMMAND_BIT | TSL2561_REGISTER_INTERRUPT, _interruptPersistence | TSL2561_INTERRUPT_LEVELMODE);
 
-		//	//
+}
 
-		//}
+//		}
+//		else {
+//			//Drifting to the Left
+//			return DriftDirection::DLeft;
 
-		//---------Setup Gains and Intergration time for all sensors
-		//tsl.setGain(TSL2561_GAIN_16X);
-		//tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
-		//tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
-		//tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
+//		}
+
+//	}
+//	else {
+//		//No Idea where the buggy is
+//	}
+
+
+
+
+
+
 //}
 
 
 
 
+
+
+{
+//DriftDirection CurrentDrift = DriftDirection::None;
+if (sens[0].tileWhite == sens[1].tileWhite) { // If they are the same
+if (lastCorrectLeft != sens[1].tileWhite) {
+// Dirfiting right
+return DRight;
+}
+else {
+//No Dirft
+}
+if (lastCorrectRight != sens[0].tileWhite) {
+//Drift Left
+return DLeft;
+}
+else {
+//No Drift
+//CurrentDrift = None;
+
+}
+
+return CurrentDrift;
+
+}
+else {
+return DriftDirection::None;
+}
+}
+}
+
+
+
+Elements removed from setup:
+
+const byte blackTileLowLow = BLACKLOWTHRESHOLDLOWBYTE;
+const byte blackTileLowHigh = BLACKLOWTHRESHOLDHIGHBYTE;
+const byte blackTileHighLow = BLACKHIGHTHRESHOLDLOWBYTE;
+const byte blackTileHighHigh = BLACKHIGHTHRESHOLDLOWBYTE;
+
+const byte whiteTileLowLow = WHITELOWTHRESHOLDLOWBYTE;
+const byte whiteTileLowHigh = WHITELOWTHRESHOLDHIGHBYTE;
+const byte whiteTileHighLow = WHITEHIGHTHRESHOLDLOWBYTE;
+const byte whiteTileHighHigh = WHITEHIGHTHRESHOLDHIGHBYTE;
+
+
+//Set interrupt thesholds
+//RIGHT starts as black, black, black, white
+//LEFT starts as white, white, white, black
+//Thresholds set such that value will remain inside bound until change of tile.
+//if ((i == sensorNumber::junctRight) || (i == LTR) || (i == MR) || (i == BL)) {
+//	//set thresholds for over black tile
+//	//set low threshold
+//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, blackTileLowLow, blackTileLowHigh);
+//	//set high threshold
+//	tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, blackTileHighLow, blackTileHighHigh);
+//}
+//else if ((i == junctLeft) || (i == LTL) || (i == ML) || (i == BR)) {
+//set thresholds for over white tile
+
+//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDL_LOW, whiteTileLowLow, whiteTileLowHigh);
+//		//set high threshold
+//		tsl.write16bits(TSL2561_COMMAND_BIT | TSL2561_WORD_BIT | TSL2561_REGISTER_THRESHHOLDH_LOW, whiteTileHighLow, whiteTileHighHigh);
+
+//	}
+
+
+//	uint8_t _interruptPersistence = TSL2561_INTERRUPT_PERSISTENCE_ONE;
+
+//	//Set interrupt control register with mode and persistence;
+//	tsl.write8bits(TSL2561_COMMAND_BIT | TSL2561_REGISTER_INTERRUPT, _interruptPersistence | TSL2561_INTERRUPT_LEVELMODE);
+
+//	//
+
+//}
+
+//---------Setup Gains and Intergration time for all sensors
+//tsl.setGain(TSL2561_GAIN_16X);
+//tsl.setTiming(TSL2561_INTEGRATIONTIME_13MS);  // Shortest time (Bright light)
+//tsl.setTiming(TSL2561_INTEGRATIONTIME_101MS);  // medium integration time (medium light)
+//tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS); //tsl.setTiming(TSL2561_INTEGRATIONTIME_402MS);  // longest integration time (dim light)
+//
+*/
 /* UNUSED FUNCTIONS
 *
 *public static function declared in scope Sensors but never called:
