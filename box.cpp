@@ -33,14 +33,14 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 	//check if correctly docked
 	if (!docked()) {
 		presentationData.error = 1;
-		Serial.println("Buggy not docked");
+		ERROR_PRINTLN("Buggy not docked");
 		return presentationData.error;
 	};
 
 	if (boxNumber = 1) {
 		setInput(ON, boxNumber);
 		presentationData.v1 = getReading();
-		Serial.print("V1 = ");
+		Serial.print(F("V1 = "));
 		Serial.println(presentationData.v1);
 		return 0;
 	}
@@ -49,18 +49,10 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 		rawValue = getReading();
 		calculatedValue = calculateResistorValue(rawValue, boxNumber);
 		presentationData.r1 = PrefResistor(calculatedValue, boxNumber);
-		if (boxNumber == 2) {
-			Serial.print("Ra = ");
-		} else if (boxNumber == 3) {
-			Serial.print("Ra = ");
-		} else if (boxNumber == 4) {
-			Serial.print("Ra = ");
-		} else if (boxNumber == 5) {
-			Serial.print("R1 = ");
-		} else if (boxNumber == 6) {
-			Serial.print("R1 = ");
-		} else if (boxNumber == 7){
-			Serial.print("R1 = ");
+		if ((boxNumber == 2) || (boxNumber == 3) || (boxNumber == 4)) {
+			Serial.print(F("Ra = "));
+		} else if ((boxNumber == 5) || (boxNumber == 6) || (boxNumber == 7)) {
+			Serial.print(F("R1 = "));
 		}
 		Serial.println(presentationData.r1);
 	}
@@ -73,24 +65,26 @@ byte box::interrogateBox(byte boxNumber, bool boxInverted){
 		rawValue = getReading();
 		calculatedValue = calculateResistorValue(rawValue, (0x80|boxNumber));
 		presentationData.r2 = PrefResistor(calculatedValue, boxNumber);
-		Serial.print("Rb = ");
+		Serial.print(F("Rb = "));
 		Serial.println(presentationData.r2);
 		setInput(OFF); 
 	} else {
 		calculatedValue = measureCapacitance();
 		presentationData.c1 = PrefCapactitor(calculatedValue, boxNumber);
-		Serial.print("C = ");
+		Serial.print(F("C = "));
 		Serial.println(presentationData.c1);
 
 		presentationData.f = calculateFrequency(boxNumber);
-		(boxNumber == 7) ? (Serial.print("Resonant Frequency = ")) : (Serial.print("Corner Frequency = "));
+		(boxNumber == 7) ? (Serial.print(F("Resonant Frequency = "))) : (Serial.print(F("Corner Frequency = ")));
 		Serial.println(presentationData.f);
 	}
 	return 0;
 
 };
 
-double box::getReadingOnce(){};
+double box::getOneReading(){
+	return analogRead(_adcInPin);
+};
 
 void box::setupADC(){
 	pinMode(_adcInPin, INPUT);
@@ -103,7 +97,7 @@ void box::setupADC(){
 
 	ADCSRA |= PS_16; //20us
 
-	double setup = getReadingOnce();
+	double setup = getOneReading();
 };
 
 void box::checkconfigCorrect() {
@@ -118,7 +112,7 @@ boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
 		bitClear(boxNumber, 7);
 		switch (boxNumber) {
 		case 1:
-			Serial.print("Error, no second stage in box 1 analysis");
+			ERROR_PRINTLN("Error, no second stage in box 1 analysis");
 			return boxConfig::box1;
 		case 2:	return boxConfig::box2b;
 		case 3: return boxConfig::box3b;
@@ -148,12 +142,14 @@ bool box::docked() {
 	return connected;
 };
 
+
 double box::getReading() {
 	
 
 };
 
-double calculateResistorValue(double rawValue, byte boxNumber){};
+double calculateResistorValue(double rawValue, byte boxNumber){
+};
 
 //Function to pick the prefered resistor from a given resistor value range.
 short PrefResistor(double OResistor, byte BoxNo) {

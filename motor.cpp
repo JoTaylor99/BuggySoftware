@@ -25,7 +25,7 @@ void motor::initMotors() {
 	_motorInitComplete = true;
 };
 
-void motor::MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed = 0, int RSpeed = 0){
+void motor::MotorControl(mC::Direction LDir, mC::Direction RDir, byte LSpeed = 0, byte RSpeed = 0){
 	if (LSpeed < 0) {
 		LSpeed = 0;
 	}
@@ -38,14 +38,14 @@ void motor::MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDi
 	else if (RSpeed >255) {
 		RSpeed = 255;
 	}
-	if (LDir == motorConfig::F) {
+	if (LDir == mC::F) {
 
 		GP.digitalWrite(dir1PinB, LOW);
 		GP.digitalWrite(dir2PinB, HIGH);
 		analogWrite(speedPinB, LSpeed);
 
 	}
-	else if (LDir == motorConfig::B) {
+	else if (LDir == mC::B) {
 
 		GP.digitalWrite(dir1PinB, HIGH);
 		GP.digitalWrite(dir2PinB, LOW);
@@ -59,12 +59,12 @@ void motor::MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDi
 	}
 
 
-	if (RDir == motorConfig::F) {
+	if (RDir == mC::F) {
 		GP.digitalWrite(dir1PinA, HIGH);
 		GP.digitalWrite(dir2PinA, LOW);
 		analogWrite(speedPinA, RSpeed);
 	}
-	else if (RDir == motorConfig::B) {
+	else if (RDir == mC::B) {
 		GP.digitalWrite(dir1PinA, LOW);
 		GP.digitalWrite(dir2PinA, HIGH);
 		analogWrite(speedPinA, RSpeed);

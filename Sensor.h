@@ -3,62 +3,74 @@
 #ifndef _SENSOR_H
 #define _SENSOR_H
 
+
+#include <SparkFunTSL2561.h>
 #include "Config.h"
-#include <TSL2561.h>
-#include <NewPing.h>
-#include <QTRSensors.h>
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include "Comms.h"
+
+#ifdef QTRSINUSE
+#include <QTRSensors.h>
+#endif
+
+
 
 class Sensor {
 
 public:
 	/* Sensor constructor*/
 	Sensor(uint16_t Pin);
-	Sensor(uint16_t Pin, sensorConfig::SensorType S);
+	Sensor(uint16_t Pin, sC::SensorType S);
 
 	
 	/* Sensor destructor*/
 	~Sensor();
-
-	enum DriftDirection {
-		DLeft, DRight, None, NotInTransition, Stop
-	};
-
-	double Normalised;
-	bool Boolian;
-	bool PreviousBool;
-	static bool values[6];
-
-	static const byte DefaultOrder[6];
-	static const byte Front[2];
-	static const byte Back[2];
-	static const byte FrontM[2];
-	static const byte FrontNMiddle[4];
-
+		
+	static const sC::sensorNumber DefaultOrder[8];
+	static const sC::sensorNumber Front[4];
+	static const sC::sensorNumber Back[2];
+	static const sC::sensorNumber Middle[2];
+	static const sC::sensorNumber FrontNMiddle[6];
+	
 	static void initSensors();
 	
-	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
-	static void PollSensors(Sensor *sens, const byte *order, byte OrderLength);
+	
+	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
+
+#ifdef SENSOR_MEMORY_SAVE
+	private:
+		static void setVal(sC::sensorNumber, bool tileColour);
+		static void setLastVal(sC::sensorNumber, bool lastValue);
+		static uint8_t lastValues;
+
+	public:
+		static bool valIs(sC::sensorNumber);
+		static bool lastValIs(sC::sensorNumber);
+		static uint8_t values;
+#else
+	public:
+		static bool values[8];
+		static bool lastValues[8];
+#endif
+
 
 private:
+	bool tileWhite;
 	uint16_t _pin;
 	uint16_t Max;
 	uint16_t Min;
 	uint16_t Raw;
-	sensorConfig::SensorType _s;
+	double Normalised;
+	sC::SensorType _s;
 	
-
+	
 	bool GetReading();
-	static void SelectSensor(uint8_t sensor_number);
-	static void LogicCheck(Sensor *sens);
+	static void SelectSensor(byte sensorNumber);
 	void ReadRaw(); //Reads the Raw value from whichever sensor is enabled
-	void UpdateMaximum(); //Update's the sensor's maximum value for correct scaling
-	void UpdateMinimum(); //Update's the sensor's minimum value for correct scaling
+	void UpdateRange(); //Update's the sensor's range of values for correct scaling
 	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
-	void NormalToBool(); //Determins weither a detacted sensor reading is Black or White
-	void ThresholdCheck(); //Checks the Normalised sensor readings against their thresholds
+	void toTileColour(); //Checks the Normalised sensor readings against their thresholds
 	static void printbw(bool *values); /*Being called by PollSensors & loop1
 This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
 Prints boolean values, presently there is no material difference between the conditions,
@@ -67,7 +79,27 @@ so one has been commented out until such time as communication code is finalised
 
 };
 
+//from changes 25/03
+/*
 
+enum DriftDirection : uint8_t {
+DLeft, DRight, None, NotInTransition, Stop
+};
+
+static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
+
+static void LogicCheck(Sensor *sens);
+*/
+
+
+
+
+
+
+
+
+
+//from original INO
 /* UNUSED VARIABLES
 *
 * int TransitionOrder declared in global scope and not presently referenced

@@ -29,6 +29,5 @@ BuggyCode/BuggyCode/Debug/buggyCode.ino.hex
 Sensors2.ino
 Release/
 src/_micro-api/libraries/TSL2561NR/library.properties
-TODO.txt
 src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.cpp
 src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.h
