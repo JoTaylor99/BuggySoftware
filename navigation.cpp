@@ -39,110 +39,47 @@ void navigation::initNavigation() {
 
 void navigation::navigate(String str) {
 
-		/*
-		for (int i = 0; i < 6; i++) {
-		Sensor::SelectSensor(i);
-		values[i] = Sensors[i].GetReading();
-		//Serial.println(Sensors[i].Normalised);
-		}*/
-		//int DefaultOrder[6] = { 1,2,3,4,5,6 };
-
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-
-
-
-		//printbw(values);
-		//sensor_events();
-		//Serial.println();
-
-		//Serial.println("---------------------");
-		//delay(50);
+		Sensor::PollSensors(Sensors);
 
 			if (str == "F") {
-				sensor0_event = false;
-				sensor1_event = false;
-				flag0 = false;
-				flag1 = false;
 				start();
 				MoveForward();
-				smartAlignment(Forward);
 			} else if (str == "B") {
-				sensor4_event = false;
-				sensor5_event = false;
-				flag4 = false;
-				flag5 = false;
 				start();
 				MoveBackward();
-				smartAlignment(Backward);
 			} else if (str == "R") {
 				start();
-				//RotateR();
 				TurnRight();
-				smartAlignmentRotation();
 			} else if (str == "L") {
 				start();
-				//RotateL();
 				TurnLeft();
-				smartAlignmentRotation();
-			} 		/*if (str == "D") {
-			where_am_i();
-			sensor0_event = false;
-			sensor1_event = false;
-			sensor4_event = false;
-			sensor5_event = false;
-			bool flag0 = false;
-			bool flag1 = false;
-			bool flag4 = false;
-			bool flag5 = false;
 			}
-			if (str == "A") {
-			smart_alignment();
-			}*/
 			else if (str == "G") {
 				BoxApproach();
-				box assessBox;
-				byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
-				if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
+				//box assessBox;
+				//byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
+				//if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
 			} else if (str == "S") {
-				drive(motorConfig::S, motorConfig::S);
+				//drive(motorConfig::S, motorConfig::S);
 			}
 			else {
-				drive(motorConfig::S, motorConfig::S);
+				//drive(motorConfig::S, motorConfig::S);
 			}
-	
 };
 
-	void navigation::BoxApproach() {
+void navigation::BoxApproach() {
 		uint8_t Distance = 0;
-		LeftSpeed = 60;
-		RightSpeed = 60;
 		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
-		drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+		//drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
 		while (true) {
 			Distance = Ultrasonic.ping_cm();
 			DEBUG_VPRINTLN(Distance);
 			if (Distance > 3) {
 				DEBUG_PRINTLN("Approaching Box");
 				Sensor::PollSensors(Sensors, Sensor::Front, 2);
-				if (Sensors[sC::LTR].tileWhite == Sensors[sC::LTL].tileWhite) {
-					Sensor::DriftDirection Dir = Sensor::Drifting(Sensors, LastCorrectLeft, LastCorrectRight);
-					if (Dir == Sensor::DriftDirection::DRight) {
-						DEBUG_PRINTLN("Drifting Right");
-						LeftSpeed -= CORRECTION_MAG;
-						//RightSpeed += CORRECTION_MAG;
-						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
-					}
-					else if (Dir == Sensor::DriftDirection::DLeft) {
-						DEBUG_PRINTLN("Drifting Left");
-						//LeftSpeed += CORRECTION_MAG;
-						RightSpeed -= CORRECTION_MAG;
-						drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
-					}
-				}
-			}
-			else {
+			} else {
 				DEBUG_PRINTLN("I Have Reached the box");
-				drive(motorConfig::S, motorConfig::S, 0, 0);
+				//drive(motorConfig::S, motorConfig::S, 0, 0);
 				if (Distance == 0) {
 					DEBUG_PRINTLN("Either too far or too close");
 				}
@@ -466,7 +403,6 @@ void navigation::passedNote() {
 		}
 	}
 }
-
 //Function to tell if have reached the node or not yet.
 //Optimised
 void navigation::reachedNode(Direction Dir) {
@@ -569,8 +505,6 @@ void navigation::getBackToLineRotation() {
 		}
 	}
 }
-
-
 //Aligns the middle sensors s2 and s3 with the line
 void navigation::forwardAlignmentOnRotation() {
 	bool s2s3aligned = false;
