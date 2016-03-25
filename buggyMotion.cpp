@@ -12,6 +12,19 @@ buggyMotion::~buggyMotion() {
 
 bool buggyMotion::_motionInitComplete = false;
 
+void buggyMotion::initMotion() {
+	initMotors();
+	_motionInitComplete = true;
+}
+
+void buggyMotion::drive(nC::Direction direction, nC::Drift drift) {
+
+
+}
+
+//functions removed 25/03
+/*
+
 void buggyMotion::Kick(KickDirection dir, int Magnitude) {
 if (dir == KickDirection::Forward) {
 MotorControl(motorConfig::Direction::F, motorConfig::Direction::F, Magnitude, Magnitude);
