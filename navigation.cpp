@@ -23,14 +23,15 @@ void navigation::initNavigation() {
 	
 	//box assessBox;
 	//assessBox.init();
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+
+	Sensor::PollSensors(Sensors);
 #ifdef SENSOR_DEBUG
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-	Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+	Sensor::PollSensors(Sensors);
+	Sensor::PollSensors(Sensors);
+	Sensor::PollSensors(Sensors);
+	Sensor::PollSensors(Sensors);
+	Sensor::PollSensors(Sensors);
+	Sensor::PollSensors(Sensors);
 #endif
 
 	DEBUG_PRINTLN("Setup Complete!");
@@ -190,7 +191,7 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 		}
 	}
 	else {//Backward
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+		Sensor::PollSensors(Sensors);
 		//ideal-case Both sensors have passed the intersection line normally
 		if ((Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5]) || ((sensor4_event == true) && (sensor5_event == true)))
 		{
@@ -265,7 +266,6 @@ void navigation::findLineS23(uint8_t quadrant) {
 	switch (quadrant) {
 	case 1: while (smart_line_s45 == false) {
 				//Sensor::PollSensors(Sensors, Back, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
@@ -273,24 +273,24 @@ void navigation::findLineS23(uint8_t quadrant) {
 					DEBUG_PRINTLN("Q1 NEED TO KICK BACKWARDS RIGHT");
 					Kick(KickDirection::Backward, KickDirection::Forward, 255, 0);
 				}
+		Sensor::PollSensors(Sensors);
 	}
 			break;
 	case 2: while (smart_line_s45 == false) {
 				// Sensor::PollSensors(Sensors, Back, 2);
-				Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					smart_line_s45 = true;
 				}
 				else {
 					DEBUG_PRINTLN("Q2 NEED TO KICK BACKWARDS RIGHT");
 					Kick(KickDirection::Backward, KickDirection::Forward, KICK_MAGNITUDE, 0);
+		Sensor::PollSensors(Sensors);
 
 				}
 	}
 			break;
 	case 3:  while (smart_line_s45 == false) {
 				 // Sensor::PollSensors(Sensors, Back, 2);
-				 Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
 				 if (Sensors[2].tileWhite != (Sensors[3].tileWhite)) {
 					 smart_line_s45 = true;
 				 }
@@ -410,7 +410,7 @@ void navigation::reachedNode(Direction Dir) {
 	bool passed = false;
 	while (passed == false) {
 		//Sensor::PollSensors(Sensors, FrontM, 2);
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+		Sensor::PollSensors(Sensors);
 		if (reachedDestination() == true) {
 			return;
 		}
@@ -438,16 +438,15 @@ void navigation::reachedNode(Direction Dir) {
 		}
 	}
 }
-
 //Smart Alignment Function for Forward/Backward movement.
 //Optimised
 void navigation::smartAlignment(Direction Dir) {
 	bool perfect_intersection = false;
 	uint8_t quadrant = whereAmI(Dir);
 	while (perfect_intersection == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-		if ((Sensors[0].tileWhite != starting_intersection[0]) && (Sensors[1].tileWhite != starting_intersection[1]) && (Sensors[2].tileWhite != starting_intersection[2]) &&
-			(Sensors[3].tileWhite != starting_intersection[3]) && (Sensors[4].tileWhite != starting_intersection[4]) && (Sensors[5].tileWhite != starting_intersection[5])) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::FR) != START_VAL(sC::FR)) && (RVAL(sC::LTR) != START_VAL(sC::LTR)) && (RVAL(sC::LTL) != START_VAL(sC::LTL)) &&
+			(RVAL(sC::FL) != START_VAL(sC::FL)) && (RVAL(sC::MR) != START_VAL(sC::MR)) && (RVAL(sC::ML) != START_VAL(sC::ML))) {
 			perfect_intersection = true;
 			DEBUG_PRINTLN(" FINISHED");
 		}
@@ -477,21 +476,18 @@ void navigation::smartAlignment(Direction Dir) {
 		}
 	}
 }
-
-
 //----------------ROTATION ALIGNMENT----------------------------------------------------------------------------------------------------------------------------------------------------
 //Rotation strategy
 //1) Get back to the line with s0 and s1
 //2) Follow the line by going forwards  to align the entire buggy with it
 //3) steadily go backwards, avoid drift away from the line to find the intersection
-
 //// Brings the buggy back to line at the rotation movement --Horizontal alignment
 void navigation::getBackToLineRotation() {
 	bool back_to_line = false;
 	while (back_to_line == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-		if (Sensor::values[0] == Sensor::values[1]) {
-			if ((Sensor::values[0] == starting_intersection[0])) {
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::FR) == RVAL(sC::LTR)) {
+			if ((RVAL(sC::FR) == START_VAL(sC::FR))) {
 				DEBUG_PRINTLN("I MUST ROTATE RIGHT_get_back_to_line");
 				Kick(KickDirection::Right, KICK_MAGNITUDE);
 			}
@@ -509,8 +505,8 @@ void navigation::getBackToLineRotation() {
 void navigation::forwardAlignmentOnRotation() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-		if (Sensor::values[2] != Sensor::values[3]) {
+		Sensor::PollSensors(Sensors);
+		if (RVAL(sC::LTL) != RVAL(sC::FL)) {
 			s2s3aligned = true;
 			DEBUG_PRINTLN("Back On Track!");
 		}
@@ -521,14 +517,12 @@ void navigation::forwardAlignmentOnRotation() {
 		}
 	}
 }
-
-
 //Kick back until S2 and S3 are behind the note
 void navigation::backwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] == starting_intersection[2])) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::LTL) != RVAL(sC::FL)) && (RVAL(sC::LTL) == START_VAL(sC::LTL))) {
 			s2s3aligned = true;
 			DEBUG_PRINT("Need to go forward to pass the node");
 		}
@@ -539,14 +533,12 @@ void navigation::backwardsToIntersection() {
 		}
 	}
 }
-
-
 //Kick forward until s2 and s3 have passed the intersection
 void navigation::forwardsToIntersection() {
 	bool s2s3aligned = false;
 	while (s2s3aligned == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
-		if ((Sensor::values[2] != Sensor::values[3]) && (Sensor::values[2] != starting_intersection[2])) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::LTL) != RVAL(sC::FL)) && (RVAL(sC::LTL) != START_VAL(sC::LTL))) {
 			s2s3aligned = true;
 			DEBUG_PRINTLN("Finished Movement");
 		}
@@ -557,13 +549,11 @@ void navigation::forwardsToIntersection() {
 		}
 	}
 }
-
-
 //Function to align the buggy upon rotation.
 void navigation::smartAlignmentRotation() {
 	bool alignmentComplete = false;
 	while (alignmentComplete == false) {
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+		Sensor::PollSensors(Sensors);
 		if (reachedDestination() == true) {
 			DEBUG_PRINTLN("FINISHED");
 			alignmentComplete = true;
@@ -588,34 +578,30 @@ void navigation::smartAlignmentRotation() {
 		}
 	}
 }
-
-
 //------BACKWARD ALIGNMENT---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Function to flag sensor events during backwards alignment.
 void navigation::sensorEventsB() {
-	if (Sensors[4].tileWhite != starting_intersection[4]) {
+	if (RVAL(sC::MR) != START_VAL(sC::MR)) {
 		sensor4_event = true;
 		flag4 = true;
 	}
-	if (Sensors[5].tileWhite != starting_intersection[5]) {
+	if (RVAL(sC::ML) != START_VAL(sC::ML)) {
 		sensor5_event = true;
 		flag5 = true;
 	}
 }
-
-
 //Funtion to figure out if passed the node backwards.
 //If it has reached the node it will stop. If gone past it, it will kick forwards until reached.
 void navigation::passedNoteB() {
 	bool passed_s23 = false;
 	while (passed_s23 == false) {
 		//Sensor::PollSensors(Sensors, FrontM, 2);
-		Sensor::PollSensors(Sensors, Sensor::DefaultOrder, 8);
+		Sensor::PollSensors(Sensors);
 		if (reachedDestination() == true) {
 			return;
 		}
 	}
-	if ((Sensors[2].tileWhite != starting_intersection[0]) && (Sensors[3].tileWhite != starting_intersection[1])) {
+	if ((RVAL(sC::LTL) != START_VAL(sC::FR)) && (RVAL(sC::FL) != START_VAL(sC::LTR))) {
 		passed_s23 = true;
 	}
 	else {

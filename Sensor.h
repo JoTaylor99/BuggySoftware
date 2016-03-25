@@ -69,7 +69,8 @@ public:
 	static void initSensors();
 	
 	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
-	static void PollSensors(Sensor *sens, const sC::sensorNumber *order, byte OrderLength);
+	
+	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
 
 
 private:
