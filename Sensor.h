@@ -48,9 +48,6 @@ public:
 
 
 
-	enum DriftDirection : uint8_t {
-		DLeft, DRight, None, NotInTransition, Stop
-	};
 
 	
 	bool tileWhite;
@@ -97,6 +94,12 @@ so one has been commented out until such time as communication code is finalised
 
 };
 
+//from changes 25/03
+/*
+
+enum DriftDirection : uint8_t {
+DLeft, DRight, None, NotInTransition, Stop
+};
 
 /* UNUSED VARIABLES
 *

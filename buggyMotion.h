@@ -24,9 +24,6 @@ public:
 
 protected:
 
-	enum KickDirection :uint8_t {
-		Forward, Backward, Left, Right
-	};
 
 	void Kick(KickDirection dir, int Magnitude);
 	void Kick(KickDirection dir, int Magnitude, uint16_t time);

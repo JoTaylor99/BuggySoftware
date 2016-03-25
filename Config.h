@@ -275,8 +275,7 @@ namespace boxConfig {
 
 	};
 
-//change to mC
-	namespace motorConfig {
+	namespace mC {
 
 		enum Direction : uint8_t {
 			F, B, S
@@ -284,7 +283,17 @@ namespace boxConfig {
 
 	};
 
-//change to nC
-	namespace navigationConfig{};
+
+	namespace nC{
+	
+		enum Direction : uint8_t {
+			Forward, Backwards, Left, Right
+		};
+
+		enum Drift : uint8_t {
+			leftDrift, rightDrift
+		};
+	
+	};
 
 #endif
