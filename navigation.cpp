@@ -91,7 +91,41 @@ void navigation::BoxApproach() {
 		}
 	}
 
-//Bool function to indicate if the destination intersection has reached. True if the middle sensors are in the intersection or if perfect intersection achieved
+//captures and stores in an array all the sensor values at the initial node position
+void navigation::start() {
+	Sensor::PollSensors(Sensors);
+#ifndef SENSOR_MEMORY_SAVE
+	memcpy(starting_values, Sensor::values, NUM_SENSORS);
+#else
+	starting_values = Sensor::values;
+#endif
+	DEBUG_PRINTLN("I have the starting POSITION");
+}
+
+//Function to turn left
+void navigation::TurnLeft() {
+	Sensor::PollSensors(Sensors);
+
+}
+
+//Function to turn right.
+void navigation::TurnRight() {
+	Sensor::PollSensors(Sensors);
+	//drive(motorConfig::F, motorConfig::B, 70, 70);
+}
+
+//Function to move forwards one node
+void navigation::MoveForward() {
+	DEBUG_PRINTLN("Moving Now!");
+}
+
+void navigation::MoveBackward() {
+}
+
+void navigation::startValIs(sC::sensorNumber sensor){
+}
+// Functions removed 25/03/16
+/*//Bool function to indicate if the destination intersection has reached. True if the middle sensors are in the intersection or if perfect intersection achieved
 
 //Detects if you are drifting while kicking and corrects it. Returns false
 bool navigation::LineCorrect() {
@@ -191,21 +225,18 @@ bool navigation::didIPassIntersectionLine(Direction Dir) {
 	}
 
 
-}
-
-
-
-
+}*/
 //Quadrants Description
 //Forward  S0.S2 are in Q4, S1 and S3 are inQ1              //Backwards
 //S4 Q3 and S5 Q2                            S4 at Q4, S5 at Q1, S3S1 at Q2, S2S0 at Q3
-/* Destination Node                            Destination Node
-Q2|Q1                                            Q1|Q2
-----|-----     Q0 is the on line case              --|--
-Q3|Q4                                            Q4 Q3
-*/
+// Destination Node                            Destination Node
+//Q2|Q1                                            Q1|Q2
+//----|-----     Q0 is the on line case              --|--
+//Q3|Q4                                            Q4 Q3
+//
 // Function to identify the quadrant where the buggy is at the moment
 //Optimised
+/*
 uint8_t navigation::whereAmI(Direction Dir) {
 	uint8_t i;
 	bool passed_intersection = didIPassIntersectionLine(Dir);
