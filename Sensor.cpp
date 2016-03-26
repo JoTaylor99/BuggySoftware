@@ -121,17 +121,21 @@ void Sensor::toTileColour() {
 //This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
 //Prints boolean values, presently there is no material difference between the conditions,
 //so one has been commented out until such time as communication code is finalised.
+#ifndef SENSOR_MEMORY_SAVE
 void Sensor::printbw(bool *values) {
+#else
+void Sensor::printbw(uint8_t values) {
+#endif
 	//Print sensor outputs
 #ifdef SENSOR_DEBUG
-	Serial.print(F("FL:")); Serial.print(values[sC::FL]); Serial.print(F("\t"));
-	Serial.print(F("LTL:")); Serial.print(values[sC::LTL]); Serial.print(F("\t"));
-	Serial.print(F("LTR:")); Serial.print(values[sC::LTR]); Serial.print(F("\t"));
-	Serial.print(F("FR:")); Serial.print(values[sC::FR]); Serial.println(F("\t"));
-	Serial.print(F("ML:")); Serial.print(values[sC::ML]); Serial.print(F("\t"));
-	Serial.print(F("\t")); Serial.print(F("MR:")); Serial.print(values[sC::MR]); Serial.println(F("\t"));
-	Serial.print(F("BL:")); Serial.print(values[sC::BL]); Serial.print(F("\t"));
-	Serial.print(F("\t")); Serial.print(F("BR:")); Serial.print(values[sC::BR]); Serial.println(F("\t"));
+	Serial.print(F("FL:")); Serial.print(RVAL(sC::FL)); Serial.print(F("\t"));
+	Serial.print(F("LTL:")); Serial.print(RVAL(sC::LTL)); Serial.print(F("\t"));
+	Serial.print(F("LTR:")); Serial.print(RVAL(sC::LTR)); Serial.print(F("\t"));
+	Serial.print(F("FR:")); Serial.print(RVAL(sC::FR)); Serial.println(F("\t"));
+	Serial.print(F("ML:")); Serial.print(RVAL(sC::ML)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("MR:")); Serial.print(RVAL(sC::MR)); Serial.println(F("\t"));
+	Serial.print(F("BL:")); Serial.print(RVAL(sC::BL)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("BR:")); Serial.print(RVAL(sC::BR)); Serial.println(F("\t"));
 #endif
 }
 
@@ -139,13 +143,13 @@ void Sensor::printbw(bool *values) {
 void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte OrderLength){
 	unsigned long t1, t2;
 	t1 = micros();
-	byte CurrentSensorIndex = 0;
+	sC::sensorNumber currentSensorIndex = sC::FR;
 	for (byte n = 0; n < OrderLength; n++) {
-		CurrentSensorIndex = order[n];
-		SelectSensor(CurrentSensorIndex);
-		SLASTVAL(CurrentSensorIndex, RVAL(CurrentSensorIndex));
-		sens[CurrentSensorIndex].GetReading();
-		values[CurrentSensorIndex] = sens[CurrentSensorIndex].tileWhite;
+		currentSensorIndex = order[n];
+		SelectSensor(static_cast<byte>(currentSensorIndex));
+		SLASTVAL(currentSensorIndex, RVAL(currentSensorIndex));
+		sens[currentSensorIndex].GetReading();
+		SVAL(currentSensorIndex, sens[currentSensorIndex].tileWhite);
 	}
 	t2 = micros();
 	DEBUG_PRINTLN("SENSOR VALUES: ");
@@ -156,13 +160,21 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte
 }
 
 #ifdef SENSOR_MEMORY_SAVE
-	void setVal(sC::sensorNumber, bool tileColour){}
+	void Sensor::setVal(sC::sensorNumber position, bool tileColour){
+		bitWrite(values, position, tileColour);
+	}
 		
-	bool valIs(sC::sensorNumber){}
+	bool Sensor::valIs(sC::sensorNumber position){
+		return bitRead(values, position);
+	}
 
-	bool lastValIs(sC::sensorNumber){}
+	bool Sensor::lastValIs(sC::sensorNumber position){
+		return bitRead(lastValues, position);
+	}
 
-	void setLastVal(sC::sensorNumber, bool lastValue){}
+	void Sensor::setLastVal(sC::sensorNumber position, bool lastValue){
+		bitWrite(values, position, lastValue);
+	}
 
 	uint8_t Sensor::values = 0x00;
 	static uint8_t lastValues = 0x00;

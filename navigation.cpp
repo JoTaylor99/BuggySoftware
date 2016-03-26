@@ -95,9 +95,9 @@ void navigation::BoxApproach() {
 void navigation::start() {
 	Sensor::PollSensors(Sensors);
 #ifndef SENSOR_MEMORY_SAVE
-	memcpy(starting_values, Sensor::values, NUM_SENSORS);
+	memcpy(startingValues, Sensor::values, NUM_SENSORS);
 #else
-	starting_values = Sensor::values;
+	startingValues = Sensor::values;
 #endif
 	DEBUG_PRINTLN("I have the starting POSITION");
 }
@@ -122,8 +122,12 @@ void navigation::MoveForward() {
 void navigation::MoveBackward() {
 }
 
-void navigation::startValIs(sC::sensorNumber sensor){
+#ifdef SENSOR_MEMORY_SAVE
+bool navigation::startValIs(sC::sensorNumber position) {
+	return bitRead(startingValues, position);
 }
+#endif
+
 // Functions removed 25/03/16
 /*//Bool function to indicate if the destination intersection has reached. True if the middle sensors are in the intersection or if perfect intersection achieved
 

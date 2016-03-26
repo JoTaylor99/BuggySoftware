@@ -39,13 +39,11 @@ public:
 private:
 	
 #ifdef SENSOR_MEMORY_SAVE
-	static bool startValIs(sC::sensorNumber);
-	uint8_t starting_values = 0;
+	bool startValIs(sC::sensorNumber position);
+	uint8_t startingValues = 0;
 #else
-	bool starting_values[NUM_SENSORS] = {};
+	bool startingValues[NUM_SENSORS] = {};
 #endif
-
-	void startValIs(sC::sensorNumber sensor);
 
 	static bool _navInitComplete;
 

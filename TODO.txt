@@ -1,6 +1,6 @@
 ALL FILES
 
---Write definitions for sensor reading functions in memory saving mode
+--investigate iteration over an enum
 
 --Add a Sensor mode define to Config.h to change navigation modes between interrupt on change, interrupt on new reading, and instant return polling
 

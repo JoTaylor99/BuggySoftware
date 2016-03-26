@@ -40,13 +40,13 @@ public:
 
 #ifdef SENSOR_MEMORY_SAVE
 	private:
-		static void setVal(sC::sensorNumber, bool tileColour);
-		static void setLastVal(sC::sensorNumber, bool lastValue);
+		static void setVal(sC::sensorNumber position, bool tileColour);
+		static void setLastVal(sC::sensorNumber position, bool lastValue);
 		static uint8_t lastValues;
 
 	public:
-		static bool valIs(sC::sensorNumber);
-		static bool lastValIs(sC::sensorNumber);
+		static bool valIs(sC::sensorNumber position);
+		static bool lastValIs(sC::sensorNumber position);
 		static uint8_t values;
 #else
 	public:
@@ -71,10 +71,12 @@ private:
 	void UpdateRange(); //Update's the sensor's range of values for correct scaling
 	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
 	void toTileColour(); //Checks the Normalised sensor readings against their thresholds
-	static void printbw(bool *values); /*Being called by PollSensors & loop1
-This handles printing of the boolean values of the sensor values (x6), to either the XBee or the USB
-Prints boolean values, presently there is no material difference between the conditions,
-so one has been commented out until such time as communication code is finalised.*/
+#ifndef SENSOR_MEMORY_SAVE
+	static void printbw(bool *values); 
+#else
+	static void printbw(uint8_t values); 
+#endif
+
 	static bool _sensorInitComplete;  
 
 };
