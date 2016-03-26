@@ -24,16 +24,9 @@ public:
 
 protected:
 
-	enum KickDirection {
-		Forward, Backward, Left, Right
-	};
 
-	void Kick(KickDirection dir, int Magnitude);
-	void Kick(KickDirection dir, int Magnitude, uint16_t time);
-	void Kick(KickDirection dir, int LeftMagnitude, int RightMagnitude);
-	void Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightMag);
+	void drive(nC::Direction direction, nC::Drift drift);
 
-	void drive(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed, int RSpeed);
 private:
 	static bool _motionInitComplete;
 	
@@ -51,3 +44,16 @@ private:
 
 #endif
 
+//functions removed 25/03
+/*
+
+enum KickDirection :uint8_t {
+Forward, Backward, Left, Right
+};
+
+void Kick(KickDirection dir, int Magnitude);
+void Kick(KickDirection dir, int Magnitude, uint16_t time);
+void Kick(KickDirection dir, int LeftMagnitude, int RightMagnitude);
+void Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightMag);
+
+*/

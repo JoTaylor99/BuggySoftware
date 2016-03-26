@@ -3,22 +3,28 @@
 buggyTop::buggyTop(){};
 
 buggyTop::~buggyTop(){};
+
 navigation buggy;
 
 void buggyTop::init(){
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
-	/*box assessBox;
-	assessBox.init();*/
-
-
+	COMPILE_DATE;
+	COMPILE_TIME;
 	buggy.initNavigation();
+
 };
 
 void buggyTop::go(){
 	/* Code here is needed either here or in a not yet written communications class to separate an incomming command string from controlling PC into useful variables
 	*  For the time being this is being done in the navigate function in the navigation class.
 	*/
-	buggy.navigate();
+
+	String str;
+
+	if (Serial.available() > 0) { // If a command has been sent
+		str = Serial.readString();
+		buggy.navigate(str);
+	}
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
 
 		//box assessBox;

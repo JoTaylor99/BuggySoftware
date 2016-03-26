@@ -110,3 +110,82 @@ private:
 
 
 #endif
+
+
+/*
+* DEFINES:
+*    Known cap resistor
+*    Known resistor
+*    ADC prescalers
+*
+* Includes:
+*
+* Adafruit library
+*
+*
+*
+* setup function
+*    Adafruit_MCP23017 switcher
+*    switcher.begin()
+*    Assign pinModes
+*    Begin Serial
+*    Assign pinModes on GPIO expander
+*    Setup ADC (Set prescaller bits and call 1 analog read)
+*
+*  enum:
+*  Rk
+*  Rd
+*  stimulusState (on, off)
+*  //boostConv (on, off)
+*  components (P15V, P1ADC, P2GND, P25V, P2Rd, P2Rk, P2ADC, GNDADC, GNDGND, GND5V, BC, P1P2switch, BCswitch)
+*
+*  variables:
+*  float v1
+*  short r1, r2, r3, c1, f
+*
+*  const short inputPin
+*  const short outputPin
+*
+*  static int numRelaysActuated
+*
+*  boxCircuits::components gpioStatus[14];
+*
+* Functions:
+*
+* preferred E24 values recovery function for resistor values
+*
+* preferred E12 valules recovery function for capacitor values
+*
+* configBox (boxNumber, boxStage, boxDirection) (depends on relay switching function)
+*
+* bool relay switching function (depends on check relay assignment function, depends on compare expander status function, depends on set expander status function)
+*
+* get value once function
+*
+* get value function (dependencies get value once function)
+*
+* measure capacitor function (dependencies get value once function)
+*
+* toggle boost converter function (depends on check relay assignments function)
+*
+* toggle box direction function (depends on check relay assignments function)
+*
+* byte check relay assignments function (dependency get expander status function)
+*
+* boxCircuits::components compare expander status function (depends on get expander status function)
+*
+* get expander status function
+*
+* set expander status function
+*
+*
+* check relay assignment function
+*      looks at relays commanded to switch and checks the following:
+*          -not more than 5 pins driven
+*          -not P15V and P1GND
+*          -not P25V and P2GND
+*          -not GND5V and GNDGND
+*          -not P1BC and P1ADC
+*          -if BC must also be ADCswitch
+*          -if BC must also be P1BC
+*/

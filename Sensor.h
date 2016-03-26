@@ -3,68 +3,105 @@
 #ifndef _SENSOR_H
 #define _SENSOR_H
 
+
+#include <SparkFunTSL2561.h>
 #include "Config.h"
-#include <TSL2561.h>
-#include <NewPing.h>
-#include <QTRSensors.h>
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
 #include "Comms.h"
+
+#ifdef QTRSINUSE
+#include <QTRSensors.h>
+#endif
+
+
 
 class Sensor {
 
 public:
 	/* Sensor constructor*/
 	Sensor(uint16_t Pin);
-	Sensor(uint16_t Pin, sensorConfig::SensorType S);
+	Sensor(uint16_t Pin, sC::SensorType S);
 
 	
 	/* Sensor destructor*/
 	~Sensor();
-
-	enum DriftDirection {
-		DLeft, DRight, None, NotInTransition, Stop
-	};
-
-	double Normalised;
-	bool Boolian;
-	bool PreviousBool;
-	static bool values[6];
-
-	static const byte DefaultOrder[6];
-	static const byte Front[2];
-	static const byte Back[2];
-	static const byte FrontM[2];
-	static const byte FrontNMiddle[4];
-
+		
+	static const sC::sensorNumber DefaultOrder[8];
+	static const sC::sensorNumber Front[4];
+	static const sC::sensorNumber Back[2];
+	static const sC::sensorNumber Middle[2];
+	static const sC::sensorNumber FrontNMiddle[6];
+	
 	static void initSensors();
 	
-	static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
-	static void PollSensors(Sensor *sens, const byte *order, byte OrderLength);
+	
+	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
+
+#ifdef SENSOR_MEMORY_SAVE
+	private:
+		static void setVal(sC::sensorNumber position, bool tileColour);
+		static void setLastVal(sC::sensorNumber position, bool lastValue);
+		static uint8_t lastValues;
+
+	public:
+		static bool valIs(sC::sensorNumber position);
+		static bool lastValIs(sC::sensorNumber position);
+		static uint8_t values;
+#else
+	public:
+		static bool values[8];
+		static bool lastValues[8];
+#endif
+
 
 private:
+	bool tileWhite;
 	uint16_t _pin;
 	uint16_t Max;
 	uint16_t Min;
 	uint16_t Raw;
-	sensorConfig::SensorType _s;
+	double Normalised;
+	sC::SensorType _s;
 	
-
+	
 	bool GetReading();
-	static void SelectSensor(uint8_t sensor_number);
-	static void LogicCheck(Sensor *sens);
-	void ReadRaw();
-	void UpdateMaximum();
-	void UpdateMinimum();
-	void Normalise();
-	void NormalToBool();
-	void ThresholdCheck();
-	static void printbw(bool *values);
-	static bool _sensorInitComplete;
+	static void SelectSensor(byte sensorNumber);
+	void ReadRaw(); //Reads the Raw value from whichever sensor is enabled
+	void UpdateRange(); //Update's the sensor's range of values for correct scaling
+	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
+	void toTileColour(); //Checks the Normalised sensor readings against their thresholds
+#ifndef SENSOR_MEMORY_SAVE
+	static void printbw(bool *values); 
+#else
+	static void printbw(uint8_t values); 
+#endif
+
+	static bool _sensorInitComplete;  
 
 };
 
+//from changes 25/03
+/*
 
+enum DriftDirection : uint8_t {
+DLeft, DRight, None, NotInTransition, Stop
+};
+
+static DriftDirection Drifting(Sensor *sens, bool lastCorrectLeft, bool lastCorrectRight);
+
+static void LogicCheck(Sensor *sens);
+*/
+
+
+
+
+
+
+
+
+
+//from original INO
 /* UNUSED VARIABLES
 *
 * int TransitionOrder declared in global scope and not presently referenced

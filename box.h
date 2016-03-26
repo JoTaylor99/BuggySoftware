@@ -5,7 +5,6 @@
 #include "boxControl.h"
 #include "Config.h"
 #include "boxValues.h"
-//#include "Conversions.h"
 
 class box : private boxControl {
 
@@ -25,10 +24,10 @@ public:
 	void init();
 
 	/* interrogateBox function
-	* return type is boxValues::return data
+	* return type is boxValues::return data (currently byte)
 	* @param byte boxNumber, a byte with range 1-7 containing the number of the box to interrogate.  Function will Coms an error message if boxNumber is out of range and set an error flag in the return type.
 	* @param bool boxInverted, a bool set to false if box is approached from knob side, true otherwise.
-	* Depends on communications class for sending error codes or debug statements 
+	* Depends on communications namespace for sending error codes or debug statements and (currently) results.
 	* 
 	* Box analysis control flow:
 	*		Call checkconfigCorrect to ensure all required init functions have been called.
@@ -69,7 +68,7 @@ public:
 	*		Turn input off via boxControl::setInput
 	*		return box values to calling function
 	*/
-	boxValues::returnData interrogateBox(byte boxNumber, bool boxInverted);
+	byte interrogateBox(byte boxNumber, bool boxInverted);
 
 	using boxControl::inputStatus;
 
@@ -77,21 +76,23 @@ private:
 		//ADC in pin
 		const byte _adcInPin = ADCINPUTPIN;
 		static bool _boxinitComplete;
+
+		boxValues::returnData presentationData;
 		
 		/* Capacitance measurement function
 		 * returns double representing measured capacitance in nanofarads
 		 * Depends on communications class for sending error codes or debug statements 
-		 * Calls SetInput and getReadingOnce function.
-			*/
+		 * Calls SetInput and getOneReading function.*/
 		double measureCapacitance();
 
 		/* getReading function 
 		 * returns double containing the average of N ADC readings, where N is defined as a const variable in config.h
-		 * Calls getReadingOnce function for each reading
-		 */
+		 * Calls getOneReading function for each reading
+		 */		//ALEX
 		double getReading();
-
-		double getReadingOnce();
+		
+		
+		double getOneReading();
 
 		/*setupADC function
 		*  Sets ADC pinMode
@@ -122,7 +123,23 @@ private:
 		*	Returns true if sucessful
 		*/
 		bool docked();
+
+
+		/* calculateResistorValue function
+		*	return type double
+		*	@param rawValue type double, average value recorded from repeated ADC reads
+		*	@param boxNumber type byte, passes boxNumber, if MSB is set perform stage 2 assesment, else perform stage 1 assesment
+		*	Takes measured voltage and calculated desired resistor value to be converted to preferred.
+		*/
+		double calculateResistorValue(double rawValue, byte boxNumber);
+
+		short PrefResistor(double OResistor, byte BoxNo);
+
+		short PrefCapactitor(double OCap, byte BoxNo);
+
+		double calculateFrequency(byte boxNumber);
 };
+
 
 
 

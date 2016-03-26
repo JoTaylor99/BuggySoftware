@@ -22,8 +22,12 @@ __vm/.buggyCode.vsarduino.h
 __vm/
 Debug/
 ClassDiagram.cd
-TODO.txt
+Sensors2.ino
+BuggyCode/BuggyCode/Debug/board.buildinfo
+BuggyCode/BuggyCode/Debug/buggyCode.ino.hex
+*.elf
+Sensors2.ino
+Release/
 src/_micro-api/libraries/TSL2561NR/library.properties
 src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.cpp
 src/_micro-api/libraries/TSL2561NR/src/TSL2561NR.h
-Release/
