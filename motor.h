@@ -18,7 +18,7 @@ public:
 
 protected:
 
-	void MotorControl(motorConfig::Direction LDir, motorConfig::Direction RDir, int LSpeed, int RSpeed);
+	void MotorControl(mC::Direction LDir, mC::Direction RDir, byte LSpeed, byte RSpeed);
 
 	/* motor init function
 	*  Void return type

@@ -8,7 +8,7 @@
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 #define DEBUG
 
-#define SENSOR_DEBUG
+//#define SENSOR_DEBUG
 //#define NAV_DEBUG
 //#define MOT_DEBUG
 //#define BOX_DEBUG
@@ -100,23 +100,26 @@
 #endif
 
 
-
-//Sensor Mode
-
-//#define SENSORINTMODE
-//#define POLLALLSENSORS
-#ifndef SENSORINTMODE
-//	#ifndef POLLALLSENSORS
-//#define POLL_SENSORS(sensors, sensorPos, numberOfSensors)
-	#define POLL_SENSORS(sensors, sensorPos, numberOfSensors) Sensor::PollSensors(Sensors, sensorPos, numberOfSensors);
-#else
-	#define POLL_SENSORS(sensors)
-#endif
-
 //#define QTRSINUSE
-
+//#define SENSOR_MEMORY_SAVE
+#ifndef SENSOR_MEMORY_SAVE
+#define SVAL(sensorNumber, value) Sensor::values[sensorNumber] = value
+#define RVAL(sensorNumber)	Sensor::values[sensorNumber]
+#define STARTVAL(sensorNumber)	navigation::starting_values[sensorNumber]
+#define RLASTVAL(sensorNumber)	Sensor::lastValues[sensorNumber]
+#define SLASTVAL(sensorNumber, lastValue)	Sensor::lastValues[sensorNumber] = lastValue
+#else
+#define SVAL(sensorNumber, tileColour) Sensor::setVal(sensorNumber, tileColour)
+#define RVAL(sensorNumber)	(Sensor::valIs(sensorNumber))
+#define STARTVAL(sensorNumber)	(navigation::startValIs(sensorNumber))
+#define RLASTVAL(sensorNumber)	(Sensor::lastValIs(sensorNumber))
+#define SLASTVAL(sensorNumber, lastValue)	Sensor::setLastVal(sensorNumber, lastValue)
+#endif
 //Sensor Defines
-//Change these depending on what pins each sensor's address pin is connected to9
+
+#define NUM_SENSORS 8
+
+//Change these depending on what pins each sensor's address pin is connected to
 #define FRPIN 7                                                                                 /*       _ _front _ _    */
 #define LTRPIN 6                                                                              /*       / s1 | s0 \ */
 #define LTLPIN 5                                                                                 /*      |     |     |*/
@@ -277,8 +280,7 @@ namespace boxConfig {
 
 	};
 
-//change to mC
-	namespace motorConfig {
+	namespace mC {
 
 		enum Direction : uint8_t {
 			F, B, S
@@ -286,7 +288,17 @@ namespace boxConfig {
 
 	};
 
-//change to nC
-	namespace navigationConfig{};
+
+	namespace nC{
+	
+		enum Direction : uint8_t {
+			Forward, Backwards, Left, Right
+		};
+
+		enum Drift : uint8_t {
+			leftDrift, rightDrift
+		};
+	
+	};
 
 #endif

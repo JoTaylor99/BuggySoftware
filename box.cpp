@@ -182,10 +182,10 @@ short PrefResistor(double OResistor, byte BoxNo) {
 		FinalResistor = PResistors[IMAX];
 	}
 	else {
-		for (; (i < 55) && (i < IMAX); i++) {
+		for (; (i < IMAX+1); i++) {
 			if ((OResistor <= (PResistors[i] * 1.05)) && (OResistor >= (PResistors[i] * 0.95))) {
 				FinalResistor = PResistors[i];
-				i = 55;
+				break;
 			}
 		}
 	}
@@ -215,10 +215,10 @@ byte PrefCapactitor(double OCap, byte BoxNo) {
 		FinalCap = PCapacitors[IMAX];
 	}
 	else {
-		for (; (i < 17) && (i < IMAX); i++) {
+		for (; (i < IMAX+1); i++) {
 			if ((OCap <= (PCapacitors[i] * 1.10)) && (OCap >= (PCapacitors[i] * 0.90))) {
 				FinalCap = PCapacitors[i];
-				i = 17;
+				break;
 			}
 		}
 	}
