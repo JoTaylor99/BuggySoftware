@@ -45,19 +45,19 @@ void navigation::navigate(String str) {
 
 			if (str == "F") {
 				start();
-				MoveForward();
+				moveForward();
 			} else if (str == "B") {
 				start();
-				MoveBackward();
+				moveBackward();
 			} else if (str == "R") {
 				start();
-				TurnRight();
+				turnRight();
 			} else if (str == "L") {
 				start();
-				TurnLeft();
+				turnLeft();
 			}
 			else if (str == "G") {
-				BoxApproach();
+				boxApproach();
 				//box assessBox;
 				//byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
 				//if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
@@ -69,7 +69,7 @@ void navigation::navigate(String str) {
 			}
 };
 
-void navigation::BoxApproach() {
+void navigation::boxApproach() {
 		uint8_t Distance = 0;
 		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
 		//drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
@@ -103,23 +103,23 @@ void navigation::start() {
 }
 
 //Function to turn left
-void navigation::TurnLeft() {
+void navigation::turnLeft() {
 	Sensor::PollSensors(Sensors);
 
 }
 
 //Function to turn right.
-void navigation::TurnRight() {
+void navigation::turnRight() {
 	Sensor::PollSensors(Sensors);
 	//drive(motorConfig::F, motorConfig::B, 70, 70);
 }
 
 //Function to move forwards one node
-void navigation::MoveForward() {
+void navigation::moveForward() {
 	DEBUG_PRINTLN("Moving Now!");
 }
 
-void navigation::MoveBackward() {
+void navigation::moveBackward() {
 }
 
 #ifdef SENSOR_MEMORY_SAVE

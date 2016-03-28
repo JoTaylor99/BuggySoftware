@@ -48,14 +48,14 @@ private:
 
 	static bool _navInitComplete;
 
-	void BoxApproach();
+	void boxApproach();
 
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 
-	void TurnLeft();
-	void TurnRight();
-	void MoveForward();
-	void MoveBackward();
+	void turnLeft();
+	void turnRight();
+	void moveForward();
+	void moveBackward();
 	
 };
 
