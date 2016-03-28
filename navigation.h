@@ -10,6 +10,7 @@
 
 class navigation : private buggyMotion {
 
+	//Test commit changes.
 public:
 	/* Navigation constructor*/
 	navigation();
