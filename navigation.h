@@ -56,7 +56,32 @@ private:
 	void turnRight();
 	void moveForward();
 	void moveBackward();
+	/// <summary>
+	/// driftingWhenForward
+	/// Determines if the buggy  drifts away from its course in the forward motion.
+	/// If the buggy is drifting, it fixes the drift and returns true 
+	/// Else if the buggy is in the correct position it returns false
+	/// </summary>
+	/// <returns></returns>
+	bool driftingWhenForward();
 	
+	/// <summary>
+	/// driftingWhenBackward
+	/// Determines if the buggy  drifts away from its course in the backward motion.
+	/// If the buggy is drifting, it fixes the drift and returns true 
+	/// Else if the buggy is in the correct position it returns false
+	/// </summary>
+	/// <returns></returns>
+	bool driftingWhenBackward();
+
+	/// <summary>
+	/// adjustOnTheSpot
+	/// Is called when ML and MR have just passed the destination intersection
+	/// ((i.e RVAL(ML)!=STARTVAL(ML) && RVAL(MR) != STARTVAL(MR))&& (LASTVAL(
+	/// checks the readings of LTL/LTR and BL/BR and rotates or moves horizontally (if applicable) on the spot
+	/// to ensure LTL!=LTR and BL!=BR which means the buggy reached the destination successfully.
+	/// </summary>
+	void adjustOnTheSpot();
 };
 
 #endif
