@@ -4,7 +4,7 @@
 
 #include "navigation.h"
 
-//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::sC::LTL), RVAL(sC::sC::FR), etc.
+//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
 //Previous values are read using RLASTVAL(sensorNumber)
 //Starting values are read using STARTVAL(sensorNumber)
 //test commit changes
@@ -102,6 +102,22 @@ void navigation::start() {
 	DEBUG_PRINTLN("I have the starting POSITION");
 }
 
+bool navigation::reachedDestination() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL))&& 
+		(RVAL(sC::LTL) != STARTVAL(sC::LTL))&&
+		(RVAL(sC::LTR) != STARTVAL(sC::LTR))&&
+		(RVAL(sC::FR) != STARTVAL(sC::FR))&& 
+		(RVAL(sC::ML) != STARTVAL(sC::ML))&&  
+		(RVAL(sC::MR) != STARTVAL(sC::MR))&&
+		(RVAL(sC::BL) != STARTVAL(sC::BL))&& 
+		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 //Function to turn left
 void navigation::turnLeft() {
 	Sensor::PollSensors(Sensors);

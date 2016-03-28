@@ -52,19 +52,15 @@ private:
 
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 
-	void turnLeft();
-	void turnRight();
-	void moveForward();
-	void moveBackward();
-	/// <summary>
-	/// driftingWhenForward
-	/// Determines if the buggy  drifts away from its course in the forward motion.
-	/// If the buggy is drifting, it fixes the drift and returns true 
-	/// Else if the buggy is in the correct position it returns false
-	/// </summary>
-	/// <returns></returns>
+	  /// <summary>
+	  /// driftingWhenForward
+	 /// Determines if the buggy  drifts away from its course in the forward motion.
+	 /// If the buggy is drifting, it fixes the drift and returns true 
+	 /// Else if the buggy is in the correct position it returns false
+	 /// </summary>
+	 /// <returns></returns>
 	bool driftingWhenForward();
-	
+
 	/// <summary>
 	/// driftingWhenBackward
 	/// Determines if the buggy  drifts away from its course in the backward motion.
@@ -82,6 +78,15 @@ private:
 	/// to ensure LTL!=LTR and BL!=BR which means the buggy reached the destination successfully.
 	/// </summary>
 	void adjustOnTheSpot();
+	
+	//checks if the readings of all the sensors are opposite with their corresponding starting reading (i.e. the buggy has reached its destination)
+	bool reachedDestination();
+
+	void turnLeft();
+	void turnRight();
+	void moveForward();
+	void moveBackward();
+	
 };
 
 #endif
