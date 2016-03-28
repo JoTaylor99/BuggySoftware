@@ -146,7 +146,7 @@ bool navigation::reachedDestination() {
 ///		return true;
 /// }
 bool navigation::driftingWhenForward() {
-	if (RVAL(sC::LTL) != RVAL(sC::LTL)) {
+	if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
 		return false;
 	}
 	else{
@@ -187,6 +187,7 @@ void navigation::turnRight() {
 //Function to move forwards one node
 void navigation::moveForward() {
 	DEBUG_PRINTLN("Moving Now!");
+
 }
 
 void navigation::moveBackward() {
