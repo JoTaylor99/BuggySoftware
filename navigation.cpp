@@ -101,7 +101,7 @@ void navigation::start() {
 #endif
 	DEBUG_PRINTLN("I have the starting POSITION");
 }
-
+//Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
 	if ((RVAL(sC::FL) != STARTVAL(sC::FL))&& 
 		(RVAL(sC::LTL) != STARTVAL(sC::LTL))&&
@@ -118,6 +118,60 @@ bool navigation::reachedDestination() {
 		return false;
 	}
 }
+
+
+/// driftingWhenForward Algorithm
+/// If (LTL!= LTR )
+///		Buggy follows correctly the line
+///		return false;
+/// else {
+///			if (FR == START(FR)  AND FL == START(FL){
+///				Front of the buggy has not passed the destination intersection line yet
+///				Arena pattern has not flipped yet
+///				If (LTL!= START(LTL){
+///					drive Left so that LTL becomes LTL=START(LTL);
+///				}
+///				else {
+///					drive right so that LTR becomes LTR = START(LTR);
+///				}
+///			}
+///			else{
+///				Arena pattern has flipped/ front of the buggy has passed intersection line
+///				if (If LTL== START(LTL){
+///					drive left so that LTL becomes LTL!= START(LTL)
+///					}
+///				else{
+///					drive right so that LTR becomes LTR!= START(LTR)
+///			}
+///		return true;
+/// }
+bool navigation::driftingWhenForward() {
+	if (RVAL(sC::LTL) != RVAL(sC::LTL)) {
+		return false;
+	}
+	else{
+		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
+			//pattern of arena not flipped yet
+			if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
+				//drive Left 
+			}
+			else {
+				//drive Right
+			}
+		}
+		else {
+			if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+				//drive left
+			}
+			else{
+				//drive right
+			}
+		}
+		return true;
+	}
+}
+
+
 //Function to turn left
 void navigation::turnLeft() {
 	Sensor::PollSensors(Sensors);
