@@ -105,7 +105,7 @@
 #ifndef SENSOR_MEMORY_SAVE
 #define SVAL(sensorNumber, value) Sensor::values[sensorNumber] = value
 #define RVAL(sensorNumber)	Sensor::values[sensorNumber]
-#define STARTVAL(sensorNumber)	navigation::starting_values[sensorNumber]
+#define STARTVAL(sensorNumber)	navigation::startingValues[sensorNumber]
 #define RLASTVAL(sensorNumber)	Sensor::lastValues[sensorNumber]
 #define SLASTVAL(sensorNumber, lastValue)	Sensor::lastValues[sensorNumber] = lastValue
 #else
