@@ -171,7 +171,76 @@ bool navigation::driftingWhenForward() {
 		return true;
 	}
 }
-
+/// <summary>
+/// driftingWhenBackward Algorithm
+/// Aims to avoid the switching pattern of the arena 
+/// by following the line backwards with LTL and LTR until FR and FL flipps
+/// Then it switches to follow the line backwards with BR and BL that already crossed the destination intersection
+/// check documentation for the reason 
+///     if FR AND FL have not flipped values (i.e. front of the buggy has not passed the initial intersection line {
+///			follow the line backwards with LTL and LTR 
+///			If(LTL != LTR){
+///				Buggy follows correctly the line
+///				return false;
+///			}
+///			else if (LTL ==START(LTL){
+///				Drive Backwards Left so that LTR will move to the RIGHT
+///				return true;
+///			}
+///			else {
+///					Drive Backwards Right so that LTL will move to the	LEFT
+///					return true;
+///			}
+///		}
+///		else{ Arena pattern has flipped
+///			follow the line with BR and BL
+///			if (BL!=BR){
+///				Buggy follows the line backwards correctly
+///				return false;
+///			}
+///			else if (BL==STARTVAL BL){
+///				drive backwards Left so that  BL will move to the left
+///				return true;
+///			else{
+///					Drive Backwards Right so that BR will move to the Right
+///					return true;
+///			}
+///		}
+/// </summary>
+/// <returns></returns>
+bool navigation::driftingWhenBackward() {
+	if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
+		//Front of the buggy has not passed the initial intersection line follow the line Backwards with LTL and LTR
+		if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
+			//correct position
+			return false;
+		}
+		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//drive BACKWARDS LEFT( NOT  JUST LEFT)
+			return true;
+		}
+		else {
+			//drive backwards right 
+			return true;
+		}
+	}
+	else{
+		//Front of the buggy has passed initial intersection line + Bottom of the buggy has passed destination intersection line
+	    // Pattern of arena changed, follow the line backwards with BR and BL
+		if (RVAL(sC::BL) != RVAL(sC::BR)){
+			//correct position
+			return false;
+		}
+		else if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
+			//Drive Backwards Left
+			return true;
+		}
+		else {
+			//drive backwards right 
+			return true;
+		}
+	}
+}
 void navigation::adjustOnTheSpot(){}
 
 //Function to turn left
