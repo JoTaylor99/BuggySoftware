@@ -150,6 +150,7 @@ bool navigation::driftingWhenForward() {
 		return false;
 	}
 	else{
+		//Deviation from the course
 		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
 			//pattern of arena not flipped yet
 			if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
@@ -171,6 +172,7 @@ bool navigation::driftingWhenForward() {
 	}
 }
 
+void navigation::adjustOnTheSpot(){}
 
 //Function to turn left
 void navigation::turnLeft() {
@@ -184,10 +186,46 @@ void navigation::turnRight() {
 	//drive(motorConfig::F, motorConfig::B, 70, 70);
 }
 
+
+/// <summary>
+/// moveForward Algorithm
+/// while (true){
+///		Poll Sensors
+///		if buggy reached destination{
+///			stop
+///			break;
+///		}
+///		else if buggy is at the top of the intersection but not perfectly aligned {
+///			stop
+///			adjustOnThespot with small movements adjust the buggy to the correct final position
+///		}
+///		else if drifting {
+///			fix drifting
+///		}
+///		else{
+///			drive forward;
+///		}
+///	}
+/// 
+/// </summary>
 //Function to move forwards one node
 void navigation::moveForward() {
 	DEBUG_PRINTLN("Moving Now!");
-
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			//drive(motorConfig::S, motorConfig::S);
+			break;
+		}
+		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
+			//drive(motorConfig::S, motorConfig::S);
+			adjustOnTheSpot();
+		}
+		else if (!navigation::driftingWhenForward()) {
+			//drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+			//drive forward
+		}
+	}
 }
 
 void navigation::moveBackward() {
