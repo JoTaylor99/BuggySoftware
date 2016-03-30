@@ -37,7 +37,9 @@ boolean checksum (void *theData, uint8_t leng) {
 
 //
 void bleSend (uint8_t *theData, uint8_t leng) {
+	//Serial.println(leng);
 	Serial.write (theData, leng);
+	
 }
 
 
@@ -53,6 +55,7 @@ void sendData (void *theData, uint8_t theLeng) {
 	printHex (buffer, pro_size);
 #endif
 	bleSend ((uint8_t*)(buffer), pro_size);
+	//printHex(buffer, pro_size);
 }
 
 //
@@ -69,7 +72,8 @@ int readData (void *theData, uint8_t theLeng) {
 
 	if (leng != pro_size) {
 #ifdef _debug
-		Serial.print ("data leng error:");
+		Serial.println(pro_size);
+		Serial.print("data leng error:");
 		printHex (buffer, leng);
 #endif
 		return -2;        
