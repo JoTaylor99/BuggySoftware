@@ -241,7 +241,93 @@ bool navigation::driftingWhenBackward() {
 		}
 	}
 }
-void navigation::adjustOnTheSpot(){}
+
+
+
+/// <summary>
+/// adjustOnTheSpot is called when ML and MR have just crossed the destination intersection line
+/// Aims to get the buggy to have correct finish position 
+/// adjustOnTheSpot algorithm
+/// Case 1 horizontal movement because centre of rotation is not exactly at the top of the intersection 
+///		   but its on the horizontal destination intersection line
+/// if ((LTL==LTR)&& (BL==BR) && (LTL!=BL){
+///		IF (LTL==STARTVAL(LTL){
+///			Move Horizontally Left
+///		}
+///		else{
+///			Move Horizontally Right
+///		}
+/// }
+/// Case 2 Rotation on the spot. Centre of Rotation is at the top of destination intersection 
+///		   But the facade or the buggy are at an angle (not straight following the line)
+/// else if ((LTL == LTR && LTL==BL && LTL ==BR) {
+///		if (LTL==STARTVAL(LTL){
+///			ROTATE LEFT
+///		}
+///		else{
+///			ROTATE RIGHT
+///		}
+/// }
+/// Case 3 Just one wrong reading of the 4 sensors . That means LTL!= LTR && BR==BL  OR LTL==LTR && BR !=BL
+/// THEN accordingly with the case let one wheel stable and move forward or backward the other one to fix the situation
+///	else if  (LTL!= LTR && BL==BR){
+///		If (BL==STARTVAL(BL){
+///			LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+///		}
+///		else {
+///			LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+///		}
+/// 
+/// else if (LTL==LTR && BR !=BL){
+///		If (LTL!=STARTVAL (LTL){
+///			LEFT WHEEL STOP, RIGHT WHEEL BACKWARDS
+///		}
+///		else {
+///				LEFT WHEEL BACKWARDS, RIGHT WHEEL STOP
+///		}
+/// }
+/// else {
+///		null;
+/// }
+/// </summary>
+void navigation::adjustOnTheSpot(){
+	//Case 1 if ((LTL==LTR)&& (BL==BR) && (LTL!=BL)
+	if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR)) && (RVAL(sC::LTL) != RVAL(sC::BL))) {
+		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//Move Horizontally to the left
+		}
+		else {
+			//Move Horizontally to the Right
+		}
+	}
+	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
+	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
+		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//ROTATE LEFT
+		}
+		else {
+			//ROTATE RIGHT 
+		}
+	}
+	//Case 3 (LTL!= LTR) && (BR==BL)   
+	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
+		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
+			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+		}
+		else {
+			//LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+		}
+	}
+	//Case 3.1 (LTL==LTR) && (BR !=BL)
+	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
+		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
+			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
+		}
+		else {
+			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
+		}
+	}
+}
 
 //Function to turn left
 void navigation::turnLeft() {
