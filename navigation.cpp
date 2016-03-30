@@ -355,10 +355,96 @@ void navigation::adjustOnTheSpot(){
 }
 
 //Function to turn left
-void navigation::turnLeft() {
-	Sensor::PollSensors(Sensors);
+/// <summary>
+/// Algorithm turnLeft1
+/// While (true)
+///		If the buggy centre of rotation is at the top of intersection{
+///			if buggy has perfectly final position{
+///				Break
+///				Finish Movement
+///			}
+///			else{
+///			Adjust on the spot
+///			}
+///		}
+///		else if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else if (RVAL(LTL)== RVAL (LTR)){
+///			//Overshoot between LTL and LTR
+///			if (RVAL(LTR) == STARTVAL(LTR) {
+///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
+///			}
+///			else{
+///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
+///			}
+///		}
+///		else if  ((RVAL(BL)==RVAL(BR))|| (RVAL (ML) == RVAL (MR) ){
+///				Overshoot between the middle or Bottom Sensors
+///				Follow line forward to fix overshoot
+///		}
+///		else{
+///			//Ensure Centre of Rotation is at the top of intersection
+///			 if ((RVAL(ML)!= STARTVAL(ML)) {
+///				 FOLLOW THE LINE BACKWARDS
+///			 }
+///			 else{
+///				FOLLOW THE LINE FORWARDS
+///			}
+///		}
+/// }	 
+/// </summary>
 
+void navigation::turnLeft() {
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			//drive(motorConfig::S, motorConfig::S);
+			break;
+		}
+		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//ROTATE LEFT;
+		}
+		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
+			//overshoot between LTL and LTR
+			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+				//ROTATE RIGHT
+			}
+			else {
+				//ROTATE LEFT
+			}
+		}
+		else {
+			navigation::adjustOnTheSpot();
+		}
+	}
 }
+
+/// <summary>
+/// Turnleft2
+/// While (true)
+///		if buggy has perfectly final position{
+///			Break
+///			Finish Movement
+///		}
+///		else if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else if (RVAL(LTL)== RVAL (LTR)){
+///			//Overshoot between LTL and LTR
+///			if (RVAL(LTR) == STARTVAL(LTR) {
+///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
+///			}
+///			else{
+///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
+///			}
+///		}
+///		else{
+///			adjustOnTheSpot
+///		}
+/// </summary>
+
+
 
 //Function to turn right.
 void navigation::turnRight() {
@@ -366,7 +452,7 @@ void navigation::turnRight() {
 	//drive(motorConfig::F, motorConfig::B, 70, 70);
 }
 
-
+//Function to move forwards one node
 /// <summary>
 /// moveForward Algorithm
 /// while (true){
@@ -388,7 +474,6 @@ void navigation::turnRight() {
 ///	}
 /// 
 /// </summary>
-//Function to move forwards one node
 void navigation::moveForward() {
 	DEBUG_PRINTLN("Moving Now!");
 	while (true) {
