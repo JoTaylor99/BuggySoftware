@@ -2,7 +2,7 @@
 #define _COMMS_H
 #include "Config.h"
 namespace Comms {
-	
+
 	/// <summary>
 	/// Definition of all function codes used for communication with the buggy
 	/// </summary>
@@ -62,6 +62,11 @@ namespace Comms {
 		/// Indicates that the last frame was incorrect
 		/// </summary>
 		Error = 0x12,
+
+		/// <summary>
+		/// This will run Buggy.Go with a single character
+		/// </summary>
+		ManualCtrl = 0x12,
 
 
 		/// <summary>
@@ -145,7 +150,15 @@ namespace Comms {
 
 	};
 
+	enum Directions
+	{
+		Forward = 0x01,
+		Backward = 0x02,
+		TurnLeft = 0x03,
+		TurnRight = 0x04
 
+
+	};
 
 
 
