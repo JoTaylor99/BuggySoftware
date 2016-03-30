@@ -119,6 +119,31 @@ bool navigation::reachedDestination() {
 	}
 }
 
+//Determines if the centre of rotation of the buggy has just arrived at the top of the destination Intersection
+bool navigation::buggyCentreOnTopofDestIntersection() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+		((RLASTVAL(sC::ML) == STARTVAL(sC::ML)) || (RLASTVAL(sC::MR) == STARTVAL(sC::MR)))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+//checks if centre of rotation of the buggy is behind the intersection while front of the buggy has passed
+bool navigation::buggyCentreBehindDestIntersection() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) == STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 /// driftingWhenForward Algorithm
 /// If (LTL!= LTR )
@@ -382,8 +407,65 @@ void navigation::moveForward() {
 		}
 	}
 }
-
+//Function to move backward a node
+/// <summary>
+/// moveBackward Algorithm /slightly changed from the data flow chart to avoid going backwards and forwards at the destination intersection
+/// while(true){
+///		Poll Sensors
+///		if the centre of rotation is at the top of the destination  intersection 
+///	(i.e. if ((RVAL(FL)!=STARTVAL(FL) && RVAL(FR)!=STARTVAL(FR))&&
+///			  (RVAL(ML)!=STARTVAL(ML) && RVAL(MR)!=STARTVAL(MR))&& 
+///			  ((LASTVAL(ML)==STARTVAL(ML) || LASTVAL(MR)==STARTVAL(MR)){
+///			 if (RVAL(ALL)!= STARTVAL(ALL)){
+///			    STOP 
+///			    BREAK 
+///			   	FINISH
+///			}
+///			else {
+///				adjustOnTheSpot;
+///			}
+///	else if ML and MR have passed the destination intersection ( ML ==STARTVAL(ML)&& MR==STARTVAL(MR) && FL!=STARTVAL(FL)){
+///				that means centre of rotation of the buggy is behind the intersection and the buggy needs to go forward
+///				if (!drift){
+///					go forward
+///				}
+///				else{
+///					fix drift
+///				}
+/// }
+/// else {
+///		if (!drift)
+///			go backwards to reach the destination intersection
+///		else{
+///			fix drift
+///		}
+/// }	
+/// </summary>
 void navigation::moveBackward() {
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::buggyCentreOnTopofDestIntersection() == true) {
+			if (navigation::reachedDestination()) {
+				//drive(motorConfig::S, motorConfig::S);
+				break;
+			}
+			else {
+				navigation::adjustOnTheSpot();
+			}
+		}
+		else if (navigation::buggyCentreBehindDestIntersection()) {
+			if (!navigation::driftingWhenForward()) {
+				//drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+				//drive forward
+			}
+		}
+		else {
+			if (!navigation::driftingWhenBackward()) {
+				//drive backward
+				////drive(motorConfig::B, motorConfig::B, LeftSpeed, RightSpeed);
+			}
+		}
+	}
 }
 
 #ifdef SENSOR_MEMORY_SAVE

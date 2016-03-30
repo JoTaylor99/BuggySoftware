@@ -82,6 +82,13 @@ private:
 	//checks if the readings of all the sensors are opposite with their corresponding starting reading (i.e. the buggy has reached its destination)
 	bool reachedDestination();
 
+	//checks if the centre of rotation of the buggy is at the top of the destination intersection
+	bool buggyCentreOnTopofDestIntersection();
+
+	// Checks if the centre of rotation is behhind the destination intersection 
+	//but the front of the buggy has passed the destination intersection
+	bool buggyCentreBehindDestIntersection();
+
 	void turnLeft();
 	void turnRight();
 	void moveForward();
