@@ -114,7 +114,10 @@ void buggyTop::parseData(struct Frame *theData) {
 	case Comms::FunctionCodes::Acknowledge:
 		//Unreachable
 		break;
-
+	case Comms::FunctionCodes::ManualCtrl:
+		controlManually(theData);
+		
+		break;
 	default:
 		sendError(Comms::ErrorCodes::UnknownCmd);
 	}
@@ -137,6 +140,15 @@ void buggyTop::AppendRoute(struct Frame *theData) {
 	if (theData->data>>24 != 0xFF) {
 		str += (char)theData->data;
 	}
+}
+
+void buggyTop::controlManually(Frame * theData)
+{
+	uint8_t a = theData->data;
+	String temp = "";
+	temp += (char)a;
+	buggy.navigate(temp);
+	sendAcknowledge((Comms::FunctionCodes)a);
 }
 
 void buggyTop::sendError(Comms::ErrorCodes err)

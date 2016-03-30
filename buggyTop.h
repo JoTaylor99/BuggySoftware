@@ -30,10 +30,12 @@ public:
 	void Check();
 	void parseData(struct Frame *theData);
 	void AppendRoute(struct Frame *theData);
+	void controlManually(struct Frame *theData);
+
 
 	void sendError(Comms::ErrorCodes err);
 	void sendAcknowledge(Comms::FunctionCodes cmd);
-
+	
 };
 
 #endif
