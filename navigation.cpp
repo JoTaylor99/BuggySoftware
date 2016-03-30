@@ -395,6 +395,30 @@ void navigation::adjustOnTheSpot(){
 /// }	 
 /// </summary>
 
+/// <summary>
+/// Assumes the centre of rotation of the buggy remains stable on top of the intersection during the rotation
+/// Turnleft2Algorithm
+/// While (true)
+///		if buggy has perfectly final position{
+///			Break
+///			Finish Movement
+///		}
+///		else if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else if (RVAL(LTL)== RVAL (LTR)){
+///			//Overshoot between LTL and LTR
+///			if (RVAL(LTR) == STARTVAL(LTR) {
+///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
+///			}
+///			else{
+///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
+///			}
+///		}
+///		else{
+///			adjustOnTheSpot
+///		}
+/// </summary>
 void navigation::turnLeft() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
@@ -420,37 +444,40 @@ void navigation::turnLeft() {
 	}
 }
 
+
+
+
 /// <summary>
-/// Turnleft2
-/// While (true)
-///		if buggy has perfectly final position{
-///			Break
-///			Finish Movement
-///		}
-///		else if ( LTL == STARTVAL(LTL)) {
-///			ROTATE LEFT --Actual Rotation movement
-///		}
-///		else if (RVAL(LTL)== RVAL (LTR)){
-///			//Overshoot between LTL and LTR
-///			if (RVAL(LTR) == STARTVAL(LTR) {
-///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
-///			}
-///			else{
-///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
-///			}
-///		}
-///		else{
-///			adjustOnTheSpot
-///		}
+/// Same algorithm as RotateLeft
+/// Only difference is the direction of rotation  which is Right
+/// 
 /// </summary>
-
-
-
 //Function to turn right.
 void navigation::turnRight() {
-	Sensor::PollSensors(Sensors);
-	//drive(motorConfig::F, motorConfig::B, 70, 70);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			//drive(motorConfig::S, motorConfig::S);
+			break;
+		}
+		else if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+			//ROTATE RIGHT;
+		}
+		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
+			//overshoot between LTL and LTR
+			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+				//ROTATE RIGHT
+			}
+			else {
+				//ROTATE LEFT
+			}
+		}
+		else {
+			navigation::adjustOnTheSpot();
+		}
+	}
 }
+
 
 //Function to move forwards one node
 /// <summary>
