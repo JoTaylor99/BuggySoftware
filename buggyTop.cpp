@@ -71,7 +71,6 @@ void buggyTop::parseData(struct Frame *theData) {
 	case Comms::FunctionCodes::ConnectionRequest:
 		sendCmd.cmd = Comms::ConnectionAccept;
 		sendCmd.data = (uint32_t)0;
-		Serial.println(sizeof(sendCmd));
 		sendData((void*)&sendCmd, sizeof(sendCmd));
 		break;
 	case Comms::FunctionCodes::ConnectionAccept:
