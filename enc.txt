@@ -1,0 +1,62 @@
+volatile unsigned int M1counter, M2counter;
+setup() {
+	PIDM1.SetSampleTime(900);
+	PIDM2.SetSampleTime(900);
+
+}
+drive(F, 0) {
+	int M1speed = 0;
+	int M2speed = 0;
+	int M1newSpeed = 0;
+	int M2newSpeed = 0;
+	if (direction == F) {
+		on first call{
+		setMotorDirection(F, F);
+		setMotorSpeed(BASE_SPEED);
+		}
+		for(byte i = 0; i<4; i++) {				//maximise this, each iteration will bring error closer to target speed
+		getSpeed(M1speed, M2speed);
+		M1newSpeed = PIDM1(TARGET_SPEED, M1speed);
+		M2newSpeed = PIDM2(TARGET_SPEED, M2speed);
+		setMotorSpeed(M1newSpeed, M2newSpeed);
+		}
+		}
+		
+}
+		
+void getSpeed(&M1speed, &M2speed) {
+	M1counter = 0;
+	M2counter = 0;
+
+	unsigned long M1ta = 0;
+	unsigned long M1tb = 0;
+	unsigned long M2ta = 0;
+	unsigned long M2tb = 0;
+	
+	M1ta = micros();
+	attachInterrupt(M1C, 0, RISING);
+	M2ta = micros();
+	attachInterrupt(M2C, 0, RISING);
+	
+	delayMicroseconds(800);				//minimize this, depends on number of counts per time
+	
+	detachInterrupt(M1C);
+	M1tb = micros();
+	detachInterrupt(M2C);
+	M2tb = micros();
+	
+	byte M1tdiff = M1tb-M1ta;
+	byte M2tdiff = M2tb-M2ta;
+	
+	M1speed = static_cast <int> (M1counter/M1tdiff);
+	M2speed = static_cast<int> (M2counter/M2tdiff);
+
+}
+
+void M1C() {
+	M1counter++;
+	}
+
+void M2C() {
+	M2counter++;
+	}
