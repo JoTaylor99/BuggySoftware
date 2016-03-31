@@ -4,6 +4,7 @@
  Author:	Henry
 */
 
+#include <arduino2.h>
 #include <NewPing.h>
 #include <Wire.h>
 #include "Config.h"
