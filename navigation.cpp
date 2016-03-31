@@ -46,7 +46,6 @@ void navigation::navigate(String str) {
 			if (str == "F") {
 				start();
 				MoveForward();
-				drive(nC::Forward, nC::leftDrift);
 			} else if (str == "B") {
 				start();
 				MoveBackward();
