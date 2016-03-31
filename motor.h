@@ -18,13 +18,41 @@ public:
 
 protected:
 
-	void MotorControl(mC::Direction LDir, mC::Direction RDir, byte LSpeed, byte RSpeed);
+	/// <summary>
+	/// Sets the PWM value of both motors
+	/// </summary>
+	/// <param name="motorSpeed">PWM value to set, range 0-255</param>
+	void setMotorSpeed(byte motorSpeed);
 
+	/// <summary>
+	/// Sets the PWM value of each motor
+	/// </summary>
+	/// <param name="motorASpeed">Motor A PWM value to set</param>
+	/// <param name="motorBSpeed">Motor B PWM value to set</param>
+	void setMotorSpeed(byte motorASpeed, byte motorBSpeed);
+
+	/// <summary>
+	/// Sets the direction of each motor, note param can be stop
+	/// </summary>
+	/// <param name="motorADirection">Motor A Direction to set</param>
+	/// <param name="motorBDirection">Motor B Direction to set</param>
+	void setMotorDirection(mC::Direction motorADirection, mC::Direction motorBDirection);
+
+	/// <summary>
+	/// Sets the direction of both motors, function called with stop to stop all
+	/// </summary>
+	/// <param name="motorDirection">Direction to set</param>
+	void setMotorDirection(mC::Direction motorDirection);
+		
 	/* motor init function
 	*  Void return type
 	*  Will depends on communications class for sending error codes or debug statements
 	*  Sets up
 	*/
+	/// <summary>
+	/// Motor init function
+	/// Sets up pin directions
+	/// </summary>
 	void initMotors();
 
 private:
