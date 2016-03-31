@@ -27,12 +27,14 @@ protected:
 	/// <summary>
 	/// Sets the PWM value of each motor
 	/// </summary>
-	/// <param name="motorASpeed">Motor A PWM value to set</param>
-	/// <param name="motorBSpeed">Motor B PWM value to set</param>
+	/// <param name="motorASpeed">Motor A PWM value to set, must be 0-255</param>
+	/// <param name="motorBSpeed">Motor B PWM value to set, must be 0-255</param>
 	void setMotorSpeed(byte motorASpeed, byte motorBSpeed);
 
 	/// <summary>
-	/// Sets the direction of each motor, note param can be stop
+	/// Sets the direction of each motor
+	/// If stop is passed to both parameters stop will occur immediately
+	/// If stop is passed to ONE OF the parameters the direction assignment for the other will be made and then stop will be asserted.
 	/// </summary>
 	/// <param name="motorADirection">Motor A Direction to set</param>
 	/// <param name="motorBDirection">Motor B Direction to set</param>
@@ -44,36 +46,36 @@ protected:
 	/// <param name="motorDirection">Direction to set</param>
 	void setMotorDirection(mC::Direction motorDirection);
 		
-	/* motor init function
-	*  Void return type
-	*  Will depends on communications class for sending error codes or debug statements
-	*  Sets up
-	*/
 	/// <summary>
 	/// Motor init function
 	/// Sets up pin directions
 	/// </summary>
 	void initMotors();
 
+	void MotorControl(mC::Direction LDir, mC::Direction RDir, byte LSpeed, byte RSpeed);
 private:
-	Adafruit_MCP23017 GP;
 	static bool _motorInitComplete;
 
-	const byte dir1PinA = DIR1PINA;
-	const byte dir2PinA = DIR2PINA;
-	const byte speedPinA = SPEEDPINA; // Needs to be a PWM pin to be able to control motor speed
+	
+	// Direction Pin Motor A
+	const byte dirPinA = DIRPINA;
 
-	// Motor 2
-	const byte dir1PinB = DIR1PINB;
-	const byte dir2PinB = DIR2PINB;
+	
+	// Speed Pin Motor A
+	// Must be a PWM pin
+	const byte speedPinA = SPEEDPINA;
+
+	// Direction Pin Motor B
+	const byte dirPinB = DIRPINB;
+
+	// Speed Pin Motor B
+	// Must be a PWM pin
 	const byte speedPinB = SPEEDPINB; // Needs to be a PWM pin to be able to control motor speed
-	 
-	/* checkMotorConfigCorrect function
-	* checks to ensure all initialization functions have been run,
-	*	if any have not been called the an object will be created and the relevant init function run again.
-	*	return type void
-	*/
 
+	/// <summary>
+	/// checks to ensure all initialization functions have been run
+	/// if any have not been called then the relevant init function will be called.
+	/// </summary>
 	void checkMotorConfigCorrect();
 
 };
