@@ -19,7 +19,8 @@ void buggyMotion::initMotion() {
 
 void buggyMotion::drive(nC::Direction direction, nC::Drift drift) {
 
-
+	analogWrite(9, 127.5);
+	analogWrite(3, 127.5);
 }
 
 //functions removed 25/03
