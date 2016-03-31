@@ -165,19 +165,15 @@
 
 
 //Motor Defines
-#define DIR1PINA 4
-#define DIR2PINA 5
+#define DIRPINA 4
+#define DIRPINB 5
 #define SPEEDPINA 6
-#define DIR1PINB 6
-#define DIR2PINB 7
 #define SPEEDPINB 5
 
 #define MAX_SPEED 100
 #define MIN_SPEED 65
 #define TURNING_SPEED 60
 #define CORRECTION_MAG 5
-#define KICK_MAGNITUDE 200
-#define DEFAULT_KICK_TIME 15
 
 //Nav::navigation defines
 #define COUNTER_LEN 2
