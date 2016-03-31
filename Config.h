@@ -2,6 +2,8 @@
 #define _CONFIG_H
 #include <Arduino.h>
 
+//Savvas test commit
+
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 #define DEBUG
@@ -103,7 +105,7 @@
 #ifndef SENSOR_MEMORY_SAVE
 #define SVAL(sensorNumber, value) Sensor::values[sensorNumber] = value
 #define RVAL(sensorNumber)	Sensor::values[sensorNumber]
-#define STARTVAL(sensorNumber)	navigation::starting_values[sensorNumber]
+#define STARTVAL(sensorNumber)	navigation::startingValues[sensorNumber]
 #define RLASTVAL(sensorNumber)	Sensor::lastValues[sensorNumber]
 #define SLASTVAL(sensorNumber, lastValue)	Sensor::lastValues[sensorNumber] = lastValue
 #else
