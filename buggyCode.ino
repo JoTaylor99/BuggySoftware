@@ -5,6 +5,7 @@
 */
 
 #include <arduino2.h>
+#include <PWM.h>
 #include <NewPing.h>
 #include <Wire.h>
 #include "Config.h"
