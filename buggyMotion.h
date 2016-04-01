@@ -4,9 +4,8 @@
 #define _BUGGYMOTION_H
 
 #include "Config.h"
-#include "motor.h"
 
-class buggyMotion : private motor {
+class buggyMotion  {
 
 public:
 	/* buggyMotion constructor*/
@@ -25,26 +24,35 @@ public:
 protected:
 
 
-	//Drive functions two types:
-	/// <summary>
-	/// Drive function 1, for standard movements (Forwards, Backwards, Left, Right).
-	/// Calls specific functions for each direction
-	/// </summary>
-	/// <param name="direction"></param>
-	void drive(nC::Direction direction);
-	/// <summary>
-	/// Drive function 2, for movements where you want a certain amount of steps.
-	/// This is for forwards & backwards only.
-	/// 800 Steps per revolution of the wheel.
-	/// </summary>
-	/// <param name="direction"></param>
-	/// <param name="Step"></param>
-	void drive(nC::Direction direction, byte Step);
-	/// <summary>
-	/// Function to call relevant drift functions. (Left or right)
-	/// </summary>
-	/// <param name="drift"></param>
-	void drift(nC::Drift drift);
+	void drive(nC::Direction, nC::Drift);
+
+
+
+	////Drive functions two types:
+	///// <summary>
+	///// Drive function 1, for standard movements (Forwards, Backwards, Left, Right).
+	///// Calls specific functions for each direction
+	///// </summary>
+	///// <param name="direction"></param>
+	//void drive(nC::Direction direction);
+	///// <summary>
+	///// Drive function 2, for movements where you want a certain amount of steps.
+	///// This is for forwards & backwards only.
+	///// 800 Steps per revolution of the wheel.
+	///// </summary>
+	///// <param name="direction"></param>
+	///// <param name="Step"></param>
+	//void drive(nC::Direction direction, byte Step);
+	///// <summary>
+	///// Function to call relevant drift functions. (Left or right)
+	///// </summary>
+	///// <param name="drift"></param>
+	//void drift(nC::Drift drift);
+
+	
+
+
+
 
 private:
 	static bool _motionInitComplete;

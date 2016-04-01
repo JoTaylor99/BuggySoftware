@@ -14,9 +14,20 @@ buggyMotion::~buggyMotion() {
 bool buggyMotion::_motionInitComplete = false;
 
 void buggyMotion::initMotion() {
-	initMotors();
+	//initMotors();
+	InitTimersSafe();
 	_motionInitComplete = true;
 }
+
+void buggyMotion::drive(nC::Direction, nC::Drift)
+{
+	if ()
+
+
+}
+
+
+
 
 void buggyMotion::drive(nC::Direction direction) {
 	Reset();
@@ -58,6 +69,7 @@ void buggyMotion::ForwardMovement() {
 	analogWrite(MotorR, 127.5);
 	digitalWrite2(dirL, HIGH);
 	digitalWrite2(dirR, HIGH);
+
 }
 
 void buggyMotion::BackwardMovement() {
@@ -117,26 +129,26 @@ void buggyMotion::StepBackward(byte Steps) {
 
 
 void buggyMotion::DriftRight() {
-	//Make Right wheel go faster & Left wheel go slower:
-	TCCR2B = TCCR2B & B11111000 | B00000100;    // set timer 2 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-	TCCR1B = TCCR1B & B11111000 | B00000101;    // set timer 1 divisor to  1024 for PWM frequency of    30.64 Hz
-												//Turn towards the left.
-	LeftMovement();
+	////Make Right wheel go faster & Left wheel go slower:
+	//TCCR2B = TCCR2B & B11111000 | B00000100;    // set timer 2 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
+	//TCCR1B = TCCR1B & B11111000 | B00000101;    // set timer 1 divisor to  1024 for PWM frequency of    30.64 Hz
+	//											//Turn towards the left.
+	//LeftMovement();
 }
 
 void buggyMotion::DriftLeft() {
-	//Make Left wheel go faster & Right wheel go slower:
-	TCCR1B = TCCR1B & B11111000 | B00000011;    // set timer 1 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-	TCCR2B = TCCR2B & B11111000 | B00000111;    // set timer 2 divisor to  1024 for PWM frequency of    30.64 Hz
-												//Turn towards the left.
-	LeftMovement();
+	////Make Left wheel go faster & Right wheel go slower:
+	//TCCR1B = TCCR1B & B11111000 | B00000011;    // set timer 1 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
+	//TCCR2B = TCCR2B & B11111000 | B00000111;    // set timer 2 divisor to  1024 for PWM frequency of    30.64 Hz
+	//											//Turn towards the left.
+	//LeftMovement();
 }
 
 void buggyMotion::Reset() {
-	TCCR1B = 0;
-	TCCR2B = 0;
-	TCCR1B = TCCR1B & B11111000 | B00000100;    // set timer 1 divisor to   256 for PWM frequency of   122.55 Hz
-	TCCR2B = TCCR2B & B11111000 | B00000110;    // set timer 2 divisor to   256 for PWM frequency of   122.55 Hz
+	//TCCR1B = 0;
+	//TCCR2B = 0;
+	//TCCR1B = TCCR1B & B11111000 | B00000100;    // set timer 1 divisor to   256 for PWM frequency of   122.55 Hz
+	//TCCR2B = TCCR2B & B11111000 | B00000110;    // set timer 2 divisor to   256 for PWM frequency of   122.55 Hz
 }
 //functions removed 25/03
 /*
