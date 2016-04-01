@@ -179,10 +179,11 @@
 
 //Nav::navigation defines
 #define COUNTER_LEN 2
-#define dirL 6
-#define dirR 7
-#define MotorL 9
-#define MotorR 3
+#define LEFTMOTORDIR 6
+#define RIGHTMOTORDIR 7
+#define LEFTMOTOR 9
+#define RIGHTMOTOR 3
+
 
 
 //Box Defines
