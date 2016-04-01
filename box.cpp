@@ -11,6 +11,111 @@ void box::init(){
 	setupADC();
 };
 
+void box1() {
+}
+
+void box2a() { //Find R1, p1-5V p2-ADC gnd-HI Z Rk-ground
+	int Rk = 560; // get exact value from bridge
+	int Vi = 5.00; //get exact output with lipo to arduino
+	int Vo; // assign Vo to ADC Value 
+	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
+	int R1;
+	R1 = Rk * ((Vi - Vo) / Vo);
+	//output R1
+}
+
+void box2b() { //Find R2, p1-HI Z p2-ADC GND-GND Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo; 
+	Vo = (Vo * Vi) / 1023;
+	int R2;
+	R2 = (Vo * Rk) / (Vi - Vo);
+	//output R2
+}
+
+void box3a(){ //Find R1, p1-GND p2-ADC GND-HI Z Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo;
+	Vo = (Vo * Vi) / 1023;
+	int R1;
+	R1 = (Vo * Rk) / (Vi - Vo);
+	//output R1
+}
+
+void box3b() { //Find R2, p1-HI Z p2-ADC GND-GND Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo;
+	Vo = (Vo * Vi) / 1023;
+	int R2;
+	R2 = (Vo * Rk) / (Vi - Vo);
+	//output R2
+}
+
+void box4a(){//Find R1, p1-5V p2-ADC gnd-gnd Rk-HI Z
+	int Rk = 1200; // get exact value from bridge
+	int Vi = 5.00; //get exact output with lipo to arduino
+	int Vo; // assign Vo to ADC Value 
+	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
+	int R1;
+	R1 = Rk * ((Vi - Vo) / Vo);
+	//output R1
+}
+
+void box4b() {//Find R2, p1-ADC p2-5V gnd-gnd Rk-HI Z
+	int Rk = 560; // get exact value from bridge
+	int Vi = 5.00; //get exact output with lipo to arduino
+	int Vo; // assign Vo to ADC Value 
+	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
+	int R2;
+	R2 = Rk * ((Vi - Vo) / Vo);
+	//output R2
+}
+
+void box5a(){
+	//capacitor read between p1 and p2
+}
+
+void box5b() {//Find R, p1-HI Z p2-ADC GND-GND Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo;
+	Vo = (Vo * Vi) / 1023;
+	int R;
+	R = (Vo * Rk) / (Vi - Vo);
+	//output R
+}
+
+void box6a(){ 
+	//capacitor read between p2 and gnd
+}
+
+void box6b() {//Find R, p1-gnd p2-ADC GND-HI Z Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo;
+	Vo = (Vo * Vi) / 1023;
+	int R;
+	R = (Vo * Rk) / (Vi - Vo);
+	//output R
+}
+
+void box7a(){
+	// capacitor read betwen p1 and p2
+}
+
+void box7b() {//Find R, p1-HI Z p2-ADC GND-GND Rk-5V
+	int Rk = 560;
+	int Vi = 5.00;
+	int Vo;
+	Vo = (Vo * Vi) / 1023;
+	int R;
+	R = (Vo * Rk) / (Vi - Vo);
+	//output R
+}
+
 byte box::interrogateBox(byte boxNumber, bool boxInverted){
 	presentationData.error = 0;
 	presentationData.c1 = 0;
