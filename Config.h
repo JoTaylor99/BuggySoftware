@@ -10,7 +10,7 @@
 
 //#define SENSOR_DEBUG
 //#define NAV_DEBUG
-//#define MOT_DEBUG
+#define MOT_DEBUG
 //#define BOX_DEBUG
 
 //#define SEN_INFO
@@ -167,10 +167,10 @@
 
 
 //Motor Defines
-#define DIRPINA 4
-#define DIRPINB 5
-#define SPEEDPINA 6
-#define SPEEDPINB 5
+//#define DIRPINA 4
+//#define DIRPINB 5
+//#define SPEEDPINA 6
+//#define SPEEDPINB 5
 
 #define MAX_SPEED 100
 #define MIN_SPEED 65

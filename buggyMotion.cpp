@@ -15,13 +15,20 @@ buggyMotion::~buggyMotion() {
 
 void buggyMotion::initMotion() {
 	InitTimersSafe();
+	pinMode(LEFTMOTORDIR, OUTPUT);
+	pinMode(RIGHTMOTORDIR, OUTPUT);
+	pinMode(RIGHTMOTOR, OUTPUT);
+	pinMode(LEFTMOTOR, OUTPUT);
 	_timersInitialised = true;
-	_leftspeed = 0;
-	_rightspeed = 0;
+	_leftSpeed = 0;
+	_rightSpeed = 0;
 	_firstCall = true;
+
 }
+
 void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::noDrift)
 {
+	
 	if (direction == nC::Stop) {
 		stop();
 		return;
@@ -30,14 +37,21 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::no
 
 	if (_firstCall) {
 		_firstCall = false;
+
 		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
-			_leftspeed = 80;
-			_rightspeed = 80;
+			_leftSpeed = 100;
+			_rightSpeed = 100;
+
+
 		}
 		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
-			_leftspeed = 50;
-			_rightspeed = 50;
+			_leftSpeed = 50;
+			_rightSpeed = 50;
 		}
+		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
+		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
+		pwmWrite(LEFTMOTOR, 128);
+		pwmWrite(RIGHTMOTOR, 128);
 	}
 
 	//If the buggy is drifting
@@ -53,16 +67,16 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::no
 	switch (direction)
 	{
 	case nC::Direction::Forward:
-		stepperControl(nC::Direction::Forward, nC::Direction::Forward, _leftspeed, _rightspeed);
+		stepperControl(nC::Direction::Forward, nC::Direction::Forward);
 		break;
 	case nC::Direction::Backwards:
-		stepperControl(nC::Direction::Backwards, nC::Direction::Backwards, _leftspeed, _rightspeed);
+		stepperControl(nC::Direction::Backwards, nC::Direction::Backwards);
 		break;
 	case nC::Direction::Left:
-		stepperControl(nC::Direction::Backwards, nC::Direction::Forward, _leftspeed, _rightspeed);
+		stepperControl(nC::Direction::Backwards, nC::Direction::Forward);
 		break;
 	case nC::Direction::Right:
-		stepperControl(nC::Direction::Forward, nC::Direction::Forward, _leftspeed, _rightspeed);
+		stepperControl(nC::Direction::Forward, nC::Direction::Backwards);
 		break;
 
 	default:
@@ -73,28 +87,30 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::no
 
 
 }
-void buggyMotion::stepperControl(nC::Direction leftMotor, nC::Direction rightMotor, uint16_t leftSpeed, uint16_t rightSpeed) {
+void buggyMotion::stepperControl(nC::Direction leftMotor, nC::Direction rightMotor) {
+
 	setLeftMotorDirection(leftMotor);
 	setRightMotorDirection(rightMotor);
-	setLeftSpeed(leftSpeed);
-	setRightSpeed(rightSpeed);
+	setLeftSpeed(_leftSpeed);
+	setRightSpeed(_rightSpeed);
 }
 void buggyMotion::setLeftMotorDirection(nC::Direction dir)
 {
+
 	if (dir == nC::Direction::Forward || dir == nC::Direction::Right) {
-		digitalWrite(LEFTMOTORDIR, HIGH);
+		digitalWrite(LEFTMOTORDIR, LOW);
 	}
 	if (dir == nC::Direction::Backwards || dir == nC::Direction::Left) {
-		digitalWrite(LEFTMOTORDIR, LOW);
+		digitalWrite(LEFTMOTORDIR, HIGH);
 	}
 }
 void buggyMotion::setRightMotorDirection(nC::Direction dir)
 {
 	if (dir == nC::Direction::Forward || dir == nC::Direction::Right) {
-		digitalWrite(LEFTMOTORDIR, LOW);
+		digitalWrite(RIGHTMOTORDIR, HIGH);
 	}
 	if (dir == nC::Direction::Backwards || dir == nC::Direction::Left) {
-		digitalWrite(LEFTMOTORDIR, HIGH);
+		digitalWrite(RIGHTMOTORDIR, LOW);
 	}
 }
 void buggyMotion::setRightSpeed(int32_t freq)
@@ -105,6 +121,8 @@ void buggyMotion::setRightSpeed(int32_t freq)
 void buggyMotion::setLeftSpeed(int32_t freq)
 {
 	SetPinFrequencySafe(LEFTMOTOR, freq);
+
+
 }
 void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 {
@@ -113,25 +131,25 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 	case nC::Forward:
 		if (drift==nC::Drift::leftDrift)
 		{
-			_leftspeed++;
-			_rightspeed--;
+			_leftSpeed++;
+			_rightSpeed--;
 		}
 		else if (drift == nC::Drift::rightDrift)
 		{
-			_leftspeed--;
-			_rightspeed++;
+			_leftSpeed--;
+			_rightSpeed++;
 		}	
 		break;
 	case nC::Backwards:
 		if (drift == nC::Drift::leftDrift)
 		{
-			_leftspeed--;
-			_rightspeed++;
+			_leftSpeed--;
+			_rightSpeed++;
 		}
 		else if (drift == nC::Drift::rightDrift)
 		{
-			_leftspeed++;
-			_rightspeed--;
+			_leftSpeed++;
+			_rightSpeed--;
 		}
 		break;
 	case nC::Left:
@@ -146,10 +164,10 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 }
 void buggyMotion::stop()
 {
-	_leftspeed = 0;
-	_rightspeed = 0;
+	_leftSpeed = 0;
+	_rightSpeed = 0;
 	_firstCall = true;
-	SetPinFrequencySafe(LEFTMOTOR, 0);
-	SetPinFrequencySafe(RIGHTMOTOR, 0);
+	pwmWrite(LEFTMOTOR, _leftSpeed);
+	pwmWrite(RIGHTMOTOR, _rightSpeed);
 
 }
