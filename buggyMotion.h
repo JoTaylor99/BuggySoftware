@@ -67,7 +67,16 @@ private:
 	void DriftLeft();
 	void Reset();
 
-	
+	void StepperControl(nC::Direction leftMotor, nC::Direction rightMotor, uint16_t leftSpeed, uint16_t rightSpeed);
+	void setLeftMotorDirection(nC::Direction dir);
+	void setRightMotorDirection(nC::Direction dir);
+	void setRightSpeed(int32_t freq);
+	void setLeftSpeed(int32_t freq);
+	void driftCorrect(nC::Direction direction, nC::Drift drift);
+
+	int32_t _leftspeed;
+	int32_t _rightspeed;
+
 
 	/* checkMotionConfigCorrect function
 	* checks to ensure all initialization functions have been run,
