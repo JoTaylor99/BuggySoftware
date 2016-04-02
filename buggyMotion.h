@@ -73,11 +73,14 @@ private:
 	void setRightSpeed(int32_t freq);
 	void setLeftSpeed(int32_t freq);
 	void driftCorrect(nC::Direction direction, nC::Drift drift);
+	void stop();
+
 
 	int32_t _leftspeed;
 	int32_t _rightspeed;
-
-
+	bool _timersInitialised = false;
+	bool _firstCall = true;
+	nC::Direction CurrentDirection = nC::Direction::Stop;
 	/* checkMotionConfigCorrect function
 	* checks to ensure all initialization functions have been run,
 	*	if any have not been called the an object will be created and the relevant init function run again.

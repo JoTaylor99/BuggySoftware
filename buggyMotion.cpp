@@ -11,51 +11,64 @@ buggyMotion::buggyMotion() {
 buggyMotion::~buggyMotion() {
 }
 
-bool buggyMotion::_motionInitComplete = false;
+
 
 void buggyMotion::initMotion() {
-	//initMotors();
 	InitTimersSafe();
-	_motionInitComplete = true;
-	_leftspeed = 50;
-	_rightspeed = 50;
+	_timersInitialised = true;
+	_leftspeed = 0;
+	_rightspeed = 0;
+	_firstCall = true;
 }
 
-void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
+void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::noDrift)
 {
-	if (drift != nC::Drift::noDrift) {
-		switch (drift)
-		{
-		case nC::leftDrift:
-			
-			
+	if (direction == nC::Stop) {
+		stop();
+		return;
+	}
 
-			break;
-		case nC::rightDrift:
-			break;
-		default:
-			break;
+
+	if (_firstCall) {
+		_firstCall = false;
+		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
+			_leftspeed = 80;
+			_rightspeed = 80;
+		}
+		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
+			_leftspeed = 50;
+			_rightspeed = 50;
 		}
 	}
 
-		switch (direction)
-		{
-		case nC::Direction::Forward:
-			StepperControl(nC::Direction::Forward, nC::Direction::Forward, 50, 50);
-			break;
-		case nC::Direction::Backwards:
-			StepperControl(nC::Direction::Backwards, nC::Direction::Backwards, 50, 50);
-			break;
-		case nC::Direction::Left:
-			StepperControl(nC::Direction::Backwards, nC::Direction::Forward, 50, 50);
-			break;
-		case nC::Direction::Right:
-			StepperControl(nC::Direction::Forward, nC::Direction::Forward, 50, 50);
-			break;
+	//If the buggy is drifting
+	if (drift != nC::Drift::noDrift) {
+		//Append the left and right motor speeds to solve drifting
+		driftCorrect(direction, drift);
+	}
 
-		default:
-			break;
-		}
+	
+	
+
+	//Call StepperControl with the correct parameters
+	switch (direction)
+	{
+	case nC::Direction::Forward:
+		StepperControl(nC::Direction::Forward, nC::Direction::Forward, _leftspeed, _rightspeed);
+		break;
+	case nC::Direction::Backwards:
+		StepperControl(nC::Direction::Backwards, nC::Direction::Backwards, _leftspeed, _rightspeed);
+		break;
+	case nC::Direction::Left:
+		StepperControl(nC::Direction::Backwards, nC::Direction::Forward, _leftspeed, _rightspeed);
+		break;
+	case nC::Direction::Right:
+		StepperControl(nC::Direction::Forward, nC::Direction::Forward, _leftspeed, _rightspeed);
+		break;
+
+	default:
+		break;
+	}
 
 	
 
@@ -88,6 +101,7 @@ void buggyMotion::setRightMotorDirection(nC::Direction dir)
 }
 void buggyMotion::setRightSpeed(int32_t freq)
 {
+	
 	SetPinFrequencySafe(RIGHTMOTOR, freq);
 }
 void buggyMotion::setLeftSpeed(int32_t freq)
@@ -130,6 +144,16 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 	default:
 		break;
 	}
+
+}
+
+void buggyMotion::stop()
+{
+	_leftspeed = 0;
+	_rightspeed = 0;
+	_firstCall = true;
+	SetPinFrequencySafe(LEFTMOTOR, 0);
+	SetPinFrequencySafe(RIGHTMOTOR, 0);
 
 }
 
