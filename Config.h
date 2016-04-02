@@ -293,7 +293,7 @@ namespace boxConfig {
 	namespace nC{
 	
 		enum Direction : uint8_t {
-			Forward, Backwards, Left, Right
+			Forward, Backwards, Left, Right, Stop
 		};
 
 		enum Drift : uint8_t {
