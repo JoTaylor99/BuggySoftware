@@ -33,6 +33,7 @@ private:
 	int32_t _rightSpeed;
 	bool _timersInitialised = false;
 	bool _firstCall = true;
+	bool _drifting;
 	nC::Direction CurrentDirection = nC::Direction::Stop;
 };
 
