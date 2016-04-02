@@ -297,7 +297,7 @@ namespace boxConfig {
 		};
 
 		enum Drift : uint8_t {
-			leftDrift, rightDrift
+			leftDrift, rightDrift , noDrift
 		};
 	
 	};
