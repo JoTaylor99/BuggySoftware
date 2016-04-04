@@ -535,18 +535,23 @@ void navigation::turnRight() {
 /// 
 /// </summary>
 void navigation::moveForward() {
-	DEBUG_PRINTLN("Moving Now!");
+	NAV_PRINTLN("Moving Now!");
 	while (true) {
 		Sensor::PollSensors(Sensors);
+		NAV_PRINTLN("In forward loop");
 		if (navigation::reachedDestination()) {
+			NAV_PRINTLN("Destination reached");
+
 			drive(nC::Direction::Stop);
 			break;
 		}
 		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
-			drive(nC::Direction::Stop);
-			adjustOnTheSpot();
+			NAV_PRINTLN("Adjust on Spot");
+			//drive(nC::Direction::Stop);
+			//adjustOnTheSpot();
 		}
 		else if (!navigation::driftingWhenForward()) {
+			NAV_PRINTLN("Who knows");
 			drive(nC::Direction::Forward);
 		}
 	}
