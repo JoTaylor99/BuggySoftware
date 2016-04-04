@@ -547,7 +547,8 @@ void navigation::moveForward() {
 		}
 		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
 			NAV_PRINTLN("Adjust on Spot");
-			//drive(nC::Direction::Stop);
+			break;
+			drive(nC::Direction::Stop);
 			//adjustOnTheSpot();
 		}
 		else if (!navigation::driftingWhenForward()) {
