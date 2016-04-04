@@ -146,8 +146,8 @@
 
 #define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
-#define MAX_DEFAULT 100
-#define MIN_DEFAULT 100
+#define MAX_DEFAULT 1000
+#define MIN_DEFAULT 800
 
 //Sensor interrupt thesholds
 
