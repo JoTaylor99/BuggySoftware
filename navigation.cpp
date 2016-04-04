@@ -41,7 +41,7 @@ void navigation::initNavigation() {
 
 void navigation::navigate(String str) {
 
-		//Sensor::PollSensors(Sensors);
+		Sensor::PollSensors(Sensors);
 			
 			if (str == "F") {
 				start();

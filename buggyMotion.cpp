@@ -14,11 +14,13 @@ buggyMotion::~buggyMotion() {
 
 
 void buggyMotion::initMotion() {
-	InitTimersSafe();
+	
+
 	pinMode(LEFTMOTORDIR, OUTPUT);
 	pinMode(RIGHTMOTORDIR, OUTPUT);
 	pinMode(RIGHTMOTOR, OUTPUT);
 	pinMode(LEFTMOTOR, OUTPUT);
+	InitTimersSafe();
 	_timersInitialised = true;
 	_leftSpeed = 0;
 	_rightSpeed = 0;
@@ -27,7 +29,7 @@ void buggyMotion::initMotion() {
 
 }
 
-void buggyMotion::drive(nC::Direction direction, nC::Drift drift = nC::Drift::noDrift)
+void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 {
 	
 	if (direction == nC::Stop) {
