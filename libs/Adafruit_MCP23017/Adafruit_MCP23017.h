@@ -23,8 +23,7 @@
 
 class Adafruit_MCP23017 {
 public:
-  void begin(uint8_t addr);
-  void begin(void);
+  void begin(uint8_t addr = 0, uint8_t portAPinModes = 0xff, uint8_t portBPinModes = 0xff);
 
   void pinMode(uint8_t p, uint8_t d);
   void digitalWrite(uint8_t p, uint8_t d);

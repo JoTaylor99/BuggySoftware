@@ -4,10 +4,10 @@
 
 #include "navigation.h"
 
-//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::sC::LTL), RVAL(sC::sC::FR), etc.
+//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
 //Previous values are read using RLASTVAL(sensorNumber)
 //Starting values are read using STARTVAL(sensorNumber)
-
+//test commit changes
 
 navigation::navigation() {
 	
@@ -42,38 +42,59 @@ void navigation::initNavigation() {
 void navigation::navigate(String str) {
 
 		Sensor::PollSensors(Sensors);
-
+			
 			if (str == "F") {
 				start();
-				MoveForward();
-				drive(nC::Forward, nC::leftDrift);
+				moveForward();
+				/*unsigned long tim = 0;
+				unsigned long tim2 = 0;
+
+				drive(nC::Direction::Stop, nC::Drift::noDrift);
+				tim = micros();
+				
+				drive(nC::Direction::Forward, nC::Drift::noDrift);
+				tim2 = micros();
+				Serial.println(tim2 - tim,DEC);
+
+				tim = micros();
+				drive(nC::Direction::Forward, nC::Drift::noDrift);
+				tim2 = micros();
+				Serial.println(tim2 - tim, DEC);
+
+				tim = micros();
+				drive(nC::Direction::Stop, nC::Drift::noDrift);
+				tim2 = micros();
+				Serial.println(tim2 - tim, DEC);
+
+*/
 			} else if (str == "B") {
 				start();
-				MoveBackward();
+				moveBackward();
 			} else if (str == "R") {
 				start();
-				TurnRight();
+				turnRight();
 			} else if (str == "L") {
 				start();
-				TurnLeft();
+				turnLeft();
 			}
 			else if (str == "G") {
-				BoxApproach();
+				boxApproach();
 				//box assessBox;
 				//byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
 				//if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
 			} else if (str == "S") {
-				//drive(motorConfig::S, motorConfig::S);
+				drive(nC::Direction::Stop);
+
 			}
 			else {
-				//drive(motorConfig::S, motorConfig::S);
+				drive(nC::Direction::Stop);
 			}
 };
 
-void navigation::BoxApproach() {
+void navigation::boxApproach() {
 		uint8_t Distance = 0;
 		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
-		//drive(motorConfig::F, motorConfig::F, LeftSpeed, RightSpeed);
+		drive(nC::Direction::Forward);
 		while (true) {
 			Distance = Ultrasonic.ping_cm();
 			DEBUG_VPRINTLN(Distance);
@@ -82,7 +103,7 @@ void navigation::BoxApproach() {
 				Sensor::PollSensors(Sensors, Sensor::Front, 2);
 			} else {
 				DEBUG_PRINTLN("I Have Reached the box");
-				//drive(motorConfig::S, motorConfig::S, 0, 0);
+				drive(nC::Direction::Stop);
 				if (Distance == 0) {
 					DEBUG_PRINTLN("Either too far or too close");
 				}
@@ -102,25 +123,491 @@ void navigation::start() {
 #endif
 	DEBUG_PRINTLN("I have the starting POSITION");
 }
+//Determines if the buggy reached the destination intersection correctly
+bool navigation::reachedDestination() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL))&& 
+		(RVAL(sC::LTL) != STARTVAL(sC::LTL))&&
+		(RVAL(sC::LTR) != STARTVAL(sC::LTR))&&
+		(RVAL(sC::FR) != STARTVAL(sC::FR))&& 
+		(RVAL(sC::ML) != STARTVAL(sC::ML))&&  
+		(RVAL(sC::MR) != STARTVAL(sC::MR))&&
+		(RVAL(sC::BL) != STARTVAL(sC::BL))&& 
+		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//Determines if the centre of rotation of the buggy has just arrived at the top of the destination Intersection
+bool navigation::buggyCentreOnTopofDestIntersection() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+		((RLASTVAL(sC::ML) == STARTVAL(sC::ML)) || (RLASTVAL(sC::MR) == STARTVAL(sC::MR)))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+//checks if centre of rotation of the buggy is behind the intersection while front of the buggy has passed
+bool navigation::buggyCentreBehindDestIntersection() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) == STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/// driftingWhenForward Algorithm
+/// If (LTL!= LTR )
+///		Buggy follows correctly the line
+///		return false;
+/// else {
+///			if (FR == START(FR)  AND FL == START(FL){
+///				Front of the buggy has not passed the destination intersection line yet
+///				Arena pattern has not flipped yet
+///				If (LTL!= START(LTL){
+///					drive Left so that LTL becomes LTL=START(LTL);
+///				}
+///				else {
+///					drive right so that LTR becomes LTR = START(LTR);
+///				}
+///			}
+///			else{
+///				Arena pattern has flipped/ front of the buggy has passed intersection line
+///				if (If LTL== START(LTL){
+///					drive left so that LTL becomes LTL!= START(LTL)
+///					}
+///				else{
+///					drive right so that LTR becomes LTR!= START(LTR)
+///			}
+///		return true;
+/// }
+bool navigation::driftingWhenForward() {
+	if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
+		return false;
+	}
+	else{
+		//Deviation from the course
+		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
+			//pattern of arena not flipped yet
+			if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
+				drive(nC::Direction::Forward,nC::Drift::leftDrift);
+			}
+			else {
+				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+
+			}
+		}
+		else {
+			if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+				drive(nC::Direction::Forward, nC::Drift::leftDrift);
+
+			}
+			else{
+				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+
+			}
+		}
+		return true;
+	}
+}
+/// <summary>
+/// driftingWhenBackward Algorithm
+/// Aims to avoid the switching pattern of the arena 
+/// by following the line backwards with LTL and LTR until FR and FL flipps
+/// Then it switches to follow the line backwards with BR and BL that already crossed the destination intersection
+/// check documentation for the reason 
+///     if FR AND FL have not flipped values (i.e. front of the buggy has not passed the initial intersection line {
+///			follow the line backwards with LTL and LTR 
+///			If(LTL != LTR){
+///				Buggy follows correctly the line
+///				return false;
+///			}
+///			else if (LTL ==START(LTL){
+///				Drive Backwards Left so that LTR will move to the RIGHT
+///				return true;
+///			}
+///			else {
+///					Drive Backwards Right so that LTL will move to the	LEFT
+///					return true;
+///			}
+///		}
+///		else{ Arena pattern has flipped
+///			follow the line with BR and BL
+///			if (BL!=BR){
+///				Buggy follows the line backwards correctly
+///				return false;
+///			}
+///			else if (BL==STARTVAL BL){
+///				drive backwards Left so that  BL will move to the left
+///				return true;
+///			else{
+///					Drive Backwards Right so that BR will move to the Right
+///					return true;
+///			}
+///		}
+/// </summary>
+/// <returns></returns>
+bool navigation::driftingWhenBackward() {
+	if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
+		//Front of the buggy has not passed the initial intersection line follow the line Backwards with LTL and LTR
+		if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
+			//correct position
+			return false;
+		}
+		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//drive BACKWARDS LEFT( NOT  JUST LEFT)
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+
+			return true;
+		}
+		else {
+			//drive backwards right 
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+
+			return true;
+		}
+	}
+	else{
+		//Front of the buggy has passed initial intersection line + Bottom of the buggy has passed destination intersection line
+	    // Pattern of arena changed, follow the line backwards with BR and BL
+		if (RVAL(sC::BL) != RVAL(sC::BR)){
+			//correct position
+			return false;
+		}
+		else if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
+			//Drive Backwards Left
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+
+			return true;
+		}
+		else {
+			//drive backwards right 
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+
+			return true;
+		}
+	}
+}
+
+
+
+/// <summary>
+/// adjustOnTheSpot is called when ML and MR have just crossed the destination intersection line
+/// Aims to get the buggy to have correct finish position 
+/// adjustOnTheSpot algorithm
+/// Case 1 horizontal movement because centre of rotation is not exactly at the top of the intersection 
+///		   but its on the horizontal destination intersection line
+/// if ((LTL==LTR)&& (BL==BR) && (LTL!=BL){
+///		IF (LTL==STARTVAL(LTL){
+///			Move Horizontally Left
+///		}
+///		else{
+///			Move Horizontally Right
+///		}
+/// }
+/// Case 2 Rotation on the spot. Centre of Rotation is at the top of destination intersection 
+///		   But the facade or the buggy are at an angle (not straight following the line)
+/// else if ((LTL == LTR && LTL==BL && LTL ==BR) {
+///		if (LTL==STARTVAL(LTL){
+///			ROTATE LEFT
+///		}
+///		else{
+///			ROTATE RIGHT
+///		}
+/// }
+/// Case 3 Just one wrong reading of the 4 sensors . That means LTL!= LTR && BR==BL  OR LTL==LTR && BR !=BL
+/// THEN accordingly with the case let one wheel stable and move forward or backward the other one to fix the situation
+///	else if  (LTL!= LTR && BL==BR){
+///		If (BL==STARTVAL(BL){
+///			LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+///		}
+///		else {
+///			LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+///		}
+/// 
+/// else if (LTL==LTR && BR !=BL){
+///		If (LTL!=STARTVAL (LTL){
+///			LEFT WHEEL STOP, RIGHT WHEEL BACKWARDS
+///		}
+///		else {
+///				LEFT WHEEL BACKWARDS, RIGHT WHEEL STOP
+///		}
+/// }
+/// else {
+///		null;
+/// }
+/// </summary>
+void navigation::adjustOnTheSpot(){
+	//Case 1 if ((LTL==LTR)&& (BL==BR) && (LTL!=BL)
+	if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR)) && (RVAL(sC::LTL) != RVAL(sC::BL))) {
+		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//Move Horizontally to the left
+		}
+		else {
+			//Move Horizontally to the Right
+		}
+	}
+	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
+	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
+		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			//drive(nC::Direction::Left);
+		}
+		else {
+			//drive(nC::Direction::Right);
+		}
+	}
+	//Case 3 (LTL!= LTR) && (BR==BL)   
+	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
+		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
+			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+		}
+		else {
+			//LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+		}
+	}
+	//Case 3.1 (LTL==LTR) && (BR !=BL)
+	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
+		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
+			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
+		}
+		else {
+			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
+		}
+	}
+}
 
 //Function to turn left
-void navigation::TurnLeft() {
-	Sensor::PollSensors(Sensors);
+/// <summary>
+/// Algorithm turnLeft1
+/// While (true)
+///		If the buggy centre of rotation is at the top of intersection{
+///			if buggy has perfectly final position{
+///				Break
+///				Finish Movement
+///			}
+///			else{
+///			Adjust on the spot
+///			}
+///		}
+///		else if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else if (RVAL(LTL)== RVAL (LTR)){
+///			//Overshoot between LTL and LTR
+///			if (RVAL(LTR) == STARTVAL(LTR) {
+///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
+///			}
+///			else{
+///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
+///			}
+///		}
+///		else if  ((RVAL(BL)==RVAL(BR))|| (RVAL (ML) == RVAL (MR) ){
+///				Overshoot between the middle or Bottom Sensors
+///				Follow line forward to fix overshoot
+///		}
+///		else{
+///			//Ensure Centre of Rotation is at the top of intersection
+///			 if ((RVAL(ML)!= STARTVAL(ML)) {
+///				 FOLLOW THE LINE BACKWARDS
+///			 }
+///			 else{
+///				FOLLOW THE LINE FORWARDS
+///			}
+///		}
+/// }	 
+/// </summary>
 
+/// <summary>
+/// Assumes the centre of rotation of the buggy remains stable on top of the intersection during the rotation
+/// Turnleft2Algorithm
+/// While (true)
+///		if buggy has perfectly final position{
+///			Break
+///			Finish Movement
+///		}
+///		else if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else if (RVAL(LTL)== RVAL (LTR)){
+///			//Overshoot between LTL and LTR
+///			if (RVAL(LTR) == STARTVAL(LTR) {
+///				ROTATE RIGHT  (OVERSHOOT TO THE LEFT)
+///			}
+///			else{
+///				ROTATE LEFT (OVERSHOOT TO THE RIGHT)
+///			}
+///		}
+///		else{
+///			adjustOnTheSpot
+///		}
+/// </summary>
+void navigation::turnLeft() {
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			drive(nC::Direction::Stop);
+			break;
+		}
+		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+			drive(nC::Direction::Left);
+		}
+		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
+			//overshoot between LTL and LTR
+			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+				drive(nC::Direction::Right);
+			}
+			else {
+				drive(nC::Direction::Left);
+			}
+		}
+		else {
+			navigation::adjustOnTheSpot();
+		}
+	}
 }
 
+
+
+
+/// <summary>
+/// Same algorithm as RotateLeft
+/// Only difference is the direction of rotation  which is Right
+/// 
+/// </summary>
 //Function to turn right.
-void navigation::TurnRight() {
-	Sensor::PollSensors(Sensors);
-	//drive(motorConfig::F, motorConfig::B, 70, 70);
+void navigation::turnRight() {
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			drive(nC::Direction::Stop);
+			break;
+		}
+		else if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+			drive(nC::Direction::Right);
+		}
+		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
+			//overshoot between LTL and LTR
+			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+				drive(nC::Direction::Right);
+			}
+			else {
+				drive(nC::Direction::Left);
+			}
+		}
+		else {
+			navigation::adjustOnTheSpot();
+		}
+	}
 }
+
 
 //Function to move forwards one node
-void navigation::MoveForward() {
+/// <summary>
+/// moveForward Algorithm
+/// while (true){
+///		Poll Sensors
+///		if buggy reached destination{
+///			stop
+///			break;
+///		}
+///		else if buggy is at the top of the intersection but not perfectly aligned {
+///			stop
+///			adjustOnThespot with small movements adjust the buggy to the correct final position
+///		}
+///		else if drifting {
+///			fix drifting
+///		}
+///		else{
+///			drive forward;
+///		}
+///	}
+/// 
+/// </summary>
+void navigation::moveForward() {
 	DEBUG_PRINTLN("Moving Now!");
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::reachedDestination()) {
+			drive(nC::Direction::Stop);
+			break;
+		}
+		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
+			drive(nC::Direction::Stop);
+			adjustOnTheSpot();
+		}
+		else if (!navigation::driftingWhenForward()) {
+			drive(nC::Direction::Forward);
+		}
+	}
 }
-
-void navigation::MoveBackward() {
+//Function to move backward a node
+/// <summary>
+/// moveBackward Algorithm /slightly changed from the data flow chart to avoid going backwards and forwards at the destination intersection
+/// while(true){
+///		Poll Sensors
+///		if the centre of rotation is at the top of the destination  intersection 
+///	(i.e. if ((RVAL(FL)!=STARTVAL(FL) && RVAL(FR)!=STARTVAL(FR))&&
+///			  (RVAL(ML)!=STARTVAL(ML) && RVAL(MR)!=STARTVAL(MR))&& 
+///			  ((LASTVAL(ML)==STARTVAL(ML) || LASTVAL(MR)==STARTVAL(MR)){
+///			 if (RVAL(ALL)!= STARTVAL(ALL)){
+///			    STOP 
+///			    BREAK 
+///			   	FINISH
+///			}
+///			else {
+///				adjustOnTheSpot;
+///			}
+///	else if ML and MR have passed the destination intersection ( ML ==STARTVAL(ML)&& MR==STARTVAL(MR) && FL!=STARTVAL(FL)){
+///				that means centre of rotation of the buggy is behind the intersection and the buggy needs to go forward
+///				if (!drift){
+///					go forward
+///				}
+///				else{
+///					fix drift
+///				}
+/// }
+/// else {
+///		if (!drift)
+///			go backwards to reach the destination intersection
+///		else{
+///			fix drift
+///		}
+/// }	
+/// </summary>
+void navigation::moveBackward() {
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if (navigation::buggyCentreOnTopofDestIntersection() == true) {
+			if (navigation::reachedDestination()) {
+				drive(nC::Direction::Stop);
+				break;
+			}
+			else {
+				navigation::adjustOnTheSpot();
+			}
+		}
+		else if (navigation::buggyCentreBehindDestIntersection()) {
+			if (!navigation::driftingWhenForward()) {
+				drive(nC::Direction::Forward);
+			}
+		}
+		else {
+			if (!navigation::driftingWhenBackward()) {
+				drive(nC::Direction::Backwards);
+			}
+		}
+	}
 }
 
 #ifdef SENSOR_MEMORY_SAVE
@@ -775,7 +1262,7 @@ void navigation::TurnRight() {
 			drive(motorConfig::S, motorConfig::S, 0, 0);
 
 			//analogWrite(E1, 0);
-			//analogWrite(E2, 0);
+			//(E2, 0);
 			return;
 		}
 		else {
