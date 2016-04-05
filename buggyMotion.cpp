@@ -161,13 +161,14 @@ void buggyMotion::setRightMotorDirection(nC::Direction dir)
 void buggyMotion::setRightSpeed(int32_t freq)
 {
 	if (_drifting == true || (_previousDrift != nC::Drift::noDrift)){
-
+		capSpeeds();
 		SetPinFrequencySafe(RIGHTMOTOR, freq);
 	}
 }
 void buggyMotion::setLeftSpeed(int32_t freq)
 {
 	if (_drifting == true || (_previousDrift != nC::Drift::noDrift)) {
+		capSpeeds();
 		SetPinFrequencySafe(LEFTMOTOR, freq);
 	}
 
@@ -225,4 +226,20 @@ void buggyMotion::stop()
 	pwmWrite(LEFTMOTOR, _leftSpeed);
 	pwmWrite(RIGHTMOTOR, _rightSpeed);
 
+}
+
+void buggyMotion::capSpeeds()
+{
+	if (_leftSpeed <35){
+		_leftSpeed = 35;
+	}
+	else if(_leftSpeed>100) {
+		_leftSpeed = 100;
+	}
+	if (_rightSpeed <35) {
+		_rightSpeed = 35;
+	}
+	else if (_rightSpeed>100) {
+		_rightSpeed = 100;
+	}
 }
