@@ -596,21 +596,31 @@ void navigation::moveForward() {
 void navigation::moveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
+
 		if (navigation::buggyCentreOnTopofDestIntersection() == true) {
+			NAV_PRINTLN("Buggy centre on top of Intersection");
 			if (navigation::reachedDestination()) {
+				NAV_PRINTLN("Destinaion Reached");
+
 				drive(nC::Direction::Stop);
 				break;
 			}
 			else {
+				NAV_PRINTLN("Adjuston spot");
+
 				navigation::adjustOnTheSpot();
 			}
 		}
 		else if (navigation::buggyCentreBehindDestIntersection()) {
+			NAV_PRINTLN("Behind intersection");
+
 			if (!navigation::driftingWhenForward()) {
 				drive(nC::Direction::Forward);
 			}
 		}
 		else {
+			NAV_PRINTLN("In front of intersection");
+
 			if (!navigation::driftingWhenBackward()) {
 				drive(nC::Direction::Backwards);
 			}
