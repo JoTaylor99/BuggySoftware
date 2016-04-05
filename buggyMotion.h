@@ -33,6 +33,9 @@ protected:
 	/// <param name="drift">If the buggy is drifting, set this parameter to be the direction the buggy is drifting relative to the direction it is going.</param>
 	void drive(nC::Direction direction, nC::Drift drift = nC::Drift::noDrift);
 
+	void getSpeeds(int32_t &leftSpeed, int32_t &rightSpeed);
+
+
 private:
 	/// <summary>
 	/// Provides control of each motors direction, the speed of the motors will be determined by the variables _leftSpeed and _rightSpeed
@@ -96,6 +99,10 @@ private:
 	/// Stores the current direction of the buggy.
 	/// </summary>
 	nC::Direction CurrentDirection = nC::Direction::Stop;
+
+	uint8_t _driftCount = 0;
+
+	nC::Drift _previousDrift = nC::Drift::noDrift;
 };
 
 

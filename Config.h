@@ -8,14 +8,14 @@
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 //#define DEBUG
 
-#define SENSOR_DEBUG
+//#define SENSOR_DEBUG
 #define NAV_DEBUG
 //#define MOT_DEBUG
 //#define BOX_DEBUG
 
 //#define SEN_INFO
 #define NAV_INFO
-//#define MOT_INFO
+#define MOT_INFO
 //#define BOX_INFO
 
 /// <summary>

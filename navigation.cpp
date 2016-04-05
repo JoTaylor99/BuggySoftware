@@ -116,6 +116,9 @@ void navigation::boxApproach() {
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
 	Sensor::PollSensors(Sensors);
+	int32_t lspeed, rspeed;
+	getSpeeds(lspeed, rspeed);
+	NAV_VPRINTLN(lspeed); NAV_VPRINTLN(rspeed);
 #ifndef SENSOR_MEMORY_SAVE
 	memcpy(startingValues, Sensor::values, NUM_SENSORS);
 #else
@@ -125,14 +128,9 @@ void navigation::start() {
 }
 //Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
-	if ((RVAL(sC::FL) != STARTVAL(sC::FL))&& 
-		(RVAL(sC::LTL) != STARTVAL(sC::LTL))&&
-		(RVAL(sC::LTR) != STARTVAL(sC::LTR))&&
-		(RVAL(sC::FR) != STARTVAL(sC::FR))&& 
+	if ( 
 		(RVAL(sC::ML) != STARTVAL(sC::ML))&&  
-		(RVAL(sC::MR) != STARTVAL(sC::MR))&&
-		(RVAL(sC::BL) != STARTVAL(sC::BL))&& 
-		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		(RVAL(sC::MR) != STARTVAL(sC::MR))) {
 		return true;
 	}
 	else
@@ -193,7 +191,7 @@ bool navigation::buggyCentreBehindDestIntersection() {
 ///		return true;
 /// }
 bool navigation::driftingWhenForward() {
-	if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
+	if ((RVAL(sC::LTL) && RLASTVAL(sC::LTL)) != (RVAL(sC::LTR) && RLASTVAL(sC::LTR))) {
 		return false;
 	}
 	else{
@@ -207,14 +205,15 @@ bool navigation::driftingWhenForward() {
 				drive(nC::Direction::Forward, nC::Drift::rightDrift);
 
 			}
+
 		}
 		else {
 			if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-				drive(nC::Direction::Forward, nC::Drift::leftDrift);
+				drive(nC::Direction::Forward, nC::Drift::rightDrift);
 
 			}
 			else{
-				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+				drive(nC::Direction::Forward, nC::Drift::leftDrift);
 
 			}
 		}
@@ -537,7 +536,9 @@ void navigation::turnRight() {
 void navigation::moveForward() {
 	NAV_PRINTLN("Moving Now!");
 	while (true) {
+		
 		Sensor::PollSensors(Sensors);
+		//m1 = micros()
 		NAV_PRINTLN("In forward loop");
 		if (navigation::reachedDestination()) {
 			NAV_PRINTLN("Destination reached");
@@ -545,10 +546,11 @@ void navigation::moveForward() {
 			drive(nC::Direction::Stop);
 			break;
 		}
-		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
+		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && ((RVAL(sC::ML) != STARTVAL(sC::ML)))) {
 			NAV_PRINTLN("Adjust on Spot");
-			break;
+			
 			drive(nC::Direction::Stop);
+			break;
 			//adjustOnTheSpot();
 		}
 		else if (!navigation::driftingWhenForward()) {
