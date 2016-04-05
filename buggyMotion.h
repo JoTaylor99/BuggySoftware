@@ -74,6 +74,8 @@ private:
 	/// </summary>
 	void stop();
 
+	void capSpeeds();
+
 	/// <summary>
 	/// Stores the left wheel's speed
 	/// </summary>
