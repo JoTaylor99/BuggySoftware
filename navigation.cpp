@@ -594,24 +594,18 @@ void navigation::moveForward() {
 void navigation::moveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (navigation::buggyCentreOnTopofDestIntersection() == true) {
-			if (navigation::reachedDestination()) {
-				drive(nC::Direction::Stop);
-				break;
-			}
-			else {
-				navigation::adjustOnTheSpot();
-			}
-		}
-		else if (navigation::buggyCentreBehindDestIntersection()) {
-			if (!navigation::driftingWhenForward()) {
-				drive(nC::Direction::Forward);
-			}
+		if ((RVAL(sC::BL) != STARTVAL(sC::BL)) && (RVAL(sC::BR) != STARTVAL(sC::BR)) && (RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			break;
 		}
 		else {
 			if (!navigation::driftingWhenBackward()) {
 				drive(nC::Direction::Backwards);
 			}
+		}
+	}
+	while ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		if (!navigation::driftingWhenForward()) {
+			drive(nC::Direction::Forward);
 		}
 	}
 }
