@@ -5,12 +5,14 @@
 */
 
 #include <arduino2.h>
+#include <PWM.h>
 #include <NewPing.h>
 #include <Wire.h>
 #include "Config.h"
+#include <Adafruit_MCP23017.h>
 #include <SparkFunTSL2561.h>
 #include "buggyTop.h"
-#include <Adafruit_MCP23017.h>
+
 //#ifdef QTRSINUSE
 //#include <QTRSensors.h>
 //#endif

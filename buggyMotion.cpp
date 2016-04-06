@@ -4,250 +4,242 @@
 
 #include "buggyMotion.h"
 #include <arduino2.h>
-
+#include <PWM.h>
 buggyMotion::buggyMotion() {
 }
 
 buggyMotion::~buggyMotion() {
 }
 
-bool buggyMotion::_motionInitComplete = false;
+
 
 void buggyMotion::initMotion() {
-	initMotors();
-	_motionInitComplete = true;
+	
+
+	pinMode(LEFTMOTORDIR, OUTPUT);
+	pinMode(RIGHTMOTORDIR, OUTPUT);
+	pinMode(RIGHTMOTOR, OUTPUT);
+	pinMode(LEFTMOTOR, OUTPUT);
+	InitTimersSafe();
+	_timersInitialised = true;
+	_leftSpeed = 0;
+	_rightSpeed = 0;
+	_firstCall = true;
+	_drifting = false;
+	_driftCount = 0;
+	_previousDrift = nC::Drift::noDrift;
+
 }
 
-void buggyMotion::drive(nC::Direction direction) {
-	Reset();
-	if (direction == nC::Forward) {
-		ForwardMovement();
+void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
+{
+	
+	if (direction == nC::Stop) {
+		stop();
+		return;
 	}
-	else if (direction == nC::Backwards) {
-		BackwardMovement();
+
+	MOT_VPRINT(_leftSpeed);
+	MOT_PRINT("\t");
+	MOT_VPRINTLN(_rightSpeed);
+
+	if (_firstCall) {
+		_firstCall = false;
+
+		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
+			_leftSpeed = 80;
+			_rightSpeed = 80;
+
+
+		}
+		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
+			_leftSpeed = 50;
+			_rightSpeed = 50;
+		}
+		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
+		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
+		pwmWrite(LEFTMOTOR, 128);
+		pwmWrite(RIGHTMOTOR, 128);
 	}
-	else if (direction == nC::Right) {
-		RightMovement();
+
+	//If the buggy is drifting
+	if (drift != nC::Drift::noDrift) {
+		//Append the left and right motor speeds to solve drifting
+		driftCorrect(direction, drift);
+		_drifting = true;
 	}
 	else {
-		LeftMovement();
-	}
-}
+		_drifting = false;
+		_driftCount = 0;
+		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
+			
+			_leftSpeed = 80;
+			_rightSpeed = 80;
 
-void buggyMotion::drive(nC::Direction direction, byte Step) {
-	if (direction == nC::Backwards) {
-		StepBackward(Step);
-	}
-	else {
-		StepForward(Step);
-	}
-}
 
-void buggyMotion::drift(nC::Drift drift) {
-	if (drift == nC::leftDrift) {
-		DriftLeft();
-	}
-	else {
-		DriftRight();
+		}
+		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
+			_leftSpeed = 50;
+			_rightSpeed = 50;
+		}
 	}
 
-}
+	
+	
 
-void buggyMotion::ForwardMovement() {
-	analogWrite(MotorL, 127.5);
-	analogWrite(MotorR, 127.5);
-	digitalWrite2(dirL, HIGH);
-	digitalWrite2(dirR, HIGH);
-}
+	//Call StepperControl with the correct parameters
+	switch (direction)
+	{
+	case nC::Direction::Forward:
+		stepperControl(nC::Direction::Forward, nC::Direction::Forward);
+		break;
+	case nC::Direction::Backwards:
+		stepperControl(nC::Direction::Backwards, nC::Direction::Backwards);
+		break;
+	case nC::Direction::Left:
+		stepperControl(nC::Direction::Backwards, nC::Direction::Forward);
+		break;
+	case nC::Direction::Right:
+		stepperControl(nC::Direction::Forward, nC::Direction::Backwards);
+		break;
+	case nC::Direction::RightBackwardsOnly:
+		stepperControl(nC::Direction::Stop, nC::Direction::Backwards);
+		break;
+	case nC::Direction::RightForwardOnly:
+		stepperControl(nC::Direction::Stop, nC::Direction::Forward);
+		break;
+	case nC::Direction::LeftBackwardsOnly:
+		stepperControl(nC::Direction::Backwards, nC::Direction::Stop);
+		break;
+	case nC::Direction::LeftForwardOnly:
+		stepperControl(nC::Direction::Forward, nC::Direction::Stop);
+		break;
+	default:
+		break;
+	}
 
-void buggyMotion::BackwardMovement() {
-	analogWrite(MotorL, 127.5);
-	analogWrite(MotorR, 127.5);
-	digitalWrite2(dirL, LOW);
-	digitalWrite2(dirR, LOW);
+	
+	_previousDrift = drift;
 }
-
-void buggyMotion::Stop() {
-	Reset();
-	digitalWrite2(MotorL, LOW);
-	digitalWrite2(MotorR, LOW);
+void buggyMotion::getSpeeds(int32_t & leftSpeed, int32_t & rightSpeed)
+{
+	leftSpeed = _leftSpeed;
+	rightSpeed = _rightSpeed;
 }
+void buggyMotion::stepperControl(nC::Direction leftMotor, nC::Direction rightMotor) {
 
-void buggyMotion::LeftMovement() {
-	analogWrite(MotorL, 127.5);
-	analogWrite(MotorR, 127.5);
-	digitalWrite2(dirL, LOW);
-	digitalWrite2(dirR, HIGH);
+	setLeftMotorDirection(leftMotor);
+	setRightMotorDirection(rightMotor);
+	setLeftSpeed(_leftSpeed);
+	setRightSpeed(_rightSpeed);
 }
+void buggyMotion::setLeftMotorDirection(nC::Direction dir)
+{
 
-void buggyMotion::RightMovement() {
-	analogWrite(MotorL, 127.5);
-	analogWrite(MotorR, 127.5);
-	digitalWrite2(dirL, HIGH);
-	digitalWrite2(dirR, LOW);
-}
-
-void buggyMotion::StepForward(byte Steps) {
-	//This will move forward a set distance (Clicks = Steps/4).
-	//800 Steps per revolution (200 Clicks).
-	digitalWrite2(dirL, HIGH);
-	digitalWrite2(dirR, HIGH);
-	for (; Steps > 0; Steps--) {
-		digitalWrite2(MotorL, HIGH);
-		digitalWrite2(MotorR, HIGH);
-		delay(10);
-		digitalWrite2(MotorL, LOW);
-		digitalWrite2(MotorR, LOW);
+	if (dir == nC::Direction::Forward || dir == nC::Direction::Right) {
+		digitalWrite(LEFTMOTORDIR, LOW);
+	}
+	if (dir == nC::Direction::Backwards || dir == nC::Direction::Left) {
+		digitalWrite(LEFTMOTORDIR, HIGH);
+	}
+	if (dir == nC::Direction::Stop) {
+		pwmWrite(LEFTMOTOR, 0);
 	}
 }
-
-void buggyMotion::StepBackward(byte Steps) {
-	//This will move forward a set distance (Clicks = Steps/4).
-	//800 Steps per revolution (200 Clicks).
-	digitalWrite2(dirL, LOW);
-	digitalWrite2(dirR, LOW);
-	for (; Steps > 0; Steps--) {
-		digitalWrite2(MotorL, HIGH);
-		digitalWrite2(MotorR, HIGH);
-		delay(10);
-		digitalWrite2(MotorL, LOW);
-		digitalWrite2(MotorR, LOW);
+void buggyMotion::setRightMotorDirection(nC::Direction dir)
+{
+	if (dir == nC::Direction::Forward || dir == nC::Direction::Right) {
+		digitalWrite(RIGHTMOTORDIR, HIGH);
+	}
+	if (dir == nC::Direction::Backwards || dir == nC::Direction::Left) {
+		digitalWrite(RIGHTMOTORDIR, LOW);
+	}
+	if (dir == nC::Direction::Stop) {
+		pwmWrite(LEFTMOTOR, 0);
 	}
 }
-
-
-void buggyMotion::DriftRight() {
-	//Make Right wheel go faster & Left wheel go slower:
-	TCCR2B = TCCR2B & B11111000 | B00000100;    // set timer 2 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-	TCCR1B = TCCR1B & B11111000 | B00000101;    // set timer 1 divisor to  1024 for PWM frequency of    30.64 Hz
-												//Turn towards the left.
-	LeftMovement();
+void buggyMotion::setRightSpeed(int32_t freq)
+{
+	if (_drifting == true || (_previousDrift != nC::Drift::noDrift)){
+		capSpeeds();
+		SetPinFrequencySafe(RIGHTMOTOR, freq);
+	}
 }
-
-void buggyMotion::DriftLeft() {
-	//Make Left wheel go faster & Right wheel go slower:
-	TCCR1B = TCCR1B & B11111000 | B00000011;    // set timer 1 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-	TCCR2B = TCCR2B & B11111000 | B00000111;    // set timer 2 divisor to  1024 for PWM frequency of    30.64 Hz
-												//Turn towards the left.
-	LeftMovement();
-}
-
-void buggyMotion::Reset() {
-	TCCR1B = 0;
-	TCCR2B = 0;
-	TCCR1B = TCCR1B & B11111000 | B00000100;    // set timer 1 divisor to   256 for PWM frequency of   122.55 Hz
-	TCCR2B = TCCR2B & B11111000 | B00000110;    // set timer 2 divisor to   256 for PWM frequency of   122.55 Hz
-}
-//functions removed 25/03
-/*
-
-void buggyMotion::Kick(KickDirection dir, int Magnitude) {
-if (dir == KickDirection::Forward) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::F, Magnitude, Magnitude);
-delay(DEFAULT_KICK_TIME);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-}
-else if (dir == KickDirection::Backward) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::B, Magnitude, Magnitude);
-
-delay(DEFAULT_KICK_TIME);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
+void buggyMotion::setLeftSpeed(int32_t freq)
+{
+	if (_drifting == true || (_previousDrift != nC::Drift::noDrift)) {
+		capSpeeds();
+		SetPinFrequencySafe(LEFTMOTOR, freq);
+	}
 
 }
-else if (dir == KickDirection::Left) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::F, Magnitude, Magnitude);
+void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
+{
+	if (_driftCount > 2) {
+		switch (direction)
+		{
+		case nC::Forward:
+			if (drift == nC::Drift::leftDrift)
+			{
+				_leftSpeed++;
+				_rightSpeed--;
+			}
+			else if (drift == nC::Drift::rightDrift)
+			{
+				_leftSpeed--;
+				_rightSpeed++;
+			}
+			break;
+		case nC::Backwards:
+			if (drift == nC::Drift::leftDrift)
+			{
+				_leftSpeed--;
+				_rightSpeed++;
+			}
+			else if (drift == nC::Drift::rightDrift)
+			{
+				_leftSpeed++;
+				_rightSpeed--;
+			}
+			break;
+		case nC::Left:
 
-delay(DEFAULT_KICK_TIME);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
+			break;
+		case nC::Right:
+			break;
+		default:
+			break;
+		}
+		_driftCount = 0;
+		return;
+	}
+	_driftCount++;
 
-}
-else if (dir == KickDirection::Right) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::B, Magnitude, Magnitude);
-
-delay(DEFAULT_KICK_TIME);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-
-}
-return;
-}
-void buggyMotion::Kick(KickDirection dir, int Magnitude, uint16_t time) {
-if (dir == KickDirection::Forward) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::F, Magnitude, Magnitude);
-
-delay(time);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-
-}
-else if (dir == KickDirection::Backward) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::B, Magnitude, Magnitude);
-
-delay(time);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-
-}
-else if (dir == KickDirection::Left) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::F, Magnitude, Magnitude);
-
-delay(time);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-
-}
-else if (dir == KickDirection::Right) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::B, Magnitude, Magnitude);
-
-delay(time);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, Magnitude, Magnitude);
-
-}
-return;
-}
-void buggyMotion::Kick(KickDirection dir, int LeftMagnitude, int RightMagnitude) {
-if (dir == KickDirection::Forward) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::F, LeftMagnitude, RightMagnitude);
-
-delay(DEFAULT_KICK_TIME);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, LeftMagnitude, RightMagnitude);
 
 }
-else if (dir == KickDirection::Backward) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::B, LeftMagnitude, RightMagnitude);
-delay(DEFAULT_KICK_TIME);
-//analogWrite(E1, 0);
-//digitalWrite2(M1, HIGH);
-//analogWrite(E2, 0);
-//digitalWrite2(M2, HIGH);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, LeftMagnitude, RightMagnitude);
+void buggyMotion::stop()
+{
+	_leftSpeed = 0;
+	_rightSpeed = 0;
+	_firstCall = true;
+	_driftCount = 0;
+	pwmWrite(LEFTMOTOR, _leftSpeed);
+	pwmWrite(RIGHTMOTOR, _rightSpeed);
 
 }
-else if (dir == KickDirection::Left) {
-MotorControl(motorConfig::Direction::B, motorConfig::Direction::F, LeftMagnitude, RightMagnitude);
-delay(DEFAULT_KICK_TIME);
-//analogWrite(E1, 0);
-//digitalWrite2(M1, HIGH);
-//analogWrite(E2, 0);
-//digitalWrite2(M2, HIGH);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, LeftMagnitude, RightMagnitude);
 
+void buggyMotion::capSpeeds()
+{
+	if (_leftSpeed <35){
+		_leftSpeed = 35;
+	}
+	else if(_leftSpeed>100) {
+		_leftSpeed = 100;
+	}
+	if (_rightSpeed <35) {
+		_rightSpeed = 35;
+	}
+	else if (_rightSpeed>100) {
+		_rightSpeed = 100;
+	}
 }
-else if (dir == KickDirection::Right) {
-MotorControl(motorConfig::Direction::F, motorConfig::Direction::B, LeftMagnitude, RightMagnitude);
-delay(DEFAULT_KICK_TIME);
-//analogWrite(E1, 0);
-//digitalWrite2(M1, HIGH);
-//analogWrite(E2, 0);
-//digitalWrite(M2, HIGH);
-MotorControl(motorConfig::Direction::S, motorConfig::Direction::S, LeftMagnitude, RightMagnitude);
-
-}
-return;
-}
-void buggyMotion::Kick(KickDirection LeftDir, KickDirection RightDir, int LeftMag, int RightMag) {
-if (LeftDir == RightDir) {
-Kick(LeftDir, LeftMag, RightMag);
-}
-else {
-Kick(LeftDir, LeftMag, 0);
-Kick(RightDir, 0, RightMag);
-}
-}
-*/

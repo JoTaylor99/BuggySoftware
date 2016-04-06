@@ -141,8 +141,7 @@ void Sensor::printbw(uint8_t values) {
 
 //Polls all given sensors in the order specified.
 void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte OrderLength){
-	unsigned long t1, t2;
-	t1 = micros();
+
 	sC::sensorNumber currentSensorIndex = sC::FR;
 	for (byte n = 0; n < OrderLength; n++) {
 		currentSensorIndex = order[n];
@@ -151,11 +150,9 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte
 		sens[currentSensorIndex].GetReading();
 		SVAL(currentSensorIndex, sens[currentSensorIndex].tileWhite);
 	}
-	t2 = micros();
-	DEBUG_PRINTLN("SENSOR VALUES: ");
+	
 	printbw(values);
-	DEBUG_PRINT("Time to poll 8 sensors: ");
-	DEBUG_VPRINTLN(t2 - t1);
+
 
 }
 

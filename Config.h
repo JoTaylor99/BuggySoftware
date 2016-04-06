@@ -6,16 +6,16 @@
 
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
-#define DEBUG
+//#define DEBUG
 
 //#define SENSOR_DEBUG
-//#define NAV_DEBUG
+#define NAV_DEBUG
 //#define MOT_DEBUG
 //#define BOX_DEBUG
 
 //#define SEN_INFO
-//#define NAV_INFO
-//#define MOT_INFO
+#define NAV_INFO
+#define MOT_INFO
 //#define BOX_INFO
 
 /// <summary>
@@ -146,8 +146,8 @@
 
 #define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
-#define MAX_DEFAULT 100
-#define MIN_DEFAULT 100
+#define MAX_DEFAULT 1000
+#define MIN_DEFAULT 800
 
 //Sensor interrupt thesholds
 
@@ -167,10 +167,10 @@
 
 
 //Motor Defines
-#define DIRPINA 4
-#define DIRPINB 5
-#define SPEEDPINA 6
-#define SPEEDPINB 5
+//#define DIRPINA 4
+//#define DIRPINB 5
+//#define SPEEDPINA 6
+//#define SPEEDPINB 5
 
 #define MAX_SPEED 100
 #define MIN_SPEED 65
@@ -179,10 +179,11 @@
 
 //Nav::navigation defines
 #define COUNTER_LEN 2
-#define dirL 6
-#define dirR 7
-#define MotorL 9
-#define MotorR 3
+#define LEFTMOTORDIR 6
+#define RIGHTMOTORDIR 7
+#define LEFTMOTOR 9
+#define RIGHTMOTOR 3
+
 
 
 //Box Defines
@@ -292,11 +293,11 @@ namespace boxConfig {
 	namespace nC{
 	
 		enum Direction : uint8_t {
-			Forward, Backwards, Left, Right
+			Forward, Backwards, Left, Right, Stop, RightForwardOnly, RightBackwardsOnly,LeftForwardOnly, LeftBackwardsOnly
 		};
 
 		enum Drift : uint8_t {
-			leftDrift, rightDrift
+			leftDrift, rightDrift , noDrift
 		};
 	
 	};
