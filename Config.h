@@ -190,7 +190,7 @@
 
 #define BOXONERATIO		0.56
 #define VREF			5
-#define ADCMAX			1024
+#define ADCMAX			1023
 
 #define RK	560
 
