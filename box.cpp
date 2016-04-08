@@ -387,4 +387,15 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 	else {
 			calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue));
 	}
+double box::calculateFrequency() {
+	double frequency = 0;
+	if ((_boxNumber == 5) || (_boxNumber == 6)) {
+		frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
+	}
+	else if (_boxNumber == 7) {
+		frequency = (1 / (2 * PI * sqrt(1e-6 * presentationData.c1)));
+	}
+	else {}
+
+	return frequency;
 }

@@ -75,7 +75,7 @@ private:
 
 		byte toPreferredCapacitor(double OCap);
 
-		double calculateFrequency(byte boxNumber);
+		double calculateFrequency();
 
 		/// <summary>
 		/// returns one ADC reading of the passed pin
