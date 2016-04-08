@@ -9,14 +9,14 @@
 //#define DEBUG
 
 //#define SENSOR_DEBUG
-#define NAV_DEBUG
+//#define NAV_DEBUG
 //#define MOT_DEBUG
-//#define BOX_DEBUG
+#define BOX_DEBUG
 
 //#define SEN_INFO
-#define NAV_INFO
-#define MOT_INFO
-//#define BOX_INFO
+//#define NAV_INFO
+//#define MOT_INFO
+#define BOX_INFO
 
 /// <summary>
 /// Conditional debug defines
@@ -188,16 +188,44 @@
 
 #define NUMADCREADINGS 50
 
+#define BOXONERATIO		0.56
+#define VREF			5
+#define ADCMAX			1024
+
+#define RK	560
 
 
+#define P1PIN	15
+#define P2PIN	16
+#define GNDPIN	17
+#define RKPIN	14
+
+//on expander
+#define P1P2RELAYPIN	0
+#define BCPIN			1
+#define BCRELAYPIN		2
 
 
 //change to bC
+namespace bC {
+
+	enum inputStatus : uint8_t {
+		OFF,
+		ON
 	};
 
+	enum pinSettings : uint8_t {
+		input_adc,
+		input,
+		high,
+		low,
+		nop
+	};
+#ifdef BOX_DEBUG
 	//temporary variables to be removed when comms between buggy and PC are finalised.
 	const byte boxNumber = BOXNUM;
 	const bool boxInverted = BOXINV;
+#endif
 }
 
 //change to sC
