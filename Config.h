@@ -193,22 +193,6 @@
 
 
 //change to bC
-namespace boxConfig {
-
-	enum boxSettings : uint16_t {
-		box1 = 1,
-		box2a = 2,
-		box2b = 3,
-		box3a = 4,
-		box3b = 5,
-		box4a = 6,
-		box4b = 7,
-		box5a = 8,
-		box5b = 9,
-		box6a = 10,
-		box6b = 11,
-		box7a = 12,
-		box7b = 13
 	};
 
 	//temporary variables to be removed when comms between buggy and PC are finalised.
