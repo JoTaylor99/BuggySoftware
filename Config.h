@@ -205,6 +205,9 @@
 #define BCPIN			1
 #define BCRELAYPIN		2
 
+//Pullup resistance on P2PIN will vary depending on board.
+//Calibrate this with known capacitor.
+#define RPULLUP 36.486  //in ohms
 
 //change to bC
 namespace bC {
