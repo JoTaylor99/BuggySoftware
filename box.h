@@ -2,6 +2,7 @@
 #define _BOX_H
 
 #include <Adafruit_MCP23017.h>
+#include "arduino2.h"
 #include "Config.h"
 #include "boxValues.h"
 
@@ -121,6 +122,9 @@ private:
 
 
 		double calculateResistorValue(double rawValue, bool stage);
+
+		
+		double measureCapacitance();
 };
 
 

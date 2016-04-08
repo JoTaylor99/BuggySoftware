@@ -387,6 +387,76 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 	else {
 			calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue));
 	}
+}
+
+double box::measureCapacitance() {
+	uint8_t outPin;
+	uint8_t inPin;
+	unsigned long u1;
+	unsigned long t;
+	int digVal;
+	unsigned long u2;
+	if ((_boxNumber == 5) || (_boxNumber == 7)) {
+		inPin = P1PIN;
+		outPin = P2PIN;
+	}
+	else if (_boxNumber == 6) {
+		inPin = GNDPIN;
+		outPin = P2PIN;
+	}
+
+		pinMode2(outPin, OUTPUT);
+		//digitalWrite(OUT_PIN, LOW);  //This is the default state for outputs
+		pinMode2(inPin, OUTPUT);
+		//digitalWrite(IN_PIN, LOW);
+
+		//Capacitor under test between OUT_PIN and IN_PIN
+		//Rising high edge on OUT_PIN
+		pinMode2(inPin, INPUT);
+		digitalWrite2(outPin, HIGH);
+		int val = analogRead(inPin);
+		digitalWrite2(outPin, LOW);
+
+
+			//Big capacitor - so use RC charging method
+
+			//discharge the capacitor (from low capacitance test)
+			pinMode(inPin, OUTPUT);
+			delay(1);
+
+			//Start charging the capacitor with the internal pullup
+			pinMode2(outPin, INPUT_PULLUP);
+			u1 = micros();
+
+			//Charge to a fairly arbitrary level mid way between 0 and 5V
+			//Best not to use analogRead() here because it's not really quick enough
+			do
+			{
+				digVal = digitalRead2(outPin);
+				u2 = micros();
+				t = u2 > u1 ? u2 - u1 : u1 - u2;
+			} while ((digVal < 1) && (t < 400000L));
+
+			pinMode2(outPin, INPUT);  //Stop charging
+			//Now we can read the level the capacitor has charged up to
+			val = analogRead(outPin);
+
+			//Discharge capacitor for next measurement
+			digitalWrite2(inPin, HIGH);
+			int dischargeTime = (int)(t / 1000L) * 5;
+			delay(dischargeTime);    //discharge slowly to start with
+			pinMode(outPin, OUTPUT);  //discharge remainder quickly
+			digitalWrite2(outPin, LOW);
+			digitalWrite2(inPin, LOW);
+
+			//Calculate and print result
+			float capacitance = (-(float)t / RPULLUP)
+				/ (log(1.0 - (float)val / (float)ADCMAX));
+
+			return capacitance;
+
+}
+
 double box::calculateFrequency() {
 	double frequency = 0;
 	if ((_boxNumber == 5) || (_boxNumber == 6)) {
