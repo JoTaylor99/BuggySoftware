@@ -146,11 +146,32 @@ bool box::interrogateBox() {
 		BOX_VPRINTLN(presentationData.r2);
 		return true;
 	case 5:
-		break;
 	case 6:
-		break;
 	case 7:
-		break;
+		rawValue = getReading(0);
+
+		//calculate resistor value
+		calculatedValue = calculateResistorValue(rawValue, 0);
+
+		//get preferred
+		presentationData.r1 = toPreferredResistor(calculatedValue);
+
+		//In future will Coms result for now just serial print
+		BOX_PRINT("R = ");
+		BOX_VPRINTLN(presentationData.r1);
+		
+		calculatedValue = measureCapacitance();
+		presentationData.c1 = toPreferredCapacitor(calculatedValue);
+		//In future will Coms result for now just serial print
+		BOX_PRINT("C = ");
+		BOX_VPRINTLN(presentationData.c1);
+
+		presentationData.f = calculateFrequency();
+		//In future will Coms result for now just serial print
+		BOX_PRINT("Frequency = ");
+		BOX_VPRINTLN(presentationData.f);
+
+		return true;
 	default:
 		ERROR_PRINTLN("Passed invalid box number, returning to navigation");
 		return true;
