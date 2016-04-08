@@ -11,7 +11,7 @@
 //#define SENSOR_DEBUG
 //#define NAV_DEBUG
 //#define MOT_DEBUG
-#define BOX_DEBUG
+//#define BOX_DEBUG
 
 //#define SEN_INFO
 //#define NAV_INFO

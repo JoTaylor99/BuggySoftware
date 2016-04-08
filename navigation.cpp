@@ -79,6 +79,7 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
+#ifdef BOX_DEBUG
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
 				boxs.begin(BOXNUM, BOXINV);
@@ -88,6 +89,7 @@ void navigation::navigate(String str) {
 				else {
 					boxs.interrogateBox();
 				}
+#endif
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
