@@ -73,7 +73,7 @@ private:
 
 		short toPreferredResistor(double OResistor);
 
-		byte toPreferredCapactitor(double OCap);
+		byte toPreferredCapacitor(double OCap);
 
 		double calculateFrequency(byte boxNumber);
 

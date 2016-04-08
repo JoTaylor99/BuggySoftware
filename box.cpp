@@ -199,7 +199,7 @@ short box::toPreferredResistor(double OResistor) {
 	return FinalResistor;
 };
 
-byte box::toPreferredCapactitor(double OCap) {
+byte box::toPreferredCapacitor(double OCap) {
 	const double PCapacitors[] = { 4.7, 5.6, 6.8, 8.2, 10, 12, 15, 18, //7
 		22, 27, 33, 39, 47, 56, 68, 82, 100 }; //16
 	byte FinalCap = 0;
