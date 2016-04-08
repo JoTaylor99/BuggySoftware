@@ -1,263 +1,159 @@
 #include "box.h"
 
-box::box() {
+box::box(uint8_t boxNumber, bool boxInverted): _boxNumber(boxNumber) {
+	boxGPIO.begin();
+	boxGPIO.pinMode(P1P2RELAYPIN, OUTPUT);
+	boxGPIO.pinMode(BCPIN, OUTPUT);
+	boxGPIO.pinMode(BCRELAYPIN, OUTPUT);
+	boxGPIO.digitalWrite(BCRELAYPIN, LOW);
+
+	if (boxInverted) {
+		boxGPIO.digitalWrite(P1P2RELAYPIN, HIGH);
+	}
+	
+	if (_boxNumber == 1) {
+		P1pin[0] = bC::input;
+		P1pin[1] = bC::nop;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::nop;
+		GNDpin[0] = bC::low;
+		GNDpin[1] = bC::nop;
+		Rkpin[0] = bC::input;
+		Rkpin[1] = bC::nop;
+	}
+	else if (_boxNumber == 2) {
+		P1pin[0] = bC::high;
+		P1pin[1] = bC::input;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::input_adc;
+		GNDpin[0] = bC::input;
+		GNDpin[1] = bC::high;
+		Rkpin[0] = bC::low;
+		Rkpin[1] = bC::low;
+	}
+	else if (_boxNumber == 3) {
+		P1pin[0] = bC::input_adc;
+		P1pin[1] = bC::high;
+		P2pin[0] = bC::high;
+		P2pin[1] = bC::input_adc;
+		GNDpin[0] = bC::low;
+		GNDpin[1] = bC::low;
+		Rkpin[0] = bC::input;
+		Rkpin[1] = bC::input;
+	}
+	else if (_boxNumber == 4) {
+		P1pin[0] = bC::high;
+		P1pin[1] = bC::input_adc;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::high;
+		GNDpin[0] = bC::low;
+		GNDpin[1] = bC::low;
+		Rkpin[0] = bC::input;
+		Rkpin[1] = bC::input;
+	}
+	else if (_boxNumber == 5) {
+		P1pin[0] = bC::input;
+		P1pin[1] = bC::nop;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::nop;
+		GNDpin[0] = bC::low;
+		GNDpin[1] = bC::input;
+		Rkpin[0] = bC::high;
+		Rkpin[1] = bC::input;
+	}
+	else if (_boxNumber == 6) {
+		P1pin[0] = bC::high;
+		P1pin[1] = bC::input;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::nop;
+		GNDpin[0] = bC::input;
+		GNDpin[1] = bC::nop;
+		Rkpin[0] = bC::low;
+		Rkpin[1] = bC::input;
+	}
+	else if (_boxNumber == 7) {
+		P1pin[0] = bC::input;
+		P1pin[1] = bC::nop;
+		P2pin[0] = bC::input_adc;
+		P2pin[1] = bC::nop;
+		GNDpin[0] = bC::low;
+		GNDpin[1] = bC::input;
+		Rkpin[0] = bC::high;
+		Rkpin[1] = bC::input;
+	}
 }
 
 box::~box() {
+	boxGPIO.resetToDefault();
+	pinMode(P1PIN, INPUT);
+	pinMode(P2PIN, INPUT);
+	pinMode(GNDPIN, INPUT);
+	pinMode(RKPIN, INPUT);
 }
 
-void box::init(){
-	initControl();
-	setupADC();
-};
-
-void box1() {
-}
-
-void box2a() { //Find R1, p1-5V p2-ADC gnd-HI Z Rk-ground
-	int Rk = 560; // get exact value from bridge
-	int Vi = 5.00; //get exact output with lipo to arduino
-	int Vo; // assign Vo to ADC Value 
-	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
-	int R1;
-	R1 = Rk * ((Vi - Vo) / Vo);
-	//output R1
-}
-
-void box2b() { //Find R2, p1-HI Z p2-ADC GND-GND Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo; 
-	Vo = (Vo * Vi) / 1023;
-	int R2;
-	R2 = (Vo * Rk) / (Vi - Vo);
-	//output R2
-}
-
-void box3a(){ //Find R1, p1-GND p2-ADC GND-HI Z Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo;
-	Vo = (Vo * Vi) / 1023;
-	int R1;
-	R1 = (Vo * Rk) / (Vi - Vo);
-	//output R1
-}
-
-void box3b() { //Find R2, p1-HI Z p2-ADC GND-GND Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo;
-	Vo = (Vo * Vi) / 1023;
-	int R2;
-	R2 = (Vo * Rk) / (Vi - Vo);
-	//output R2
-}
-
-void box4a(){//Find R1, p1-5V p2-ADC gnd-gnd Rk-HI Z
-	int Rk = 1200; // get exact value from bridge
-	int Vi = 5.00; //get exact output with lipo to arduino
-	int Vo; // assign Vo to ADC Value 
-	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
-	int R1;
-	R1 = Rk * ((Vi - Vo) / Vo);
-	//output R1
-}
-
-void box4b() {//Find R2, p1-ADC p2-5V gnd-gnd Rk-HI Z
-	int Rk = 560; // get exact value from bridge
-	int Vi = 5.00; //get exact output with lipo to arduino
-	int Vo; // assign Vo to ADC Value 
-	Vo = (Vo * Vi) / 1023; // turns ADC value to actual voltage level
-	int R2;
-	R2 = Rk * ((Vi - Vo) / Vo);
-	//output R2
-}
-
-void box5a(){
-	//capacitor read between p1 and p2
-}
-
-void box5b() {//Find R, p1-HI Z p2-ADC GND-GND Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo;
-	Vo = (Vo * Vi) / 1023;
-	int R;
-	R = (Vo * Rk) / (Vi - Vo);
-	//output R
-}
-
-void box6a(){ 
-	//capacitor read between p2 and gnd
-}
-
-void box6b() {//Find R, p1-gnd p2-ADC GND-HI Z Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo;
-	Vo = (Vo * Vi) / 1023;
-	int R;
-	R = (Vo * Rk) / (Vi - Vo);
-	//output R
-}
-
-void box7a(){
-	// capacitor read betwen p1 and p2
-}
-
-void box7b() {//Find R, p1-HI Z p2-ADC GND-GND Rk-5V
-	int Rk = 560;
-	int Vi = 5.00;
-	int Vo;
-	Vo = (Vo * Vi) / 1023;
-	int R;
-	R = (Vo * Rk) / (Vi - Vo);
-	//output R
-}
-
-byte box::interrogateBox(byte boxNumber, bool boxInverted){
-	presentationData.error = 0;
-	presentationData.c1 = 0;
-	presentationData.f = 0;
-	presentationData.r1 = 0;
-	presentationData.r2 = 0;
-	presentationData.v1 = 0;
+bool box::interrogateBox() {
+	if (_previouslyCalled == true) {
+		ERROR_PRINTLN("Only 1 call to interrogateBox is allowed per object creation, please create another object and try again.");
+			return true;
+	}
+	else {
+		_previouslyCalled = true;
+	}
 
 	double rawValue = 0;
 	double calculatedValue = 0;
-	short preferred = 0;
-	checkconfigCorrect();		//ensure init functions sucessfully called
-	setInput(OFF);				//ensure all circuit stimulis are off
 
-	//select correct switch configuration
-	switchControl((retrieveSettings(boxNumber)));
-	//sets approach direction relay
-	setDirection(boxInverted);
+	switch (_boxNumber)
+	{
+	case 1:
+		rawValue = getReading(0);
+		//calculate actual voltage
+		calculatedValue = BOXONERATIO * rawValue;
+		//store voltage in return data variable
+		presentationData.v1 = calculatedValue;
+		//In future will Coms result for now just serial print
+		BOX_PRINT("V1 = ");
+		BOX_VPRINTLN(presentationData.v1);
+		return true;
+	case 2:
+	case 3:
+	case 4:
+		rawValue = getReading(0);
 
-	//check if correctly docked
-	if (!docked()) {
-		presentationData.error = 1;
-		ERROR_PRINTLN("Buggy not docked");
-		return presentationData.error;
-	};
+		//calculate resistor value
+		calculatedValue = calculateResistorValue(rawValue, 0);
 
-	if (boxNumber = 1) {
-		setInput(ON, boxNumber);
-		presentationData.v1 = getReading();
-		Serial.print(F("V1 = "));
-		Serial.println(presentationData.v1);
-		return 0;
-	}
-	else {
-		setInput(ON);
-		rawValue = getReading();
-		calculatedValue = calculateResistorValue(rawValue, boxNumber);
-		presentationData.r1 = PrefResistor(calculatedValue, boxNumber);
-		if ((boxNumber == 2) || (boxNumber == 3) || (boxNumber == 4)) {
-			Serial.print(F("Ra = "));
-		} else if ((boxNumber == 5) || (boxNumber == 6) || (boxNumber == 7)) {
-			Serial.print(F("R1 = "));
-		}
-		Serial.println(presentationData.r1);
-	}
-	setInput(OFF);
+		//get preferred
+		presentationData.r1 = toPreferredResistor(calculatedValue);
 
-	switchControl((retrieveSettings(0x80|boxNumber)));
+		//In future will Coms result for now just serial print
+		BOX_PRINT("R1 = ");
+		BOX_VPRINTLN(presentationData.r1);
 
-	if (boxNumber < 4) {
-		setInput(ON);
-		rawValue = getReading();
-		calculatedValue = calculateResistorValue(rawValue, (0x80|boxNumber));
-		presentationData.r2 = PrefResistor(calculatedValue, boxNumber);
-		Serial.print(F("Rb = "));
-		Serial.println(presentationData.r2);
-		setInput(OFF); 
-	} else {
-		calculatedValue = measureCapacitance();
-		presentationData.c1 = PrefCapactitor(calculatedValue, boxNumber);
-		Serial.print(F("C = "));
-		Serial.println(presentationData.c1);
+		rawValue = getReading(1);
+		//calculate resistor value
+		calculatedValue = calculateResistorValue(rawValue, 1);
+		//get preferred
+		presentationData.r2 = toPreferredResistor(calculatedValue);
 
-		presentationData.f = calculateFrequency(boxNumber);
-		(boxNumber == 7) ? (Serial.print(F("Resonant Frequency = "))) : (Serial.print(F("Corner Frequency = ")));
-		Serial.println(presentationData.f);
-	}
-	return 0;
-
-};
-
-double box::getOneReading(){
-	return analogRead(_adcInPin);
-};
-
-void box::setupADC(){
-	pinMode(_adcInPin, INPUT);
-
-	const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-
-	ADCSRA &= ~PS_128;  // remove bits set by Arduino library
-
-	const unsigned char PS_16 = (1 << ADPS2);
-
-	ADCSRA |= PS_16; //20us
-
-	double setup = getOneReading();
-};
-
-void box::checkconfigCorrect() {
-	if (!_boxinitComplete) { init(); }
-
-	if (!checkboxcontrolInit()) { initControl(); }
-}
-bool box::_boxinitComplete = false;
-
-boxConfig::boxSettings box::retrieveSettings(byte boxNumber) {
-	if (bitRead(boxNumber, 7)){
-		bitClear(boxNumber, 7);
-		switch (boxNumber) {
-		case 1:
-			ERROR_PRINTLN("Error, no second stage in box 1 analysis");
-			return boxConfig::box1;
-		case 2:	return boxConfig::box2b;
-		case 3: return boxConfig::box3b;
-		case 4: return boxConfig::box4b;
-		case 5: return boxConfig::box5b;
-		case 6: return boxConfig::box6b;
-		case 7: return boxConfig::box7b;
-		}
-	} else {
-		switch (boxNumber) {
-		case 1: return boxConfig::box1;
-		case 2: return boxConfig::box2a;
-		case 3: return boxConfig::box3a;
-		case 4: return boxConfig::box4a;
-		case 5: return boxConfig::box5a;
-		case 6: return boxConfig::box6a;
-		case 7: return boxConfig::box7a;
-		}
+		//In future will Coms result for now just serial print
+		BOX_PRINT("R2 = ");
+		BOX_VPRINTLN(presentationData.r2);
+		return true;
+	case 5:
+		break;
+	case 6:
+		break;
+	case 7:
+		break;
+	default:
+		ERROR_PRINTLN("Passed invalid box number, returning to navigation");
+		return true;
 	}
 }
-
-bool box::docked() {
-	bool connected = false;
-	if (getReading() == 0) {
-		connected = true;
-	}
-	return connected;
-};
-
-
-double box::getReading() {
-	
-
-};
-
-double calculateResistorValue(double rawValue, byte boxNumber){
-};
 
 //Function to pick the prefered resistor from a given resistor value range.
-short PrefResistor(double OResistor, byte BoxNo) {
+short box::toPreferredResistor(double OResistor) {
 	const short PResistors[] = { 20, 22, 24, 27, 30, 33, 36, 39, 43, 47, 51, //10
 		56, 62, 68, 75, 82, 91, //16
 		100, 110, 120, 130, 150, 160, 180, //23
@@ -268,11 +164,11 @@ short PrefResistor(double OResistor, byte BoxNo) {
 	short FinalResistor = 0;
 	byte IMAX = 53;
 	byte i = 0; //To define index of array.
-	if (BoxNo < 5) { //Boxes 2-4
+	if (_boxNumber < 5) { //Boxes 2-4
 		i = 17; //Index of 100.
 		IMAX = 49; // Index of 2000.
 	}
-	else if (BoxNo < 7) { // Boxes 5 & 6
+	else if (_boxNumber < 7) { // Boxes 5 & 6
 		i = 44; //Index of 1300.
 		IMAX = 53; //Index of 3000.
 	}
@@ -298,13 +194,13 @@ short PrefResistor(double OResistor, byte BoxNo) {
 	return FinalResistor;
 };
 
-byte PrefCapactitor(double OCap, byte BoxNo) {
+byte box::toPreferredCapactitor(double OCap) {
 	const double PCapacitors[] = { 4.7, 5.6, 6.8, 8.2, 10, 12, 15, 18, //7
 		22, 27, 33, 39, 47, 56, 68, 82, 100 }; //16
 	byte FinalCap = 0;
 	byte IMAX = 16;
 	byte i = 0; //To define index of array.
-	if (BoxNo < 7) { //Boxes 5-6
+	if (_boxNumber < 7) { //Boxes 5-6
 		i = 0; //Index of 4.7 (closest to 4).
 		IMAX = 6; // Index of 15 (closest under 17).
 	}
@@ -329,4 +225,161 @@ byte PrefCapactitor(double OCap, byte BoxNo) {
 	}
 
 	return FinalCap;
+}
+
+void box::setBoostConverter(bC::inputStatus state) {
+	if (state = bC::ON) {
+		_boostConverterOn = true;
+		boxGPIO.digitalWrite(BCRELAYPIN, HIGH);
+		delay(10);
+		boxGPIO.digitalWrite(BCPIN, HIGH);
+		delay(10);
+	}
+	else {
+		boxGPIO.digitalWrite(BCPIN, LOW);
+		delay(10);
+		boxGPIO.digitalWrite(BCRELAYPIN, LOW);
+		delay(10);
+		_boostConverterOn = false;
+	}
+}
+
+bool box::docked() {
+	boxGPIO.digitalWrite(BCRELAYPIN, LOW);
+	pinMode(P1PIN, OUTPUT);
+	pinMode(GNDPIN, OUTPUT);
+	pinMode(P2PIN, INPUT);
+	digitalWrite(P1PIN, LOW);
+	digitalWrite(GNDPIN, LOW);
+	if (getRawReading(P2PIN) != 0) {
+		ERROR_PRINTLN("Buggy improperly docked");
+		return false;
+	}
+	else { return true; }
+}
+
+void box::configureForAnalysis(bool state) {
+	_adcPin = P2PIN;
+
+	if (Rkpin[state] == bC::input_adc) {
+		ERROR_PRINTLN("Rkpin not used for readings, setup as high impedance, ADC pin left as default (P2)");
+		pinMode(RKPIN, INPUT);
+	}
+	else if (Rkpin[state] == bC::input) {
+		pinMode(RKPIN, INPUT);
+	}
+	else if ((Rkpin[state] == bC::high) || (Rkpin[state] == bC::low)) {
+		pinMode(RKPIN, OUTPUT);
+	}
+	else {}
+
+	if (GNDpin[state] == bC::input_adc) {
+		ERROR_PRINTLN("GNDpin not used for readings, setup as high impedance, ADC pin left as default (P2)");
+		pinMode(GNDPIN, INPUT);
+	}
+	else if (GNDpin[state] == bC::input) {
+		pinMode(GNDPIN, INPUT);
+	}
+	else if ((GNDpin[state] == bC::high) || (GNDpin[state] == bC::low)) {
+		pinMode(GNDPIN, OUTPUT);
+		}
+	else {}
+
+	if (P1pin[state] == bC::input_adc) {
+		_adcPin = P1PIN;
+		pinMode(P1PIN, INPUT);
+	}
+	else if (P1pin[state] == bC::input) {
+		pinMode(P1PIN, INPUT);
+	}
+	else if ((P1pin[state] == bC::high) || (P1pin[state] == bC::low)) {
+		pinMode(P1PIN, OUTPUT);
+	}
+	else {}
+
+	if (P2pin[state] == bC::input_adc) {
+		_adcPin = P2PIN;
+		pinMode(P2PIN, INPUT);
+	}
+	else if (P2pin[state] == bC::input) {
+		pinMode(P2PIN, INPUT);
+	}
+	else if ((P2pin[state] == bC::high) || (P2pin[state] == bC::low)) {
+		pinMode(P2PIN, OUTPUT);
+	}
+	else {}
+
+}
+
+void box::toggleOutputs(bC::inputStatus state, bool stage) {
+	if (state == bC::ON) {
+		if (Rkpin[state] == bC::low) { digitalWrite(RKPIN, LOW); }
+		else if (Rkpin[state] == bC::high) { digitalWrite(RKPIN, HIGH); }
+		if (GNDpin[state] == bC::low) { digitalWrite(GNDPIN, LOW); }
+		else if (GNDpin[state] == bC::high) { digitalWrite(GNDPIN, HIGH); }
+		if (P1pin[state] == bC::low) { digitalWrite(P1PIN, LOW); }
+		else if (P1pin[state] == bC::high) { digitalWrite(P1PIN, HIGH); }
+		if (P2pin[state] == bC::low) { digitalWrite(P2PIN, LOW); }
+		else if (P2pin[state] == bC::high) { digitalWrite(P2PIN, HIGH); }
+	}
+	else if (state == bC::OFF) {
+		digitalWrite(RKPIN, LOW);
+		digitalWrite(GNDPIN, LOW);
+		digitalWrite(P1PIN, LOW);
+		digitalWrite(P2PIN, LOW);
+	}
+}
+
+double box::getReading(bool stage) {
+	double retrievedVoltage = 0;
+	configureForAnalysis(stage);
+	toggleOutputs(bC::ON, stage);
+	if (_boxNumber == 1) {
+	setBoostConverter(bC::ON);
+	}
+	for (int i = 0; i < NUMADCREADINGS; i++) {
+		retrievedVoltage += convertToVoltage(getRawReading(_adcPin));
+	}
+	retrievedVoltage /= NUMADCREADINGS;
+	if (_boxNumber == 1) {
+		setBoostConverter(bC::OFF);
+	}
+	toggleOutputs(bC::OFF, stage);
+	return retrievedVoltage;
+}
+
+double box::convertToVoltage(short raw) {
+	return (VREF * (raw / ADCMAX));
+}
+
+short box::getRawReading(uint8_t pin) {
+	return analogRead(pin);
+}
+
+double box::calculateResistorValue(double rawValue, bool stage) {
+	double calculatedResistance = 0;
+	if (_boxNumber == 2) {
+		calculatedResistance = (RK * ((VREF / rawValue) - 1));
+	}
+	else if (_boxNumber == 4) {
+		calculatedResistance = (((VREF * 1200) / rawValue) - 1200);
+	}
+	
+	if (stage == 0) {
+		if (_boxNumber == 3) {
+			calculatedResistance = (((VREF * 1000) / rawValue) - 1000);
+		}
+		else if (_boxNumber == 5) {
+
+		}
+		else if (_boxNumber == 6) {
+
+		}
+		else if (_boxNumber == 7) {
+
+		}
+	}
+	else {
+			calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue));
+	}
 }

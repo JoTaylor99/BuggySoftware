@@ -1,143 +1,124 @@
 #ifndef _BOX_H
 #define _BOX_H
 
-
-#include "boxControl.h"
+#include <Adafruit_MCP23017.h>
 #include "Config.h"
 #include "boxValues.h"
 
-class box : private boxControl {
+class box {
 
 public:
 	/* Box constructor*/
-	box();
+	box(uint8_t boxNumber, bool boxInverted);
 
-	/* Box constructor*/
+	/* Box destructor*/
 	~box();
 
-	/* Box init function
-	 *  Void return type
-	 *  Depends on communications class for sending error codes or debug statements
-	 *  Calls initControl to setup pin modes on GPIO expander and Arduino 5V out pin
-	 *  Calls setupADC to setup ADC
+	/*Flow:
+		//getReading start
+	*	Set pins
+	*	Set input
+	*	Get reading
+	*	Unset input
+	*	Unset pins
+		//getReading end
+	*	Calculate
+	*	Prefer
+	*	Send
+	*	Set pins
+	*	Set input
+	*	Get reading
+	*	Unset input
+	*	Calculate
+	*	Prefer
+	*	Send
+	*	Return
+	*
+	*
+	* OR
+	*	Set pins
+	*	Set input
+	*	Get reading
+	*	Unset input
+	*	Calculate
+	*	Prefer
+	*	Send
+	*	measureCapacitance
+	*	Prefer
+	*	Send
+	*	Return
 	*/
-	void init();
+	bool interrogateBox();
 
-	/* interrogateBox function
-	* return type is boxValues::return data (currently byte)
-	* @param byte boxNumber, a byte with range 1-7 containing the number of the box to interrogate.  Function will Coms an error message if boxNumber is out of range and set an error flag in the return type.
-	* @param bool boxInverted, a bool set to false if box is approached from knob side, true otherwise.
-	* Depends on communications namespace for sending error codes or debug statements and (currently) results.
-	* 
-	* Box analysis control flow:
-	*		Call checkconfigCorrect to ensure all required init functions have been called.
-	*		turn all input off via boxControl::setInput
-	*		Create return values variable
-	*		Call boxControl::switchControl to set switches
-	*		Test properly docked
-	*			IF !DOCKED 
-	*				Coms not correctly docked error
-	*				Return attempt re-dock error flag in returnData to calling function
-	*			ELSE
-	*				continue
-	*		Turn input on via boxControl::setInput
-	*		Take readings
-	*		Turn input off via boxControl::setInput
-	*		Call calculateValue to return a resistor value
-	*		Call convertresistortoPreferred to get preferred value
-	*		fill in the relevant variable in returnData
-	*		Set second stage bit in boxNumber
-	*		Call boxControl::switchControl to set switches for 2nd stage (if reqd)
-	*		Clear second stage bit in boxNumber
-	*		IF box1 
-	*			return
-	*		IF boxes 2, 3, 4
-	*			Turn input on via boxControl::setInput
-	*			Call calculateValue to return a resistor value
-	*			Call convertresistortoPreferred to get preferred value
-	*			fill in the relevant variable in returnData
-	*		IF boxes 5, 6, 7
-	*			Call measureCapacitance();
-	*			Call convertcapacitortoPreferred to get preferred value
-	*			fill in the relevant variable in returnData
-	*			IF box 5, 6
-	*				Call calculatecornerFrequency()
-	*			IF box 7
-	*				Call calculateresonantFrequency()
-	*			fill in relevant variable in returnData
-	*		Turn input off via boxControl::setInput
-	*		return box values to calling function
-	*/
-	byte interrogateBox(byte boxNumber, bool boxInverted);
-
-	using boxControl::inputStatus;
+	bool docked();
 
 private:
-		//ADC in pin
-		const byte _adcInPin = ADCINPUTPIN;
-		static bool _boxinitComplete;
+		Adafruit_MCP23017 boxGPIO;
 
-		boxValues::returnData presentationData;
+		uint8_t _boxNumber = 0;
 		
-		/* Capacitance measurement function
-		 * returns double representing measured capacitance in nanofarads
-		 * Depends on communications class for sending error codes or debug statements 
-		 * Calls SetInput and getOneReading function.*/
-		double measureCapacitance();
+		bool _boostConverterOn = false;
+		bool _previouslyCalled = false;
 
-		/* getReading function 
-		 * returns double containing the average of N ADC readings, where N is defined as a const variable in config.h
-		 * Calls getOneReading function for each reading
-		 */		//ALEX
-		double getReading();
-		
-		
-		double getOneReading();
+		uint8_t _adcPin = P2PIN;
 
-		/*setupADC function
-		*  Sets ADC pinMode
-		*  Sets ADC prescaler
-		*  Calls analogRead once to initialise ADC
-		*/
-		void setupADC();
+		bC::pinSettings P1pin[2] = { bC::input };
+		bC::pinSettings P2pin[2] = { bC::input };
+		bC::pinSettings GNDpin[2] = { bC::input };
+		bC::pinSettings Rkpin[2] = { bC::input };
 
-		/* checkConfigCorrectfunction
-		* checks to ensure all initialization functions have been run,
-		*	if any have not been called the an object will be created and the relevant init function run again.
-		*	return type void
-		*/
+		boxValues::returnData presentationData = { 0 };
 
-		void checkconfigCorrect();
+		short toPreferredResistor(double OResistor);
 
-		/* retrieveSettings function
-		 *  return type boxConfig::boxSettings
-		 *	@param byte boxNumber
-		 *	retrieves the appropriate relay configuration from boxConfig
-		 *	boxNumber will contain the box number (1-7 in its 3 least significant bits) and have its most significant bit set for analysis stage 2
-			*/
-		boxConfig::boxSettings retrieveSettings(byte boxNumber);
-
-		/* Docked function
-		*	Bool return type
-		*	Checks ADC to ensure that the buggy has made good electrical contact with the box
-		*	Returns true if sucessful
-		*/
-		bool docked();
-
-
-		/* calculateResistorValue function
-		*	return type double
-		*	@param rawValue type double, average value recorded from repeated ADC reads
-		*	@param boxNumber type byte, passes boxNumber, if MSB is set perform stage 2 assesment, else perform stage 1 assesment
-		*	Takes measured voltage and calculated desired resistor value to be converted to preferred.
-		*/
-		double calculateResistorValue(double rawValue, byte boxNumber);
-
-		short PrefResistor(double OResistor, byte BoxNo);
-
-		short PrefCapactitor(double OCap, byte BoxNo);
+		byte toPreferredCapactitor(double OCap);
 
 		double calculateFrequency(byte boxNumber);
+
+		/// <summary>
+		/// returns one ADC reading of the passed pin
+		/// </summary>
+		/// <param name="pin">pin from which to read</param>
+		/// <returns>raw value read</returns>
+		short getRawReading(uint8_t pin);
+
+		/// <summary>
+		/// Converts ADC value into a voltage
+		/// </summary>
+		/// <param name="raw">Raw ADC value</param>
+		/// <returns>Voltage resulting from raw ADC value</returns>
+		double convertToVoltage(short raw);
+
+		/// <summary>
+		/// Sets up all pins, measures voltage, unsets pins, returns voltage
+		/// returns an average voltage from a number of ADC readings of the passed pin
+		/// number of adc readings is determined by a define in config
+		/// </summary>
+		/// <param name="stage">analysis stage</param>
+		/// <returns>average voltage observed</returns>
+		double getReading(bool stage);
+		
+		/// <summary>
+		/// Set boost converter relay, delay and turn boost converter on or off
+		/// </summary>
+		/// <param name="state">Boost converter state</param>
+		void setBoostConverter(bC::inputStatus state);
+
+		/// <summary>
+		/// Sets up the analog pin directions of the arduino for analysis
+		/// </summary>
+		/// <param name="stage">0 for stage 1, 1 for stage 2</param>
+		void configureForAnalysis(bool stage);
+
+		/// <summary>
+		/// Turns analog outputs on or off
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="stage"></param>
+		void toggleOutputs(bC::inputStatus state, bool stage);
+
+
+		double calculateResistorValue(double rawValue, bool stage);
 };
 
 
