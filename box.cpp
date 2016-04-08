@@ -1,6 +1,19 @@
 #include "box.h"
 
-box::box(uint8_t boxNumber, bool boxInverted): _boxNumber(boxNumber) {
+box::box() {
+
+}
+
+box::~box() {
+	boxGPIO.resetToDefault();
+	pinMode(P1PIN, INPUT);
+	pinMode(P2PIN, INPUT);
+	pinMode(GNDPIN, INPUT);
+	pinMode(RKPIN, INPUT);
+}
+
+void box::begin(uint8_t boxNumber, bool boxInverted) {
+	_boxNumber = boxNumber;
 	boxGPIO.begin();
 	boxGPIO.pinMode(P1P2RELAYPIN, OUTPUT);
 	boxGPIO.pinMode(BCPIN, OUTPUT);
@@ -10,7 +23,7 @@ box::box(uint8_t boxNumber, bool boxInverted): _boxNumber(boxNumber) {
 	if (boxInverted) {
 		boxGPIO.digitalWrite(P1P2RELAYPIN, HIGH);
 	}
-	
+
 	if (_boxNumber == 1) {
 		P1pin[0] = bC::input;
 		P1pin[1] = bC::nop;
@@ -81,14 +94,6 @@ box::box(uint8_t boxNumber, bool boxInverted): _boxNumber(boxNumber) {
 		Rkpin[0] = bC::high;
 		Rkpin[1] = bC::input;
 	}
-}
-
-box::~box() {
-	boxGPIO.resetToDefault();
-	pinMode(P1PIN, INPUT);
-	pinMode(P2PIN, INPUT);
-	pinMode(GNDPIN, INPUT);
-	pinMode(RKPIN, INPUT);
 }
 
 bool box::interrogateBox() {

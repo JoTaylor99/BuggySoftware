@@ -9,7 +9,7 @@ class box {
 
 public:
 	/* Box constructor*/
-	box(uint8_t boxNumber, bool boxInverted);
+	box();
 
 	/* Box destructor*/
 	~box();
@@ -51,6 +51,8 @@ public:
 	bool interrogateBox();
 
 	bool docked();
+
+	void begin(uint8_t boxNumber, bool boxInverted);
 
 private:
 		Adafruit_MCP23017 boxGPIO;
