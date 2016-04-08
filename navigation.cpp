@@ -79,9 +79,15 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-				//box assessBox;
-				//byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
-				//if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
+				//pass recieved boxnumber and recieved box inversion information
+				box boxs;
+				boxs.begin(BOXNUM, BOXINV);
+				if (!boxs.docked()) {
+					//redock unless already failed twice
+				}
+				else {
+					boxs.interrogateBox();
+				}
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
