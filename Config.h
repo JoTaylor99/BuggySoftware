@@ -161,11 +161,6 @@
 #define WHITEHIGHTHRESHOLDHIGHBYTE	(0x13)
 
 
-
-
-
-
-
 //Motor Defines
 //#define DIRPINA 4
 //#define DIRPINB 5
@@ -187,42 +182,9 @@
 
 
 //Box Defines
-#define FIVEVOLTOUTPUTPIN 2
-#define ADCINPUTPIN	   16
 
 #define BOXNUM		   4
 #define BOXINV		   0
-
-#define P1BC		0x2000
-#define P15V        0x1000
-#define P1ADC       0x800
-#define P2GND       0x400
-#define P25V        0x200
-#define P2Rd        0x100
-#define P2Rk        0x80
-#define P2ADC       0x40
-#define GNDADC		0x20
-#define GNDGND      0x10
-#define GND5V       0x08
-#define P1P2SWITCH  0x04
-#define BC          0x02    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define ADCSWITCH   0x01
-
-
-#define P1BCPIN        3
-#define P15VPIN        8
-#define P1ADCPIN       9
-#define P2GNDPIN       4
-#define P25VPIN        2
-#define P2RdPIN        1
-#define P2RkPIN        0
-#define P2ADCPIN       13
-#define GNDADCPIN     10
-#define GNDGNDPIN      11
-#define GND5VPIN       12
-#define P1P2SWITCHPIN  7
-#define BCPIN          5    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define ADCSWITCHPIN   14
 
 #define NUMADCREADINGS 50
 
