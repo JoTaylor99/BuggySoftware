@@ -5,7 +5,8 @@ box::box() {
 }
 
 box::~box() {
-	boxGPIO.resetToDefault();
+	//boxGPIO.resetToDefault();
+	boxGPIO.begin();
 	pinMode(P1PIN, INPUT);
 	pinMode(P2PIN, INPUT);
 	pinMode(GNDPIN, INPUT);
@@ -220,10 +221,10 @@ short box::toPreferredResistor(double OResistor) {
 	return FinalResistor;
 };
 
-byte box::toPreferredCapacitor(double OCap) {
+double box::toPreferredCapacitor(double OCap) {
 	const double PCapacitors[] = { 4.7, 5.6, 6.8, 8.2, 10, 12, 15, 18, //7
 		22, 27, 33, 39, 47, 56, 68, 82, 100 }; //16
-	byte FinalCap = 0;
+	double FinalCap = 0;
 	byte IMAX = 16;
 	byte i = 0; //To define index of array.
 	if (_boxNumber < 7) { //Boxes 5-6
