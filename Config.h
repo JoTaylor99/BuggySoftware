@@ -195,10 +195,10 @@
 #define RK	560
 
 
-#define P1PIN	15
-#define P2PIN	16
-#define GNDPIN	17
-#define RKPIN	14
+#define P1PIN	15 //Pin A1
+#define P2PIN	16 //Pin A2
+#define GNDPIN	17 //Pin A3
+#define RKPIN	14 //Pin A0
 
 //on expander
 #define P1P2RELAYPIN	0
