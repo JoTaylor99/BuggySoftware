@@ -38,6 +38,12 @@ public:
 	
 	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
 
+	#ifndef SENSOR_MEMORY_SAVE
+		static void printCurrent(); 
+	#else
+		static void printCurrent(); 
+	#endif
+
 #ifdef SENSOR_MEMORY_SAVE
 	private:
 		static void setVal(sC::sensorNumber position, bool tileColour);

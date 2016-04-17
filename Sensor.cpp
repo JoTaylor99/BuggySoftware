@@ -139,6 +139,22 @@ void Sensor::printbw(uint8_t values) {
 #endif
 }
 
+//Public function callable from navigation to print sensor values for debug
+#ifndef SENSOR_MEMORY_SAVE
+void Sensor::printCurrent() {
+#else
+void Sensor::printCurrent() {
+#endif
+	Serial.print(F("FL:")); Serial.print(RVAL(sC::FL)); Serial.print(F("\t"));
+	Serial.print(F("LTL:")); Serial.print(RVAL(sC::LTL)); Serial.print(F("\t"));
+	Serial.print(F("LTR:")); Serial.print(RVAL(sC::LTR)); Serial.print(F("\t"));
+	Serial.print(F("FR:")); Serial.print(RVAL(sC::FR)); Serial.println(F("\t"));
+	Serial.print(F("ML:")); Serial.print(RVAL(sC::ML)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("MR:")); Serial.print(RVAL(sC::MR)); Serial.println(F("\t"));
+	Serial.print(F("BL:")); Serial.print(RVAL(sC::BL)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("BR:")); Serial.print(RVAL(sC::BR)); Serial.println(F("\t"));
+}
+
 //Polls all given sensors in the order specified.
 void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte OrderLength){
 
