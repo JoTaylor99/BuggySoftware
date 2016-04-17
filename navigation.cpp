@@ -94,6 +94,9 @@ void navigation::navigate(String str) {
 				drive(nC::Direction::Stop);
 
 			}
+			else if (str = "H") {
+				Sensor::printCurrent();
+			}
 			else {
 				drive(nC::Direction::Stop);
 			}
