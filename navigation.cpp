@@ -605,32 +605,20 @@ void navigation::moveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
 
-		if (navigation::buggyCentreOnTopofDestIntersection() == true) {
-			NAV_PRINTLN("Buggy centre on top of Intersection");
-			if (navigation::reachedDestination()) {
-				NAV_PRINTLN("Destinaion Reached");
-
-				drive(nC::Direction::Stop);
-				break;
-			}
-			else {
-				NAV_PRINTLN("Adjuston spot");
-
-				navigation::adjustOnTheSpot();
-			}
-		}
-		else if (navigation::buggyCentreBehindDestIntersection()) {
-			NAV_PRINTLN("Behind intersection");
-
-			if (!navigation::driftingWhenForward()) {
-				drive(nC::Direction::Forward);
-			}
+		if ((RVAL(sC::BL) != STARTVAL(sC::BL)) && (RVAL(sC::BR) != STARTVAL(sC::BR)) && (RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			break;
 		}
 		else {
 			NAV_PRINTLN("In front of intersection");
 
 			if (!navigation::driftingWhenBackward()) {
 				drive(nC::Direction::Backwards);
+			}
+		}
+
+		while ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			if (!navigation::driftingWhenForward()) {
+				drive(nC::Direction::Forward);
 			}
 		}
 	}
