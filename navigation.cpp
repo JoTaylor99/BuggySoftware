@@ -606,6 +606,8 @@ void navigation::moveBackward() {
 		Sensor::PollSensors(Sensors);
 
 		if ((RVAL(sC::BL) != STARTVAL(sC::BL)) && (RVAL(sC::BR) != STARTVAL(sC::BR)) && (RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			drive(nC::Stop);
+			NAV_PRINTLN("Crossed Over");
 			break;
 		}
 		else {
@@ -615,14 +617,20 @@ void navigation::moveBackward() {
 				drive(nC::Direction::Backwards);
 			}
 		}
+	}
 
-		while ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+	Sensor::PollSensors(Sensors);
+
+		while ((RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			Sensor::PollSensors(Sensors);
 			if (!navigation::driftingWhenForward()) {
 				drive(nC::Direction::Forward);
 			}
 		}
-	}
+
+		drive(nC::Stop);
 }
+
 
 #ifdef SENSOR_MEMORY_SAVE
 bool navigation::startValIs(sC::sensorNumber position) {

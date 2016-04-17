@@ -2,11 +2,9 @@
 #define _CONFIG_H
 #include <Arduino.h>
 
-//Savvas test commit
-
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
-//#define DEBUG
+#define DEBUG
 
 //#define SENSOR_DEBUG
 //#define NAV_DEBUG
@@ -16,7 +14,7 @@
 //#define SEN_INFO
 //#define NAV_INFO
 //#define MOT_INFO
-#define BOX_INFO
+//#define BOX_INFO
 
 /// <summary>
 /// Conditional debug defines
