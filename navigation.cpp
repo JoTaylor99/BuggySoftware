@@ -34,7 +34,11 @@ void navigation::initNavigation() {
 	Sensor::PollSensors(Sensors);
 	Sensor::PollSensors(Sensors);
 #endif
-
+	DEBUG_PRINTLN("Please place buggy at correct start location");
+	while ((RVAL(sC::FR) != (false)) && (RVAL(sC::LTR) != (false)) && (RVAL(sC::LTL) != (true)) && (RVAL(sC::FL) != (true)) && (RVAL(sC::MR) != (false)) && (RVAL(sC::ML) != (true)) && (RVAL(sC::BR) != (true)) && (RVAL(sC::BL) != (false))) {
+		Sensor::PollSensors(Sensors);
+}
+	DEBUG_PRINTLN("Buggy correctly placed to start");
 	DEBUG_PRINTLN("Setup Complete!");
 
 };
