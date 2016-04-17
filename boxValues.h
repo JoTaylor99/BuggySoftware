@@ -8,7 +8,6 @@ namespace boxValues{
 		short r1, r2;
 		double c1;
 		double f;
-		byte error;
 	};
 
 
