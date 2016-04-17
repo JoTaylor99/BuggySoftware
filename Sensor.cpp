@@ -122,9 +122,9 @@ void Sensor::toTileColour() {
 //Prints boolean values, presently there is no material difference between the conditions,
 //so one has been commented out until such time as communication code is finalised.
 #ifndef SENSOR_MEMORY_SAVE
-void Sensor::printbw(bool *values) {
+void Sensor::printbw() {
 #else
-void Sensor::printbw(uint8_t values) {
+void Sensor::printbw() {
 #endif
 	//Print sensor outputs
 #ifdef SENSOR_DEBUG
@@ -167,7 +167,7 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte
 		SVAL(currentSensorIndex, sens[currentSensorIndex].tileWhite);
 	}
 	
-	printbw(values);
+	printbw();
 
 
 }

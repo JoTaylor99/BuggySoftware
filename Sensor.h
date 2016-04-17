@@ -78,9 +78,9 @@ private:
 	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
 	void toTileColour(); //Checks the Normalised sensor readings against their thresholds
 #ifndef SENSOR_MEMORY_SAVE
-	static void printbw(bool *values); 
+	static void printbw(); 
 #else
-	static void printbw(uint8_t values); 
+	static void printbw(); 
 #endif
 
 	static bool _sensorInitComplete;  
