@@ -151,8 +151,6 @@ private:
 
 	//Handler Right
 
-	//getSteps
-	//gets number of steps from number of mms
 
 	/// <summary>
 	/// Returns the number of steps required to travel the number of millimeters passed.
@@ -161,11 +159,11 @@ private:
 	/// <returns>steps</returns>
 	uint8_t getStepsFromDistance(uint8_t mmDistance);
 
-	uint8_t stepDistanceLeft;
-	uint8_t stepDistanceRight;
+	uint8_t stepDistanceLeft = 0;
+	uint8_t stepDistanceRight = 0;
 	
-	uint8_t stepTargetDistanceLeft;
-	uint8_t stepTargetDistanceRight;
+	uint8_t stepTargetDistanceLeft = 0;
+	uint8_t stepTargetDistanceRight = 0;
 
 	bool stepLeftDistanceInterruptEnabled = false;
 	bool stepRightDistanceInterruptEnabled = false;
