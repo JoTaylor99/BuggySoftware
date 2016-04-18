@@ -49,15 +49,15 @@ protected:
 	/// steps the desired distance in mm in the requested direction 
 	/// </summary>
 	/// <param name="direction">Direction to turn wheels</param>
-	/// <param name="distance">Distance in mm to turn wheels</param>
+	/// <param name="distance">Distance in mm to turn wheels MAX 250</param>
 	void step(nC::Direction direction, uint8_t distance = DEFAULTMAXDISTANCE);
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction, allows the setting of different targets for each wheel
 	/// </summary>
 	/// <param name="direction"></param>
-	/// <param name="leftDistance"></param>
-	/// <param name="rightDistance"></param>
+	/// <param name="leftDistance">Distance in mm to turn left wheel MAX 250</param>
+	/// <param name="rightDistance">Distance in mm to turn right wheel MAX 250</param>
 	void step(nC::Direction direction, uint8_t leftDistance = DEFAULTMAXDISTANCE, uint8_t rightDistance = DEFAULTMAXDISTANCE);
 
 	/// <summary>
@@ -65,8 +65,8 @@ protected:
 	/// </summary>
 	/// <param name="leftDirection">Left Wheel Direction</param>
 	/// <param name="rightDirection">Right Wheel Direction</param>
-	/// <param name="leftDistance">Left Wheel Distance</param>
-	/// <param name="rightDistance">Right Wheel Distance</param>
+	/// <param name="leftDistance">Left Wheel Distance MAX 250</param>
+	/// <param name="rightDistance">Right Wheel Distance MAX 250</param>
 	void step(nC::Direction leftDirection, nC::Direction rightDirection, uint8_t leftDistance, uint8_t rightDistance);
 
 
@@ -178,12 +178,6 @@ private:
 
 };
 
-
-//Handler Left
-void leftStepCounter();
-
-//Handler Right
-void rightStepCounter();
 
 
 
