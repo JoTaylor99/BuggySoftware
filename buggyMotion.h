@@ -130,11 +130,11 @@ private:
 	/// <summary>
 	/// Stores the left wheel's speed
 	/// </summary>
-	int32_t _leftSpeed;
+	volatile int32_t _leftSpeed;
 	/// <summary>
 	/// Stores the right wheel's speed
 	/// </summary>
-	int32_t _rightSpeed;
+	volatile int32_t _rightSpeed;
 	/// <summary>
 	/// Indicates whether the timers for controlling the pwm have been enabled
 	/// </summary>
@@ -142,7 +142,7 @@ private:
 	/// <summary>
 	/// Due to the control flow though the buggy, drive() may be called multiple times during a single motion. This flag indicates to the stepper control that this is the first time this instruction is being called
 	/// </summary>
-	bool _firstCall = true;
+	volatile bool _firstCall = true;
 	/// <summary>
 	/// Storing the current drift, used for determening if setPinPWM needs to be updated
 	/// </summary>
@@ -153,7 +153,7 @@ private:
 	/// </summary>
 	nC::Direction CurrentDirection = nC::Direction::Stop;
 
-	uint8_t _driftCount = 0;
+	volatile uint8_t _driftCount = 0;
 
 	nC::Drift _previousDrift = nC::Drift::noDrift;
 
@@ -167,14 +167,14 @@ private:
 	/// <returns>steps</returns>
 	uint8_t getStepsFromDistance(uint8_t mmDistance);
 
-	uint8_t stepDistanceLeft;
-	uint8_t stepDistanceRight;
+	volatile uint8_t stepDistanceLeft;
+	volatile uint8_t stepDistanceRight;
 
-	uint8_t stepTargetDistanceLeft;
-	uint8_t stepTargetDistanceRight;
+	volatile uint8_t stepTargetDistanceLeft;
+	volatile uint8_t stepTargetDistanceRight;
 
-	bool stepLeftDistanceInterruptEnabled = false;
-	bool stepRightDistanceInterruptEnabled = false;
+	volatile bool stepLeftDistanceInterruptEnabled = false;
+	volatile bool stepRightDistanceInterruptEnabled = false;
 
 };
 
