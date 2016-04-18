@@ -375,28 +375,32 @@ void navigation::adjustOnTheSpot(){
 	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
 		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-			//drive(nC::Direction::Left);
+			drive(nC::Direction::Left);
 		}
 		else {
-			//drive(nC::Direction::Right);
+			drive(nC::Direction::Right);
 		}
 	}
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
 		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+			drive(nC::Direction::LeftForwardOnly);
 		}
 		else {
 			//LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+			drive(nC::Direction::RightForwardOnly);
 		}
 	}
 	//Case 3.1 (LTL==LTR) && (BR !=BL)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
 		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
 			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
+			drive(nC::Direction::RightBackwardsOnly);
 		}
 		else {
 			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
+			drive(nC::Direction::LeftBackwardsOnly);
 		}
 	}
 }
