@@ -490,7 +490,7 @@ void navigation::turnLeft() {
 			}
 		}
 		else {
-			navigation::adjustOnTheSpot();
+			//navigation::adjustOnTheSpot();
 		}
 	}
 }
@@ -524,7 +524,7 @@ void navigation::turnRight() {
 			}
 		}
 		else {
-			navigation::adjustOnTheSpot();
+			//navigation::adjustOnTheSpot();
 		}
 	}
 }
