@@ -30,7 +30,14 @@ void buggyMotion::initMotion() {
 	_drifting = false;
 	_driftCount = 0;
 	_previousDrift = nC::Drift::noDrift;
+	stepDistanceLeft = 0;
+	stepDistanceRight = 0;
 
+	stepTargetDistanceLeft = 0;
+	stepTargetDistanceRight = 0;
+
+	stepLeftDistanceInterruptEnabled = false;
+	stepRightDistanceInterruptEnabled = false;
 }
 
 void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
