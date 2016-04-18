@@ -234,12 +234,19 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 }
 void buggyMotion::stop(uint8_t motorSelect)
 {
+	volatile bool calledOnInterrupt = false;
+
 	_firstCall = true;
 	_driftCount = 0;
 
 	if (motorSelect == 0) {		//both
-		detachInterrupt(0);
-		detachInterrupt(1);
+		if (stepLeftDistanceInterruptEnabled && stepRightDistanceInterruptEnabled) {
+			detachInterrupt(0);
+			detachInterrupt(1);
+			calledOnInterrupt = true;
+			stepLeftDistanceInterruptEnabled = false;
+			stepRightDistanceInterruptEnabled = false;
+		}
 		_leftSpeed = 0;
 		_rightSpeed = 0;
 		pwmWrite(LEFTMOTOR, _leftSpeed);
@@ -251,20 +258,30 @@ void buggyMotion::stop(uint8_t motorSelect)
 		stepTargetDistanceRight = 0;
 	}
 	else if (motorSelect == 1) {	//left
-		detachInterrupt(0);
+		if (stepLeftDistanceInterruptEnabled) {
+			detachInterrupt(0);
+			calledOnInterrupt = true;
+			stepLeftDistanceInterruptEnabled = false;
+		}
 		_leftSpeed = 0;
 		pwmWrite(LEFTMOTOR, _leftSpeed);
 		stepDistanceLeft = 0;
 		stepTargetDistanceLeft = 0;
 	}
 	else if (motorSelect == 2) {	//right
-		detachInterrupt(1);
+		if (stepRightDistanceInterruptEnabled) {
+			detachInterrupt(1);
+			calledOnInterrupt = true;
+			stepRightDistanceInterruptEnabled = false;
+		}
 		_rightSpeed = 0;
 		pwmWrite(RIGHTMOTOR, _rightSpeed);
 		stepDistanceRight = 0;
 		stepTargetDistanceRight = 0;
 	}
-	MOT_PRINTLN("Stopped");
+	if (!calledOnInterrupt) {
+		MOT_PRINTLN("Stopped");
+	}
 }
 
 void buggyMotion::capSpeeds()
