@@ -153,9 +153,13 @@ private:
 
 	//getSteps
 	//gets number of steps from number of mms
-	uint8_t getStepsFromDistance(uint8_t mmDistance) {
 
-	}
+	/// <summary>
+	/// Returns the number of steps required to travel the number of millimeters passed.
+	/// </summary>
+	/// <param name="mmDistance">distance in mm</param>
+	/// <returns>steps</returns>
+	uint8_t getStepsFromDistance(uint8_t mmDistance);
 
 	uint8_t stepDistanceLeft;
 	uint8_t stepDistanceRight;

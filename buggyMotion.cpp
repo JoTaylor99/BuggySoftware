@@ -245,3 +245,7 @@ void buggyMotion::capSpeeds()
 		_rightSpeed = 100;
 	}
 }
+
+uint8_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
+	return static_cast<uint8_t>(mmDistance*0.9);
+}
