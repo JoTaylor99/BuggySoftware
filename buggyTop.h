@@ -21,4 +21,12 @@ public:
 
 };
 
+
+//Handler Left
+void leftStepCounter();
+
+//Handler Right
+void rightStepCounter();
+
+
 #endif
