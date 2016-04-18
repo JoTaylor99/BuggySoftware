@@ -35,6 +35,43 @@ protected:
 
 	void getSpeeds(int32_t &leftSpeed, int32_t &rightSpeed);
 
+	/// <summary>
+	/// steps the desired distance in mm in the requested direction 
+	/// </summary>
+	/// <param name="direction">Direction to turn wheels</param>
+	/// <param name="distance">Distance in mm to turn wheels</param>
+	void step(nC::Direction direction, uint8_t distance = DEFAULTMAXDISTANCE);
+
+	/// <summary>
+	/// steps the desired distance in mm in the requested direction, allows the setting of different targets for each wheel
+	/// </summary>
+	/// <param name="direction"></param>
+	/// <param name="leftDistance"></param>
+	/// <param name="rightDistance"></param>
+	void step(nC::Direction direction, uint8_t leftDistance = DEFAULTMAXDISTANCE, uint8_t rightDistance = DEFAULTMAXDISTANCE);
+
+	/// <summary>
+	/// steps the desired distance in mm in the requested direction wheelwise
+	/// </summary>
+	/// <param name="leftDirection">Left Wheel Direction</param>
+	/// <param name="rightDirection">Right Wheel Direction</param>
+	/// <param name="leftDistance">Left Wheel Distance</param>
+	/// <param name="rightDistance">Right Wheel Distance</param>
+	void step(nC::Direction leftDirection, nC::Direction rightDirection, uint8_t leftDistance, uint8_t rightDistance);
+
+
+	/// <summary>
+	/// If both stepDistanceLeft == stepTargetDistanceLeft and stepDistanceRight == stepTargetDistanceRight then return true
+	/// </summary>
+	/// <returns></returns>
+	bool isMoveComplete();
+
+	/// <summary>
+	/// Calls a series of step commands to move the buggy horizontally left and right while remaining in the same position in the forward/backward axis.
+	/// </summary>
+	/// <param name="direction">left = 0, right = 1</param>
+	/// <param name="distance">distance in mm for centre of buggy to move in specified direction</param>
+	void moveHorizontally(bool direction, uint8_t distance);
 
 private:
 	/// <summary>
@@ -69,10 +106,14 @@ private:
 	/// <param name="direction">The direction the buggy is moving</param>
 	/// <param name="drift">The direction the buggy is drifting relative to the current direction of the buggy to be the front.</param>
 	void driftCorrect(nC::Direction direction, nC::Drift drift);
+
 	/// <summary>
-	/// Stop, Resets the buggy's motion ready for the next direction. This must be called between direction changes to ensure speed
+	/// Stop, Resets the buggy's motion ready for the next direction. This must be called between direction changes to ensure speed defaults.
+	/// Also detaches interrupts if enabled and clears appropriate flags, resets distance targets and counters.
 	/// </summary>
-	void stop();
+	/// <param name="motorSelect"> 0 = default, stop both motors, 1 = stop left motor, 2 = stop right motor</param>
+	void stop(uint8_t motorSelect = 0);
+
 
 	void capSpeeds();
 
@@ -85,7 +126,7 @@ private:
 	/// </summary>
 	int32_t _rightSpeed;
 	/// <summary>
-	/// Indicates weither the timers for controlling the pwm have been enabled
+	/// Indicates whether the timers for controlling the pwm have been enabled
 	/// </summary>
 	bool _timersInitialised = false;
 	/// <summary>
@@ -105,6 +146,26 @@ private:
 	uint8_t _driftCount = 0;
 
 	nC::Drift _previousDrift = nC::Drift::noDrift;
+
+	//Handler Left
+
+	//Handler Right
+
+	//getSteps
+	//gets number of steps from number of mms
+	uint8_t getStepsFromDistance(uint8_t mmDistance) {
+
+	}
+
+	uint8_t stepDistanceLeft;
+	uint8_t stepDistanceRight;
+	
+	uint8_t stepTargetDistanceLeft;
+	uint8_t stepTargetDistanceRight;
+
+	bool stepLeftDistanceInterruptEnabled = false;
+	bool stepRightDistanceInterruptEnabled = false;
+
 };
 
 
