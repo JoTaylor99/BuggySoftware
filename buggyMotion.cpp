@@ -221,14 +221,38 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 
 
 }
-void buggyMotion::stop()
+void buggyMotion::stop(uint8_t motorSelect)
 {
-	_leftSpeed = 0;
-	_rightSpeed = 0;
 	_firstCall = true;
 	_driftCount = 0;
-	pwmWrite(LEFTMOTOR, _leftSpeed);
-	pwmWrite(RIGHTMOTOR, _rightSpeed);
+
+	if (motorSelect == 0) {		//both
+		detachInterrupt(0);
+		detachInterrupt(1);
+		_leftSpeed = 0;
+		_rightSpeed = 0;
+		pwmWrite(LEFTMOTOR, _leftSpeed);
+		pwmWrite(RIGHTMOTOR, _rightSpeed);
+		
+		stepDistanceLeft = 0;
+		stepDistanceRight = 0;
+		stepTargetDistanceLeft = 0;
+		stepTargetDistanceRight = 0;
+	}
+	else if (motorSelect == 1) {	//left
+		detachInterrupt(0);
+		_leftSpeed = 0;
+		pwmWrite(LEFTMOTOR, _leftSpeed);
+		stepDistanceLeft = 0;
+		stepTargetDistanceLeft = 0;
+	}
+	else if (motorSelect == 2) {	//right
+		detachInterrupt(1);
+		_rightSpeed = 0;
+		pwmWrite(RIGHTMOTOR, _rightSpeed);
+		stepDistanceRight = 0;
+		stepTargetDistanceRight = 0;
+	}
 	MOT_PRINTLN("Stopped");
 }
 
