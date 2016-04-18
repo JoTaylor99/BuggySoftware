@@ -65,6 +65,10 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 			_leftSpeed = 50;
 			_rightSpeed = 50;
 		}
+		else {
+			_leftSpeed = 40;
+			_rightSpeed = 40;
+		}
 		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
 		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
 		pwmWrite(LEFTMOTOR, 128);
