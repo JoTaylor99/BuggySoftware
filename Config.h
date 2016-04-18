@@ -175,7 +175,7 @@
 #define LEFTMOTORDIR 6
 #define RIGHTMOTORDIR 7
 #define LEFTMOTOR 9
-#define RIGHTMOTOR 3
+#define RIGHTMOTOR 11
 
 
 
