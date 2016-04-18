@@ -53,8 +53,6 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 	MOT_VPRINTLN(_rightSpeed);
 
 	if (_firstCall) {
-		_firstCall = false;
-
 		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
 			_leftSpeed = 80;
 			_rightSpeed = 80;
@@ -65,14 +63,11 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 			_leftSpeed = 50;
 			_rightSpeed = 50;
 		}
-		else {
+		
+		if (direction == nC::Direction::RightForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::LeftForwardOnly || nC::Direction::LeftBackwardsOnly) {
 			_leftSpeed = 40;
 			_rightSpeed = 40;
 		}
-		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
-		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
-		pwmWrite(LEFTMOTOR, 128);
-		pwmWrite(RIGHTMOTOR, 128);
 	}
 
 	//If the buggy is drifting
@@ -131,6 +126,13 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 		break;
 	}
 
+	if (_firstCall) {
+		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
+		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
+		pwmWrite(LEFTMOTOR, 128);
+		pwmWrite(RIGHTMOTOR, 128);
+		_firstCall = false;
+	}
 	
 	_previousDrift = drift;
 }
@@ -304,18 +306,3 @@ uint8_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
 	return static_cast<uint8_t>(mmDistance*0.9);
 }
 
-//Handler Left
-void leftStepCounter() {
-	buggy.stepDistanceLeft++;
-	if (buggy.stepDistanceLeft == buggy.stepTargetDistanceLeft) {
-		buggy.stop(1);
-	}
-}
-
-//Handler Right
-void rightStepCounter(){
-	buggy.stepDistanceRight++;
-	if (buggy.stepDistanceRight == buggy.stepTargetDistanceLeft) {
-		buggy.stop(2);
-	}
-}
