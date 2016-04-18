@@ -34,7 +34,11 @@ void navigation::initNavigation() {
 	Sensor::PollSensors(Sensors);
 	Sensor::PollSensors(Sensors);
 #endif
-
+	DEBUG_PRINTLN("Please place buggy at correct start location");
+	while ((RVAL(sC::FR) != (false)) && (RVAL(sC::LTR) != (false)) && (RVAL(sC::LTL) != (true)) && (RVAL(sC::FL) != (true)) && (RVAL(sC::MR) != (false)) && (RVAL(sC::ML) != (true)) && (RVAL(sC::BR) != (true)) && (RVAL(sC::BL) != (false))) {
+		Sensor::PollSensors(Sensors);
+}
+	DEBUG_PRINTLN("Buggy correctly placed to start");
 	DEBUG_PRINTLN("Setup Complete!");
 
 };
@@ -79,12 +83,23 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-				//box assessBox;
-				//byte error = assessBox.interrogateBox(boxConfig::boxNumber, boxConfig::boxInverted);
-				//if (error == 1) { /*Backup and attempt re-docking unless already tried twice*/}
+#ifdef BOX_DEBUG
+				//pass recieved boxnumber and recieved box inversion information
+				box boxs;
+				boxs.begin(BOXNUM, BOXINV);
+				if (!boxs.docked()) {
+					//redock unless already failed twice
+				}
+				else {
+					boxs.interrogateBox();
+				}
+#endif
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
+			}
+			else if (str = "H") {
+				Sensor::printCurrent();
 			}
 			else {
 				drive(nC::Direction::Stop);
@@ -116,6 +131,9 @@ void navigation::boxApproach() {
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
 	Sensor::PollSensors(Sensors);
+	int32_t lspeed, rspeed;
+	getSpeeds(lspeed, rspeed);
+	NAV_VPRINTLN(lspeed); NAV_VPRINTLN(rspeed);
 #ifndef SENSOR_MEMORY_SAVE
 	memcpy(startingValues, Sensor::values, NUM_SENSORS);
 #else
@@ -125,14 +143,9 @@ void navigation::start() {
 }
 //Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
-	if ((RVAL(sC::FL) != STARTVAL(sC::FL))&& 
-		(RVAL(sC::LTL) != STARTVAL(sC::LTL))&&
-		(RVAL(sC::LTR) != STARTVAL(sC::LTR))&&
-		(RVAL(sC::FR) != STARTVAL(sC::FR))&& 
+	if ( 
 		(RVAL(sC::ML) != STARTVAL(sC::ML))&&  
-		(RVAL(sC::MR) != STARTVAL(sC::MR))&&
-		(RVAL(sC::BL) != STARTVAL(sC::BL))&& 
-		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		(RVAL(sC::MR) != STARTVAL(sC::MR))) {
 		return true;
 	}
 	else
@@ -193,7 +206,7 @@ bool navigation::buggyCentreBehindDestIntersection() {
 ///		return true;
 /// }
 bool navigation::driftingWhenForward() {
-	if (RVAL(sC::LTL) != RVAL(sC::LTR)) {
+	if ((RVAL(sC::LTL) && RLASTVAL(sC::LTL)) != (RVAL(sC::LTR) && RLASTVAL(sC::LTR))) {
 		return false;
 	}
 	else{
@@ -207,14 +220,15 @@ bool navigation::driftingWhenForward() {
 				drive(nC::Direction::Forward, nC::Drift::rightDrift);
 
 			}
+
 		}
 		else {
 			if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-				drive(nC::Direction::Forward, nC::Drift::leftDrift);
+				drive(nC::Direction::Forward, nC::Drift::rightDrift);
 
 			}
 			else{
-				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+				drive(nC::Direction::Forward, nC::Drift::leftDrift);
 
 			}
 		}
@@ -361,28 +375,32 @@ void navigation::adjustOnTheSpot(){
 	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
 		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-			//drive(nC::Direction::Left);
+			drive(nC::Direction::Left);
 		}
 		else {
-			//drive(nC::Direction::Right);
+			drive(nC::Direction::Right);
 		}
 	}
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
 		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
+			drive(nC::Direction::LeftForwardOnly);
 		}
 		else {
 			//LEFT WHEEL STOP, RIGHT WHEEL FORWARD
+			drive(nC::Direction::RightForwardOnly);
 		}
 	}
 	//Case 3.1 (LTL==LTR) && (BR !=BL)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
 		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
 			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
+			drive(nC::Direction::RightBackwardsOnly);
 		}
 		else {
 			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
+			drive(nC::Direction::LeftBackwardsOnly);
 		}
 	}
 }
@@ -455,7 +473,7 @@ void navigation::adjustOnTheSpot(){
 void navigation::turnLeft() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (navigation::reachedDestination()) {
+		if ((RVAL(sC::LTL) != STARTVAL(sC::LTL)) && (RVAL(sC::BR) != STARTVAL(sC::BR))) {
 			drive(nC::Direction::Stop);
 			break;
 		}
@@ -472,7 +490,7 @@ void navigation::turnLeft() {
 			}
 		}
 		else {
-			navigation::adjustOnTheSpot();
+			//navigation::adjustOnTheSpot();
 		}
 	}
 }
@@ -487,9 +505,11 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
+	Sensor::PollSensors(Sensors);
+	drive(nC::Direction::Right);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (navigation::reachedDestination()) {
+		if ((RVAL(sC::LTR) != STARTVAL(sC::LTR)) && (RVAL(sC::BL) != STARTVAL(sC::BL))) {
 			drive(nC::Direction::Stop);
 			break;
 		}
@@ -506,7 +526,7 @@ void navigation::turnRight() {
 			}
 		}
 		else {
-			navigation::adjustOnTheSpot();
+			//navigation::adjustOnTheSpot();
 		}
 	}
 }
@@ -537,7 +557,9 @@ void navigation::turnRight() {
 void navigation::moveForward() {
 	NAV_PRINTLN("Moving Now!");
 	while (true) {
+		
 		Sensor::PollSensors(Sensors);
+		//m1 = micros()
 		NAV_PRINTLN("In forward loop");
 		if (navigation::reachedDestination()) {
 			NAV_PRINTLN("Destination reached");
@@ -545,10 +567,11 @@ void navigation::moveForward() {
 			drive(nC::Direction::Stop);
 			break;
 		}
-		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && (RVAL(sC::ML) != STARTVAL(sC::ML))) {
+		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && ((RVAL(sC::ML) != STARTVAL(sC::ML)))) {
 			NAV_PRINTLN("Adjust on Spot");
-			break;
+			
 			drive(nC::Direction::Stop);
+			break;
 			//adjustOnTheSpot();
 		}
 		else if (!navigation::driftingWhenForward()) {
@@ -594,21 +617,33 @@ void navigation::moveForward() {
 void navigation::moveBackward() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
+
 		if ((RVAL(sC::BL) != STARTVAL(sC::BL)) && (RVAL(sC::BR) != STARTVAL(sC::BR)) && (RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			drive(nC::Stop);
+			NAV_PRINTLN("Crossed Over");
 			break;
 		}
 		else {
+			NAV_PRINTLN("In front of intersection");
+
 			if (!navigation::driftingWhenBackward()) {
 				drive(nC::Direction::Backwards);
 			}
 		}
 	}
-	while ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
-		if (!navigation::driftingWhenForward()) {
-			drive(nC::Direction::Forward);
+
+	Sensor::PollSensors(Sensors);
+
+		while ((RVAL(sC::ML) == STARTVAL(sC::ML)) && (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+			Sensor::PollSensors(Sensors);
+			if (!navigation::driftingWhenForward()) {
+				drive(nC::Direction::Forward);
+			}
 		}
-	}
+
+		drive(nC::Stop);
 }
+
 
 #ifdef SENSOR_MEMORY_SAVE
 bool navigation::startValIs(sC::sensorNumber position) {

@@ -2,20 +2,18 @@
 #define _CONFIG_H
 #include <Arduino.h>
 
-//Savvas test commit
-
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
-//#define DEBUG
+#define DEBUG
 
-#define SENSOR_DEBUG
-#define NAV_DEBUG
+//#define SENSOR_DEBUG
+//#define NAV_DEBUG
 //#define MOT_DEBUG
 //#define BOX_DEBUG
 
 //#define SEN_INFO
-#define NAV_INFO
-//#define MOT_INFO
+//#define NAV_INFO
+#define MOT_INFO
 //#define BOX_INFO
 
 /// <summary>
@@ -161,11 +159,6 @@
 #define WHITEHIGHTHRESHOLDHIGHBYTE	(0x13)
 
 
-
-
-
-
-
 //Motor Defines
 //#define DIRPINA 4
 //#define DIRPINB 5
@@ -187,71 +180,53 @@
 
 
 //Box Defines
-#define FIVEVOLTOUTPUTPIN 2
-#define ADCINPUTPIN	   16
 
 #define BOXNUM		   4
 #define BOXINV		   0
 
-#define P1BC		0x2000
-#define P15V        0x1000
-#define P1ADC       0x800
-#define P2GND       0x400
-#define P25V        0x200
-#define P2Rd        0x100
-#define P2Rk        0x80
-#define P2ADC       0x40
-#define GNDADC		0x20
-#define GNDGND      0x10
-#define GND5V       0x08
-#define P1P2SWITCH  0x04
-#define BC          0x02    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define ADCSWITCH   0x01
-
-
-#define P1BCPIN        3
-#define P15VPIN        8
-#define P1ADCPIN       9
-#define P2GNDPIN       4
-#define P25VPIN        2
-#define P2RdPIN        1
-#define P2RkPIN        0
-#define P2ADCPIN       13
-#define GNDADCPIN     10
-#define GNDGNDPIN      11
-#define GND5VPIN       12
-#define P1P2SWITCHPIN  7
-#define BCPIN          5    //both ADCswitch and BC to be put on 1 pin in next circuit rev
-#define ADCSWITCHPIN   14
-
 #define NUMADCREADINGS 50
 
+#define BOXONERATIO		0.56
+#define VREF			5
+#define ADCMAX			1023
+
+#define RK	560
 
 
+#define P1PIN	15 //Pin A1
+#define P2PIN	16 //Pin A2
+#define GNDPIN	17 //Pin A3
+#define RKPIN	14 //Pin A0
 
+//on expander
+#define P1P2RELAYPIN	0
+#define BCPIN			1
+#define BCRELAYPIN		2
+
+//Pullup resistance on P2PIN will vary depending on board.
+//Calibrate this with known capacitor.
+#define RPULLUP 36.486  //in ohms
 
 //change to bC
-namespace boxConfig {
+namespace bC {
 
-	enum boxSettings : uint16_t {
-		box1 = 1,
-		box2a = 2,
-		box2b = 3,
-		box3a = 4,
-		box3b = 5,
-		box4a = 6,
-		box4b = 7,
-		box5a = 8,
-		box5b = 9,
-		box6a = 10,
-		box6b = 11,
-		box7a = 12,
-		box7b = 13
+	enum inputStatus : uint8_t {
+		OFF,
+		ON
 	};
 
+	enum pinSettings : uint8_t {
+		input_adc,
+		input,
+		high,
+		low,
+		nop
+	};
+#ifdef BOX_DEBUG
 	//temporary variables to be removed when comms between buggy and PC are finalised.
 	const byte boxNumber = BOXNUM;
 	const bool boxInverted = BOXINV;
+#endif
 }
 
 //change to sC
