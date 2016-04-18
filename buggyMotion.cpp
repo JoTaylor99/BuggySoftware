@@ -20,6 +20,8 @@ void buggyMotion::initMotion() {
 	pinMode(RIGHTMOTORDIR, OUTPUT);
 	pinMode(RIGHTMOTOR, OUTPUT);
 	pinMode(LEFTMOTOR, OUTPUT);
+	pinMode(LEFTMOTORCOUNT, INPUT);
+	pinMode(RIGHTMOTORCOUNT, INPUT);
 	InitTimersSafe();
 	_timersInitialised = true;
 	_leftSpeed = 0;
