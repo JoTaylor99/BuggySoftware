@@ -8,7 +8,7 @@
 #include <NewPing.h>
 
 
-class navigation : private buggyMotion {
+class navigation : public buggyMotion {
 
 	//Test commit changes.
 public:
