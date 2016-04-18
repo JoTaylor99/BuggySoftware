@@ -473,7 +473,7 @@ void navigation::adjustOnTheSpot(){
 void navigation::turnLeft() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (navigation::reachedDestination()) {
+		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
 			drive(nC::Direction::Stop);
 			break;
 		}
@@ -505,9 +505,11 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
+	Sensor::PollSensors(Sensors);
+	drive(nC::Direction::Right);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (navigation::reachedDestination()) {
+		if (RVAL(sC::LTR) != STARTVAL(sC::LTR)) {
 			drive(nC::Direction::Stop);
 			break;
 		}
