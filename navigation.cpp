@@ -557,7 +557,6 @@ void navigation::turnRight() {
 void navigation::moveForward() {
 	NAV_PRINTLN("Moving Now!");
 	while (true) {
-		
 		Sensor::PollSensors(Sensors);
 		//m1 = micros()
 		NAV_PRINTLN("In forward loop");
@@ -567,16 +566,36 @@ void navigation::moveForward() {
 			drive(nC::Direction::Stop);
 			break;
 		}
-		else if ((RVAL(sC::ML) != RVAL(sC::MR)) && ((RVAL(sC::ML) != STARTVAL(sC::ML)))) {
-			NAV_PRINTLN("Adjust on Spot");
-			
-			drive(nC::Direction::Stop);
-			break;
+		//else if ((RVAL(sC::ML) != RVAL(sC::MR)) && ((RVAL(sC::ML) != STARTVAL(sC::ML)))) {
+			//NAV_PRINTLN("Adjust on Spot");	
+		//	drive(nC::Direction::Stop);
+			//break;
 			//adjustOnTheSpot();
+		//}
+		else {
+			if (!navigation::driftingWhenForward()) {
+				NAV_PRINTLN("Who knows");
+				drive(nC::Direction::Forward);
+			}
 		}
-		else if (!navigation::driftingWhenForward()) {
-			NAV_PRINTLN("Who knows");
-			drive(nC::Direction::Forward);
+	}
+	Sensor::PollSensors(Sensors);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		  (RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+	   	  (RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+		  (RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		  (RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+		  (RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+		  (RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+		  (RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			 NAV_PRINTLN("Success");
+			 drive(nC::Direction::Stop);
+			 break;
+		}
+		else {
+			adjustOnTheSpot();
 		}
 	}
 }
@@ -640,8 +659,26 @@ void navigation::moveBackward() {
 				drive(nC::Direction::Forward);
 			}
 		}
-
 		drive(nC::Stop);
+		Sensor::PollSensors(Sensors);
+		while (true) {
+			Sensor::PollSensors(Sensors);
+			if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+				(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+				(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+				(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+				(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+				(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+				(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+				(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+				NAV_PRINTLN("Success");
+				drive(nC::Direction::Stop);
+				break;
+			}
+			else {
+				adjustOnTheSpot();
+			}
+		}
 }
 
 
