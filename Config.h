@@ -13,7 +13,7 @@
 
 //#define SEN_INFO
 //#define NAV_INFO
-//#define MOT_INFO
+#define MOT_INFO
 //#define BOX_INFO
 
 /// <summary>

@@ -143,6 +143,7 @@ void buggyMotion::setLeftMotorDirection(nC::Direction dir)
 		digitalWrite(LEFTMOTORDIR, HIGH);
 	}
 	if (dir == nC::Direction::Stop) {
+		MOT_PRINTLN("LStop");
 		pwmWrite(LEFTMOTOR, 0);
 	}
 }
@@ -155,6 +156,7 @@ void buggyMotion::setRightMotorDirection(nC::Direction dir)
 		digitalWrite(RIGHTMOTORDIR, LOW);
 	}
 	if (dir == nC::Direction::Stop) {
+		MOT_PRINTLN("RStop");
 		pwmWrite(LEFTMOTOR, 0);
 	}
 }
@@ -225,7 +227,7 @@ void buggyMotion::stop()
 	_driftCount = 0;
 	pwmWrite(LEFTMOTOR, _leftSpeed);
 	pwmWrite(RIGHTMOTOR, _rightSpeed);
-
+	MOT_PRINTLN("Stopped");
 }
 
 void buggyMotion::capSpeeds()
