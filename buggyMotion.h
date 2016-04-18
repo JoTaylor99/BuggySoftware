@@ -25,6 +25,16 @@ public:
 	/// </summary>
 	void initMotion();
 	
+	/// <summary>
+	/// Friend declaration of the leftStepCounter ISR
+	/// </summary>
+	friend void leftStepCounter();
+
+	/// <summary>
+	/// Friend declaration of the rightStepCounter ISR
+	/// </summary>
+	friend void rightStepCounter();
+
 protected:
 	/// <summary>
 	/// Main driving function. Called whenever the buggy's motion needs to be updated.
