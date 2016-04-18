@@ -282,3 +282,19 @@ void buggyMotion::capSpeeds()
 uint8_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
 	return static_cast<uint8_t>(mmDistance*0.9);
 }
+
+//Handler Left
+void leftStepCounter() {
+	buggy.stepDistanceLeft++;
+	if (buggy.stepDistanceLeft == buggy.stepTargetDistanceLeft) {
+		buggy.stop(1);
+	}
+}
+
+//Handler Right
+void rightStepCounter(){
+	buggy.stepDistanceRight++;
+	if (buggy.stepDistanceRight == buggy.stepTargetDistanceLeft) {
+		buggy.stop(2);
+	}
+}
