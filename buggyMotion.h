@@ -66,8 +66,8 @@ protected:
 	/// steps the desired distance in mm in the requested direction wheelwise
 	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
-	/// <param name="leftDirection">Left Wheel Direction</param>
-	/// <param name="rightDirection">Right Wheel Direction</param>
+	/// <param name="leftDirection">Left Wheel Direction, Forward, Backward or Stop</param>
+	/// <param name="rightDirection">Right Wheel Direction, Forward, Backward or Stop</param>
 	/// <param name="leftDistance">Left Wheel Distance MAX 250</param>
 	/// <param name="rightDistance">Right Wheel Distance MAX 250</param>
 	void step(nC::Direction leftDirection, nC::Direction rightDirection, uint8_t leftDistance, uint8_t rightDistance);
@@ -184,7 +184,11 @@ private:
 };
 
 
+//Handler Left
+extern void leftStepCounter();
 
+//Handler Right
+extern void rightStepCounter();
 
 #endif
 
