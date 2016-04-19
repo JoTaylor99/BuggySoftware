@@ -183,6 +183,8 @@
 
 #define DEFAULTMAXDISTANCE 167	//in mm
 
+//Setting to toggle blocking mode for stepwise operations
+#define STEPWISE_BLOCKING
 
 
 //Box Defines
