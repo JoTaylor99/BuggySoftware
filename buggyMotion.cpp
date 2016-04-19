@@ -358,6 +358,6 @@ void buggyMotion::step(nC::Direction direction, uint8_t leftDistance, uint8_t ri
 	#endif
 }
 
-void buggyMotion::step(nC::Direction direction, uint8_t distance = DEFAULTMAXDISTANCE) {
+void buggyMotion::step(nC::Direction direction, uint8_t distance) {
 	step(direction, distance, distance);
 }
