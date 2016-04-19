@@ -317,8 +317,8 @@ void buggyMotion::step(nC::Direction leftDirection, nC::Direction rightDirection
 
 	stop();
 	
-	if (leftDistance > 167) { leftDistance == 167; }
-	if (rightDistance > 167) { rightDistance == 167; }
+	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance == DEFAULTMAXDISTANCE; }
+	if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance == DEFAULTMAXDISTANCE; }
 
 	uint8_t leftSteps = 0;
 	uint8_t rightSteps = 0;
@@ -328,7 +328,7 @@ void buggyMotion::step(nC::Direction leftDirection, nC::Direction rightDirection
 	ERROR_PRINTLN("Function not yet complete, call step(direction, distance) or step(direction, ldistance, rdistance) instead");
 }
 
-void buggyMotion::step(nC::Direction direction, uint8_t leftDistance, uint8_t rightDistance) {
+void buggyMotion::stepSeparately(nC::Direction direction, uint8_t leftDistance, uint8_t rightDistance) {
 
 	stop();
 
@@ -358,5 +358,5 @@ void buggyMotion::step(nC::Direction direction, uint8_t leftDistance, uint8_t ri
 }
 
 void buggyMotion::step(nC::Direction direction, uint8_t distance) {
-	step(direction, distance, distance);
+	stepSeparately(direction, distance, distance);
 }

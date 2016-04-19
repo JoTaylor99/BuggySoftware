@@ -101,6 +101,18 @@ void navigation::navigate(String str) {
 			else if (str = "H") {
 				Sensor::printCurrent();
 			}
+			else if (str = "O") {
+				step(nC::Direction::Forward, 167);
+			}
+			else if (str = ".") {
+				step(nC::Direction::Backwards, 167);
+			}
+			else if (str = "I") {
+				step(nC::Direction::Left, 30);
+			}
+			else if (str = "K") {
+				step(nC::Direction::Right, 30);
+			}
 			else {
 				drive(nC::Direction::Stop);
 			}

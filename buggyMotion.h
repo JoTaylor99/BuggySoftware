@@ -62,7 +62,7 @@ protected:
 	/// <param name="direction"></param>
 	/// <param name="leftDistance">Distance in mm to turn left wheel MAX 250</param>
 	/// <param name="rightDistance">Distance in mm to turn right wheel MAX 250</param>
-	void step(nC::Direction direction, uint8_t leftDistance = DEFAULTMAXDISTANCE, uint8_t rightDistance = DEFAULTMAXDISTANCE);
+	void stepSeparately(nC::Direction direction, uint8_t leftDistance = DEFAULTMAXDISTANCE, uint8_t rightDistance = DEFAULTMAXDISTANCE);
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction wheelwise
