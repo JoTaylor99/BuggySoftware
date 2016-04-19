@@ -691,7 +691,26 @@ void navigation::moveBackward() {
 			}
 		}
 }
+/// <summary>
+/// Victory roll defined as:
+/// 6 x turnLeft (or Right)
+/// 1 x moveForward
+/// 2 x turnLeft (or Right)
+/// 1 x moveForward
+/// </summary>
 void navigation::victoryRoll() {
+	for (int x = 0; x < 6; x++) {
+		start();
+		turnLeft();
+	}
+	start();
+	moveForward();
+	for (int x = 0; x < 2; x++) {
+		start();
+		turnLeft();
+	}
+	start();
+	moveForward();
 }
 
 #ifdef SENSOR_MEMORY_SAVE
