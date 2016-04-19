@@ -4,6 +4,8 @@
 #define _BUGGYMOTION_H
 
 #include "Config.h"
+#include <arduino2.h>
+#include <PWM.h>
 
 /// <summary>
 /// buggyMotion is the parent class of navigation and contains the code for controlling stepper motors

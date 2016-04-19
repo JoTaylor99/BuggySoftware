@@ -3,8 +3,7 @@
 // 
 
 #include "buggyMotion.h"
-#include <arduino2.h>
-#include <PWM.h>
+
 buggyMotion::buggyMotion() {
 }
 
