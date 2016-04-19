@@ -167,8 +167,6 @@ private:
 	volatile uint8_t stepTargetDistanceLeft = 1;
 	volatile uint8_t stepTargetDistanceRight = 1;
 
-	volatile bool stepLeftDistanceInterruptEnabled = false;
-	volatile bool stepRightDistanceInterruptEnabled = false;
 
 	volatile bool _leftWheelTask = true;
 	volatile bool _rightWheelTask = true;
