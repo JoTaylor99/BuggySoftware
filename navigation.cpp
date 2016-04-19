@@ -320,16 +320,23 @@ bool navigation::driftingWhenBackward() {
 /// adjustOnTheSpot is called when ML and MR have just crossed the destination intersection line
 /// Aims to get the buggy to have correct finish position 
 /// adjustOnTheSpot algorithm
-/// Case 1 horizontal movement because centre of rotation is not exactly at the top of the intersection 
-///		   but its on the horizontal destination intersection line
-/// if ((LTL==LTR)&& (BL==BR) && (LTL!=BL){
-///		IF (LTL==STARTVAL(LTL){
-///			Move Horizontally Left
-///		}
-///		else{
-///			Move Horizontally Right
-///		}
-/// }
+/// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
+///		if (ML== STARTVAL(ML))|| (MR == STARTVAL(MR)){
+///			if (ML!=MR){
+///				Both the middle sensors are behind the line
+///				Drive forward
+///			}
+///			else{
+///				if (ML==STARTVAL(ML){
+///						LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
+///						DRIVE LEFT WHEEL FORWARD ONLY
+///				}
+///				else {
+///					RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
+///					DRIVE RIGHT WHEEL FORWAR ONLY
+///				}
+///			}
+///		}	
 /// Case 2 Rotation on the spot. Centre of Rotation is at the top of destination intersection 
 ///		   But the facade or the buggy are at an angle (not straight following the line)
 /// else if ((LTL == LTR && LTL==BL && LTL ==BR) {
@@ -363,15 +370,22 @@ bool navigation::driftingWhenBackward() {
 /// }
 /// </summary>
 void navigation::adjustOnTheSpot(){
-	//Case 1 if ((LTL==LTR)&& (BL==BR) && (LTL!=BL)
-	if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR)) && (RVAL(sC::LTL) != RVAL(sC::BL))) {
-		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-			//Move Horizontally to the left
+	// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
+	if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		if (RVAL(sC::ML)!= RVAL(sC::MR)){
+			drive(nC::Direction::Forward);
 		}
-		else {
-			//Move Horizontally to the Right
+		else{
+			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
+			//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::LeftForwardOnly);
+			}
+			else {
+				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::RightForwardOnly);
+			}
 		}
-	}
+	}	
 	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
 		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
@@ -680,7 +694,8 @@ void navigation::moveBackward() {
 			}
 		}
 }
-
+void navigation::victoryRoll() {
+}
 
 #ifdef SENSOR_MEMORY_SAVE
 bool navigation::startValIs(sC::sensorNumber position) {
