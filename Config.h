@@ -12,8 +12,8 @@
 //#define BOX_DEBUG
 
 //#define SEN_INFO
-//#define NAV_INFO
-#define MOT_INFO
+#define NAV_INFO
+//#define MOT_INFO
 //#define BOX_INFO
 
 /// <summary>
@@ -133,30 +133,10 @@
 #define ECHO A1
 #define MAXDISTANCE 100
 
-#define SENSOR1INTPIN 8                                                                                 /*       _ _front _ _    */
-#define SENSOR2INTPIN 9                                                                              /*       / s1 | s0 \ */
-#define SENSOR3INTPIN 10                                                                                 /*      |     |     |*/
-#define SENSOR4INTPIN 11                                                                                 /*      |_ s3_|_s2_ |*/
-#define SENSOR5INTPIN 12                                                                                 /*      |  s5 | s4  |*/
-#define SENSOR6INTPIN 13   
-#define SENSOR7INTPIN 14
-#define SENSOR8INTPIN 15
-
 #define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
 #define MAX_DEFAULT 1000
 #define MIN_DEFAULT 800
-
-//Sensor interrupt thesholds
-
-#define BLACKLOWTHRESHOLDLOWBYTE	(0x00)
-#define BLACKLOWTHRESHOLDHIGHBYTE	(0x00)
-#define BLACKHIGHTHRESHOLDLOWBYTE	(0xF4)
-#define BLACKHIGHTHRESHOLDHIGHBYTE	(0x01)
-#define WHITELOWTHRESHOLDLOWBYTE	(0xF4)
-#define WHITELOWTHRESHOLDHIGHBYTE	(0x01)
-#define WHITEHIGHTHRESHOLDLOWBYTE	(0xBA)
-#define WHITEHIGHTHRESHOLDHIGHBYTE	(0x13)
 
 
 //Motor Defines
