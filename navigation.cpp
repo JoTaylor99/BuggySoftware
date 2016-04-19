@@ -301,13 +301,13 @@ bool navigation::driftingWhenBackward() {
 		}
 		else if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//Drive Backwards Left
-			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
 
 			return true;
 		}
 		else {
 			//drive backwards right 
-			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
 
 			return true;
 		}
@@ -569,11 +569,9 @@ void navigation::turnRight() {
 /// 
 /// </summary>
 void navigation::moveForward() {
-	NAV_PRINTLN("Moving Now!");
 	while (true) {
 		Sensor::PollSensors(Sensors);
 		//m1 = micros()
-		NAV_PRINTLN("In forward loop");
 		if (navigation::reachedDestination()) {
 			NAV_PRINTLN("Destination reached");
 
@@ -588,7 +586,7 @@ void navigation::moveForward() {
 		//}
 		else {
 			if (!navigation::driftingWhenForward()) {
-				NAV_PRINTLN("Who knows");
+				NAV_PRINTLN("D");
 				drive(nC::Direction::Forward);
 			}
 		}
@@ -657,7 +655,6 @@ void navigation::moveBackward() {
 			break;
 		}
 		else {
-			NAV_PRINTLN("In front of intersection");
 
 			if (!navigation::driftingWhenBackward()) {
 				drive(nC::Direction::Backwards);
