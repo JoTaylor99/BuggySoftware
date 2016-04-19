@@ -93,6 +93,7 @@ private:
 	void turnRight();
 	void moveForward();
 	void moveBackward();
+	void victoryRoll();
 	
 };
 
