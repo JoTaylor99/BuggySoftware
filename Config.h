@@ -178,8 +178,9 @@
 #define RIGHTMOTOR 3
 
 //buggyMotion::step by distance defines
-#define LEFTMOTORCOUNT	2
-#define RIGHTMOTORCOUNT	3
+#define LEFTMOTORCOUNT	8		//PCINT 0			
+#define RIGHTMOTORCOUNT	4		//PCINT 20
+
 
 #define DEFAULTMAXDISTANCE 167	//in mm
 
