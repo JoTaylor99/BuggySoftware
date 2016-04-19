@@ -231,58 +231,25 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 }
 void buggyMotion::stop(uint8_t motorSelect)
 {
-	volatile bool calledOnInterrupt = false;
 
 	_firstCall = true;
 	_driftCount = 0;
 
 	if (motorSelect == 0) {		//both
-		if (stepLeftDistanceInterruptEnabled && stepRightDistanceInterruptEnabled) {
-			detachInterrupt(0);
-			detachInterrupt(1);
-			calledOnInterrupt = true;
-			stepLeftDistanceInterruptEnabled = false;
-			stepRightDistanceInterruptEnabled = false;
-		}
 		_leftSpeed = 0;
 		_rightSpeed = 0;
 		pwmWrite(LEFTMOTOR, _leftSpeed);
 		pwmWrite(RIGHTMOTOR, _rightSpeed);
-		
-		stepDistanceLeft = 0;
-		stepDistanceRight = 0;
-		stepTargetDistanceLeft = 0;
-		stepTargetDistanceRight = 0;
-		_leftWheelTask = true;
-		_rightWheelTask = true;
 	}
 	else if (motorSelect == 1) {	//left
-		if (stepLeftDistanceInterruptEnabled) {
-			detachInterrupt(0);
-			calledOnInterrupt = true;
-			stepLeftDistanceInterruptEnabled = false;
-		}
 		_leftSpeed = 0;
 		pwmWrite(LEFTMOTOR, _leftSpeed);
-		stepDistanceLeft = 0;
-		stepTargetDistanceLeft = 0;
-		_leftWheelTask = true;
-	}
-	else if (motorSelect == 2) {	//right
-		if (stepRightDistanceInterruptEnabled) {
-			detachInterrupt(1);
-			calledOnInterrupt = true;
-			stepRightDistanceInterruptEnabled = false;
 		}
+	else if (motorSelect == 2) {	//right
 		_rightSpeed = 0;
 		pwmWrite(RIGHTMOTOR, _rightSpeed);
-		stepDistanceRight = 0;
-		stepTargetDistanceRight = 0;
-		_rightWheelTask = true;
-	}
-	if (!calledOnInterrupt) {
-		MOT_PRINTLN("Stopped");
-	}
+			}
+		MOT_PRINTLN("St");
 }
 
 void buggyMotion::capSpeeds()
