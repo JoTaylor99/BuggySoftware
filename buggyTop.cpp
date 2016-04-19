@@ -59,3 +59,13 @@ void rightStepCounter(){
 		buggy.stop(2);
 	}
 }
+
+ISR(PCINT2_vect) // handle pin change interrupt for D0 to D7 here
+{
+	rightStepCounter();
+}
+
+ISR(PCINT0_vect) // handle pin change interrupt for D8 to D13 here
+{
+	leftStepCounter();
+}
