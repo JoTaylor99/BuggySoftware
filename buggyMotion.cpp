@@ -315,10 +315,9 @@ bool buggyMotion::isMoveComplete() {
 
 void buggyMotion::stepSeparately(nC::Direction direction, uint8_t leftDistance, uint8_t rightDistance) {
 
-	stop();
-
-	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance == DEFAULTMAXDISTANCE; }
-	if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance == DEFAULTMAXDISTANCE; }
+	_firstCall = true;
+	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
+	if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
 
 	stepTargetDistanceLeft = getStepsFromDistance(leftDistance);
 	stepTargetDistanceRight = getStepsFromDistance(rightDistance);
