@@ -170,11 +170,11 @@ private:
 	/// <returns>steps</returns>
 	uint8_t getStepsFromDistance(uint8_t mmDistance);
 
-	volatile uint8_t stepDistanceLeft;
-	volatile uint8_t stepDistanceRight;
+	volatile uint8_t stepDistanceLeft = 0;
+	volatile uint8_t stepDistanceRight = 0;
 
-	volatile uint8_t stepTargetDistanceLeft;
-	volatile uint8_t stepTargetDistanceRight;
+	volatile uint8_t stepTargetDistanceLeft = 1;
+	volatile uint8_t stepTargetDistanceRight = 1;
 
 	volatile bool stepLeftDistanceInterruptEnabled = false;
 	volatile bool stepRightDistanceInterruptEnabled = false;
