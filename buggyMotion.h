@@ -153,14 +153,13 @@ private:
 	nC::Drift _previousDrift = nC::Drift::noDrift;
 
 
-
-
 	/// <summary>
-	/// Returns the number of steps required to travel the number of millimeters passed.
+	/// Returns the number of counts required to travel the number of millimeters passed
+	/// note this is twice the number of steps due to the pin change interrupts counting both rising and falling edges.
 	/// </summary>
 	/// <param name="mmDistance">distance in mm</param>
 	/// <returns>steps</returns>
-	uint8_t getStepsFromDistance(uint8_t mmDistance);
+	uint16_t getStepsFromDistance(uint8_t mmDistance);
 
 	volatile uint8_t stepDistanceLeft = 0;
 	volatile uint8_t stepDistanceRight = 0;
