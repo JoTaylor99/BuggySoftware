@@ -64,16 +64,6 @@ protected:
 	/// <param name="rightDistance">Distance in mm to turn right wheel MAX 250</param>
 	void stepSeparately(nC::Direction direction, uint8_t leftDistance = DEFAULTMAXDISTANCE, uint8_t rightDistance = DEFAULTMAXDISTANCE);
 
-	/// <summary>
-	/// steps the desired distance in mm in the requested direction wheelwise
-	/// Sets _leftWheelTask and/or _rightWheelTask to false
-	/// </summary>
-	/// <param name="leftDirection">Left Wheel Direction, Forward, Backward or Stop</param>
-	/// <param name="rightDirection">Right Wheel Direction, Forward, Backward or Stop</param>
-	/// <param name="leftDistance">Left Wheel Distance MAX 250</param>
-	/// <param name="rightDistance">Right Wheel Distance MAX 250</param>
-	void step(nC::Direction leftDirection, nC::Direction rightDirection, uint8_t leftDistance, uint8_t rightDistance);
-
 
 	/// <summary>
 	/// If both leftWheelTask and rightWheelTask are true then return true
