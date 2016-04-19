@@ -325,21 +325,28 @@ void buggyMotion::stepSeparately(nC::Direction direction, uint8_t leftDistance, 
 
 	if (leftDistance != 0) {
 		_leftWheelTask = false;
-		attachInterrupt(0, leftStepCounter, RISING);
+		pciSetup(LEFTMOTORCOUNT);
 	}
 
 	if (rightDistance != 0) {
 		_rightWheelTask = false;
-		attachInterrupt(1, rightStepCounter, RISING);
+		pciSetup(RIGHTMOTORCOUNT);
 	}
 
 	drive(direction);
 
 	#ifdef STEPWISE_BLOCKING
-	while (!isMoveComplete()) {}
+	while (!(isMoveComplete())) {}
 	#endif
 }
 
 void buggyMotion::step(nC::Direction direction, uint8_t distance) {
 	stepSeparately(direction, distance, distance);
+}
+
+void buggyMotion::pciSetup(uint8_t pin)
+{
+	*digitalPinToPCMSK(pin) |= bit(digitalPinToPCMSKbit(pin));  // enable pin
+	PCIFR |= bit(digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+	PCICR |= bit(digitalPinToPCICRbit(pin)); // enable interrupt for the group
 }

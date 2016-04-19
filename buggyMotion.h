@@ -169,6 +169,8 @@ private:
 
 	volatile bool _leftWheelTask = true;
 	volatile bool _rightWheelTask = true;
+
+	void pciSetup(uint8_t pin);
 };
 
 
