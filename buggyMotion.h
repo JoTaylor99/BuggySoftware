@@ -161,12 +161,11 @@ private:
 	/// <returns>steps</returns>
 	uint16_t getStepsFromDistance(uint8_t mmDistance);
 
-	volatile uint8_t stepDistanceLeft = 0;
-	volatile uint8_t stepDistanceRight = 0;
+	volatile uint16_t stepDistanceLeft = 0;
+	volatile uint16_t stepDistanceRight = 0;
 
-	volatile uint8_t stepTargetDistanceLeft = 1;
-	volatile uint8_t stepTargetDistanceRight = 1;
-
+	volatile uint16_t stepTargetDistanceLeft = 1;
+	volatile uint16_t stepTargetDistanceRight = 1;
 
 	volatile bool _leftWheelTask = true;
 	volatile bool _rightWheelTask = true;
