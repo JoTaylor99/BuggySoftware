@@ -313,3 +313,47 @@ uint8_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
 bool buggyMotion::isMoveComplete() {
 	return ((_leftWheelTask == true) && (_rightWheelTask == true)) ? true : false;
 }
+
+void buggyMotion::step(nC::Direction leftDirection, nC::Direction rightDirection, uint8_t leftDistance, uint8_t rightDistance) {
+
+	stop();
+	
+	if (leftDistance > 167) { leftDistance == 167; }
+	if (rightDistance > 167) { rightDistance == 167; }
+
+	uint8_t leftSteps = 0;
+	uint8_t rightSteps = 0;
+
+	leftSteps = getStepsFromDistance(leftDistance);
+	rightSteps = getStepsFromDistance(rightDistance);
+	ERROR_PRINTLN("Function not yet complete, call step(direction, distance) or step(direction, ldistance, rdistance) instead");
+}
+
+void buggyMotion::step(nC::Direction direction, uint8_t leftDistance, uint8_t rightDistance) {
+
+	stop();
+
+	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance == DEFAULTMAXDISTANCE; }
+	if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance == DEFAULTMAXDISTANCE; }
+
+	stepTargetDistanceLeft = getStepsFromDistance(leftDistance);
+	stepTargetDistanceRight = getStepsFromDistance(rightDistance);
+
+	if (leftDistance != 0) {
+		stepLeftDistanceInterruptEnabled = true;
+		_leftWheelTask = false;
+		attachInterrupt(0, leftStepCounter, RISING);
+	}
+
+	if (rightDistance != 0) {
+		stepRightDistanceInterruptEnabled = true;
+		_rightWheelTask = false;
+		attachInterrupt(1, rightStepCounter, RISING);
+	}
+
+	drive(direction);
+
+	#ifdef STEPWISE_BLOCKING
+	while (!isMoveComplete()) {}
+	#endif
+}
