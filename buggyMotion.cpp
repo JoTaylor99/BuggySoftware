@@ -258,6 +258,8 @@ void buggyMotion::stop(uint8_t motorSelect)
 		stepDistanceRight = 0;
 		stepTargetDistanceLeft = 0;
 		stepTargetDistanceRight = 0;
+		_leftWheelTask = true;
+		_rightWheelTask = true;
 	}
 	else if (motorSelect == 1) {	//left
 		if (stepLeftDistanceInterruptEnabled) {
@@ -269,6 +271,7 @@ void buggyMotion::stop(uint8_t motorSelect)
 		pwmWrite(LEFTMOTOR, _leftSpeed);
 		stepDistanceLeft = 0;
 		stepTargetDistanceLeft = 0;
+		_leftWheelTask = true;
 	}
 	else if (motorSelect == 2) {	//right
 		if (stepRightDistanceInterruptEnabled) {
@@ -280,6 +283,7 @@ void buggyMotion::stop(uint8_t motorSelect)
 		pwmWrite(RIGHTMOTOR, _rightSpeed);
 		stepDistanceRight = 0;
 		stepTargetDistanceRight = 0;
+		_rightWheelTask = true;
 	}
 	if (!calledOnInterrupt) {
 		MOT_PRINTLN("Stopped");
@@ -306,3 +310,6 @@ uint8_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
 	return static_cast<uint8_t>(mmDistance*0.9);
 }
 
+bool buggyMotion::isMoveComplete() {
+	return ((_leftWheelTask == true) && (_rightWheelTask == true)) ? true : false;
+}

@@ -47,6 +47,7 @@ protected:
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction 
+	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
 	/// <param name="direction">Direction to turn wheels</param>
 	/// <param name="distance">Distance in mm to turn wheels MAX 250</param>
@@ -54,6 +55,7 @@ protected:
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction, allows the setting of different targets for each wheel
+	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
 	/// <param name="direction"></param>
 	/// <param name="leftDistance">Distance in mm to turn left wheel MAX 250</param>
@@ -62,6 +64,7 @@ protected:
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction wheelwise
+	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
 	/// <param name="leftDirection">Left Wheel Direction</param>
 	/// <param name="rightDirection">Right Wheel Direction</param>
@@ -71,7 +74,7 @@ protected:
 
 
 	/// <summary>
-	/// If both stepDistanceLeft == stepTargetDistanceLeft and stepDistanceRight == stepTargetDistanceRight then return true
+	/// If both leftWheelTask and rightWheelTask are true then return true
 	/// </summary>
 	/// <returns></returns>
 	bool isMoveComplete();
@@ -176,6 +179,8 @@ private:
 	volatile bool stepLeftDistanceInterruptEnabled = false;
 	volatile bool stepRightDistanceInterruptEnabled = false;
 
+	volatile bool _leftWheelTask = true;
+	volatile bool _rightWheelTask = true;
 };
 
 
