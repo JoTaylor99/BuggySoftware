@@ -97,11 +97,6 @@ void buggyTop::parseData(struct Frame *theData) {
 		sendData((void*)&sendCmd, sizeof(sendCmd));
 
 		break;
-	case Comms::FunctionCodes::CurrentStatus:
-		sendCmd.cmd = theData->cmd;
-		sendCmd.data = CurrentPhase;
-		sendData((void*)&sendCmd, sizeof(sendCmd));
-		break;
 	case Comms::FunctionCodes::ChangePhase:
 		CurrentPhase = (Comms::Phase)((uint8_t)theData->data);
 		sendAcknowledge(Comms::FunctionCodes::ChangePhase);
