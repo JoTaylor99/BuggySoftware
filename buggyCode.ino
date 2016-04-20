@@ -28,6 +28,13 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	
+
+
+
+
 	buggy1.go();
+}
+
+void serialEvent() {
+	buggy1.Check();
 }

@@ -68,6 +68,12 @@ namespace Comms {
 		/// </summary>
 		ManualCtrl = 0x12,
 
+		StringDMP = 0x13,
+		MovementComplete = 0x14,
+
+		BoxValue1 = 0x15,
+		BoxValue2 = 0x16,
+		BoxValue3 = 0x17,
 
 		/// <summary>
 		/// Upon the reciept of this function code. The buggy will immediately stop the wheels, and return to an "idle" state

@@ -1,10 +1,12 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 #include <Arduino.h>
-
+#include <avr/io.h>
+#include <avr/wdt.h>
+#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {}
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
-#define DEBUG
+//#define DEBUG
 
 //#define SENSOR_DEBUG
 //#define NAV_DEBUG
@@ -37,7 +39,7 @@
 #define COMPILE_TIME
 #endif
 
-#define DISPLAYERRORS
+//#define DISPLAYERRORS
 
 #ifdef DISPLAYERRORS
 #define ERROR_PRINTLN(x)  Serial.println (F(x))
@@ -46,8 +48,6 @@
 #define ERROR_PRINTLN(x)
 #define ERROR_PRINT(x)
 #endif
-
-
 
 #ifdef SEN_INFO
 #define SEN_PRINTLN(x)  Serial.println (F(x))
@@ -97,7 +97,6 @@
 #define BOX_VPRINTLN(x)
 #endif
 
-
 //#define QTRSINUSE
 //#define SENSOR_MEMORY_SAVE
 #ifndef SENSOR_MEMORY_SAVE
@@ -138,7 +137,7 @@
 #define SENSOR3INTPIN 10                                                                                 /*      |     |     |*/
 #define SENSOR4INTPIN 11                                                                                 /*      |_ s3_|_s2_ |*/
 #define SENSOR5INTPIN 12                                                                                 /*      |  s5 | s4  |*/
-#define SENSOR6INTPIN 13   
+#define SENSOR6INTPIN 13
 #define SENSOR7INTPIN 14
 #define SENSOR8INTPIN 15
 
@@ -158,12 +157,6 @@
 #define WHITEHIGHTHRESHOLDLOWBYTE	(0xBA)
 #define WHITEHIGHTHRESHOLDHIGHBYTE	(0x13)
 
-
-
-
-
-
-
 //Motor Defines
 #define DIR1PINA 4
 #define DIR2PINA 5
@@ -181,7 +174,6 @@
 
 //Nav::navigation defines
 #define COUNTER_LEN 2
-
 
 //Box Defines
 #define FIVEVOLTOUTPUTPIN 2
@@ -205,7 +197,6 @@
 #define BC          0x02    //both ADCswitch and BC to be put on 1 pin in next circuit rev
 #define ADCSWITCH   0x01
 
-
 #define P1BCPIN        3
 #define P15VPIN        8
 #define P1ADCPIN       9
@@ -223,13 +214,8 @@
 
 #define NUMADCREADINGS 50
 
-
-
-
-
 //change to bC
 namespace boxConfig {
-
 	enum boxSettings : uint16_t {
 		box1 = 1,
 		box2a = 2,
@@ -252,51 +238,44 @@ namespace boxConfig {
 }
 
 //change to sC
-	namespace sC {
-		
-		#ifdef QTRSINUSE
-		enum SensorType : unint8_t {
-			TSL, QTR
-		};
-		#else
-		enum SensorType : uint8_t {
-			TSL
-		};
-		#endif		
+namespace sC {
+#ifdef QTRSINUSE
+	enum SensorType : unint8_t {
+		TSL, QTR
+	};
+#else
+	enum SensorType : uint8_t {
+		TSL
+	};
+#endif
 
-		typedef enum sensorNumber : uint8_t {
-			FR,
-			LTR,
-			LTL,
-			FL,
-			MR,
-			ML,
-			BR,
-			BL,
-			invalid
-		};
+	typedef enum sensorNumber : uint8_t {
+		FR,
+		LTR,
+		LTL,
+		FL,
+		MR,
+		ML,
+		BR,
+		BL,
+		invalid
+	};
+};
 
+namespace mC {
+	enum Direction : uint8_t {
+		F, B, S
+	};
+};
+
+namespace nC {
+	enum Direction : uint8_t {
+		Forward, Backwards, Left, Right
 	};
 
-	namespace mC {
-
-		enum Direction : uint8_t {
-			F, B, S
-		};
-
+	enum Drift : uint8_t {
+		leftDrift, rightDrift
 	};
-
-
-	namespace nC{
-	
-		enum Direction : uint8_t {
-			Forward, Backwards, Left, Right
-		};
-
-		enum Drift : uint8_t {
-			leftDrift, rightDrift
-		};
-	
-	};
+};
 
 #endif

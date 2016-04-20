@@ -10,6 +10,16 @@ struct Frame {
 	uint32_t data;
 };
 
+union parseDouble{
+	double Val;
+	uint32_t Data;
+};
+
+union parseShort
+{
+	short Val;
+	uint16_t Data;
+};
 
 class buggyTop {
 
@@ -26,7 +36,7 @@ public:
 	void go();
 
 	String str;
-
+	volatile int NavigateLoop = 0;
 	void Check();
 	void parseData(struct Frame *theData);
 	void AppendRoute(struct Frame *theData);
@@ -34,8 +44,10 @@ public:
 
 
 	void sendError(Comms::ErrorCodes err);
-	void sendAcknowledge(Comms::FunctionCodes cmd);
-	
+	static void sendAcknowledge(Comms::FunctionCodes cmd);
+	static void sendBoxValue(Comms::FunctionCodes cmd, double val);
+	static void sendBoxValue(Comms::FunctionCodes cmd, short val);
+	static void sendMovementComplete();
 };
 
 #endif

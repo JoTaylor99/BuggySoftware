@@ -10,7 +10,6 @@ navigation buggy;
 
 
 
-
 void buggyTop::init() {
 	/*Code for testing box analysis, actual structure requires team b and c discussion*/
 	COMPILE_DATE;
@@ -25,10 +24,21 @@ void buggyTop::go() {
 	*  For the time being this is being done in the navigate function in the navigation class.
 	*/
 
-	
 
-	Check();
-	
+
+
+	//if (NavigateLoop = 1) {
+	//	int length = str.length();
+	//	for (int i = 0; i < length ; i++) {
+	//		buggy.navigate(String(str[i]));
+	//	}
+	//	NavigateLoop = 0;
+
+	//	
+	//}
+
+
+
 	//if (Serial.available() > 0) { // If a command has been sent
 	//	str = Serial.readString();
 	//	buggy.navigate(str);
@@ -52,9 +62,6 @@ void buggyTop::go() {
 		//boxValues::returnData info = assessBox.interrogateBox(boxNumber, boxDirection);
 };
 
-
-
-
 void buggyTop::Check()
 {
 	int result = readData(&receiveCmd, sizeof(receiveCmd));
@@ -65,6 +72,7 @@ void buggyTop::Check()
 
 
 
+
 void buggyTop::parseData(struct Frame *theData) {
 	Frame sendCmd;
 	switch (theData->cmd) {
@@ -72,9 +80,7 @@ void buggyTop::parseData(struct Frame *theData) {
 		sendCmd.cmd = Comms::ConnectionAccept;
 		sendCmd.data = (uint32_t)0;
 		sendData((void*)&sendCmd, sizeof(sendCmd));
-		break;
-	case Comms::FunctionCodes::ConnectionAccept:
-		//This case shouldn't be reached
+
 		break;
 	case Comms::FunctionCodes::CurrentStatus:
 		sendCmd.cmd = theData->cmd;
@@ -84,12 +90,6 @@ void buggyTop::parseData(struct Frame *theData) {
 	case Comms::FunctionCodes::ChangePhase:
 		CurrentPhase = (Comms::Phase)((uint8_t)theData->data);
 		sendAcknowledge(Comms::FunctionCodes::ChangePhase);
-		break;
-	case Comms::FunctionCodes::ParameterRequest:
-		//Coming soon to a buggy near you
-		break;
-	case Comms::FunctionCodes::ParameterSet:
-		//Coming soon to a buggy near you
 		break;
 	case Comms::FunctionCodes::RouteCmd:
 		if (CurrentPhase == Comms::Phase::RouteDownload) {
@@ -106,20 +106,26 @@ void buggyTop::parseData(struct Frame *theData) {
 		break;
 	case Comms::FunctionCodes::Go:
 		sendAcknowledge(Comms::FunctionCodes::Go);
-		buggy.navigate(str);
+		NavigateLoop = 1;
 		break;
 	case Comms::FunctionCodes::EmergencyStop:
-		//Coming soon to a buggy near you
+		Reset_AVR();
+		//Hello Darkness My Old Friend
 		break;
 	case Comms::FunctionCodes::Acknowledge:
 		//Unreachable
 		break;
 	case Comms::FunctionCodes::ManualCtrl:
 		controlManually(theData);
-		
+
 		break;
+	
 	default:
 		sendError(Comms::ErrorCodes::UnknownCmd);
+	}
+	while (Serial.available() > 0)
+	{
+		Serial.read();
 	}
 	//Serial.println("Switch case complete");
 }
@@ -129,15 +135,14 @@ void buggyTop::AppendRoute(struct Frame *theData) {
 	if (theData->data != 0xFF) {
 		//Serial.println((char)theData->data);
 		str += (char)theData->data;
-		 
 	}
-	if (theData->data>>8 != 0xFF) {
+	if (theData->data >> 8 != 0xFF) {
 		str += (char)theData->data;
 	}
-	if (theData->data>>16 != 0xFF) {
+	if (theData->data >> 16 != 0xFF) {
 		str += (char)theData->data;
 	}
-	if (theData->data>>24 != 0xFF) {
+	if (theData->data >> 24 != 0xFF) {
 		str += (char)theData->data;
 	}
 }
@@ -157,7 +162,6 @@ void buggyTop::sendError(Comms::ErrorCodes err)
 	sendCmd.cmd = Comms::FunctionCodes::Error;
 	sendCmd.data = (uint32_t)err;
 	sendData((void*)&sendCmd, sizeof(sendCmd));
-
 }
 
 void buggyTop::sendAcknowledge(Comms::FunctionCodes cmd)
@@ -168,4 +172,29 @@ void buggyTop::sendAcknowledge(Comms::FunctionCodes cmd)
 	sendData((void*)&sendCmd, sizeof(sendCmd));
 }
 
+void buggyTop::sendBoxValue(Comms::FunctionCodes cmd, double val) {
+	Frame sendCmd;
+	sendCmd.cmd = cmd;
+	parseDouble D;
+	D.Val = val;
+	sendCmd.data = D.Data;
+	sendData((void*)&sendCmd, sizeof(sendCmd));
 
+}
+
+void buggyTop::sendBoxValue(Comms::FunctionCodes cmd, short val) {
+	Frame sendCmd;
+	sendCmd.cmd = cmd;
+	parseShort D;
+	D.Val = val;
+	sendCmd.data = D.Data;
+	sendData((void*)&sendCmd, sizeof(sendCmd));
+
+}
+void buggyTop::sendMovementComplete() {
+
+	Frame sendCmd;
+	sendCmd.cmd = Comms::FunctionCodes::MovementComplete;
+	sendCmd.data = (uint32_t)0;
+	sendData((void*)&sendCmd, sizeof(sendCmd));
+}
