@@ -115,8 +115,10 @@ void buggyTop::parseData(struct Frame *theData) {
 		sendAcknowledge(Comms::FunctionCodes::RouteRst);
 		break;
 	case Comms::FunctionCodes::Go:
-		sendAcknowledge(Comms::FunctionCodes::Go);
-		NavigateLoop = 1;
+		if (CurrentPhase == Comms::Phase::Operational) {
+			sendAcknowledge(Comms::FunctionCodes::Go);
+			NavigateLoop = 1;
+		}
 		break;
 	case Comms::FunctionCodes::EmergencyStop:
 		Reset_AVR();
