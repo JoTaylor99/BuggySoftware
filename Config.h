@@ -205,7 +205,7 @@ namespace bC {
 		nop
 	};
 
-#endif
+
 }
 
 //change to sC
