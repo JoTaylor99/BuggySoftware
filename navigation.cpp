@@ -105,6 +105,9 @@ void navigation::navigate(String str) {
 				Sensor::PollSensors(Sensors);
 				Sensor::printCurrent();
 			}
+			else if (str = "K") {
+				step(nC::Direction::Forward, 20);
+			}
 			else {
 				drive(nC::Direction::Stop);
 			}
