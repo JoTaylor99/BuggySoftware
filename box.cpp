@@ -74,6 +74,7 @@ void box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::input;
 		Rkpin[0] = bC::high;
 		Rkpin[1] = bC::input;
+		
 	}
 	else if (_boxNumber == 6) {
 		P1pin[0] = bC::high;
@@ -92,9 +93,12 @@ void box::begin(uint8_t boxNumber, bool boxInverted) {
 		P2pin[1] = bC::nop;
 		GNDpin[0] = bC::low;
 		GNDpin[1] = bC::input;
-		Rkpin[0] = bC::high;
+		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::input;
+		Rk7pin[0] = bC::input; // set to input in begin //set to box 7 set to output then set back to pin mode 
+		Rk7pin[1] = bC::high; //still call getreading but before called configure. change known resistors array to inputs
 	}
+
 }
 
 bool box::interrogateBox() {
