@@ -17,8 +17,6 @@ public:
 
 	void go();
 
-
-
 };
 
 #endif

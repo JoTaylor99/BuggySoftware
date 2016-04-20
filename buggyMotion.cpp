@@ -3,15 +3,12 @@
 // 
 
 #include "buggyMotion.h"
-#include <arduino2.h>
-#include <PWM.h>
+
 buggyMotion::buggyMotion() {
 }
 
 buggyMotion::~buggyMotion() {
 }
-
-
 
 void buggyMotion::initMotion() {
 	
@@ -20,6 +17,8 @@ void buggyMotion::initMotion() {
 	pinMode(RIGHTMOTORDIR, OUTPUT);
 	pinMode(RIGHTMOTOR, OUTPUT);
 	pinMode(LEFTMOTOR, OUTPUT);
+	pinMode(LEFTMOTORCOUNT, INPUT);
+	pinMode(RIGHTMOTORCOUNT, INPUT);
 	InitTimersSafe();
 	_timersInitialised = true;
 	_leftSpeed = 0;
@@ -28,6 +27,11 @@ void buggyMotion::initMotion() {
 	_drifting = false;
 	_driftCount = 0;
 	_previousDrift = nC::Drift::noDrift;
+	stepDistanceLeft = 0;
+	stepDistanceRight = 0;
+
+	stepTargetDistanceLeft = 0;
+	stepTargetDistanceRight = 0;
 
 }
 
@@ -44,8 +48,6 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 	MOT_VPRINTLN(_rightSpeed);
 
 	if (_firstCall) {
-		_firstCall = false;
-
 		if (direction == nC::Direction::Forward || direction == nC::Direction::Backwards) {
 			_leftSpeed = 80;
 			_rightSpeed = 80;
@@ -56,10 +58,11 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 			_leftSpeed = 50;
 			_rightSpeed = 50;
 		}
-		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
-		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
-		pwmWrite(LEFTMOTOR, 128);
-		pwmWrite(RIGHTMOTOR, 128);
+		
+		if (direction == nC::Direction::RightForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::LeftForwardOnly || nC::Direction::LeftBackwardsOnly) {
+			_leftSpeed = 40;
+			_rightSpeed = 40;
+		}
 	}
 
 	//If the buggy is drifting
@@ -118,6 +121,13 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 		break;
 	}
 
+	if (_firstCall) {
+		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
+		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
+		pwmWrite(LEFTMOTOR, 128);
+		pwmWrite(RIGHTMOTOR, 128);
+		_firstCall = false;
+	}
 	
 	_previousDrift = drift;
 }
@@ -219,15 +229,27 @@ void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 
 
 }
-void buggyMotion::stop()
+void buggyMotion::stop(uint8_t motorSelect)
 {
-	_leftSpeed = 0;
-	_rightSpeed = 0;
+
 	_firstCall = true;
 	_driftCount = 0;
-	pwmWrite(LEFTMOTOR, _leftSpeed);
-	pwmWrite(RIGHTMOTOR, _rightSpeed);
-	MOT_PRINTLN("Stopped");
+
+	if (motorSelect == 0) {		//both
+		_leftSpeed = 0;
+		_rightSpeed = 0;
+		pwmWrite(LEFTMOTOR, _leftSpeed);
+		pwmWrite(RIGHTMOTOR, _rightSpeed);
+	}
+	else if (motorSelect == 1) {	//left
+		_leftSpeed = 0;
+		pwmWrite(LEFTMOTOR, _leftSpeed);
+		}
+	else if (motorSelect == 2) {	//right
+		_rightSpeed = 0;
+		pwmWrite(RIGHTMOTOR, _rightSpeed);
+			}
+		MOT_PRINTLN("St");
 }
 
 void buggyMotion::capSpeeds()
@@ -244,4 +266,61 @@ void buggyMotion::capSpeeds()
 	else if (_rightSpeed>100) {
 		_rightSpeed = 100;
 	}
+}
+
+uint16_t buggyMotion::getStepsFromDistance(uint16_t mmDistance) {
+	return static_cast<uint16_t>(8*(mmDistance*THESCALEFACTOR));
+}
+
+bool buggyMotion::isMoveComplete() {
+	if ((_leftWheelTask == true) && (_rightWheelTask == true)) {
+		return true;
+	}
+	else { return false; }
+}
+
+
+void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance, uint16_t rightDistance) {
+
+	_firstCall = true;
+	//if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
+	//if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
+
+	if ((direction == nC::LeftBackwardsOnly) || (direction == nC::LeftForwardOnly)) {
+		rightDistance = 0;
+	}
+	else if ((direction == nC::RightBackwardsOnly) || (direction == nC::RightForwardOnly)) {
+		leftDistance = 0;
+	}
+
+	stepTargetDistanceLeft = getStepsFromDistance(leftDistance);
+	stepTargetDistanceRight = getStepsFromDistance(rightDistance);
+
+	if (leftDistance != 0) {
+		_leftWheelTask = false;
+		pciSetup(LEFTMOTORCOUNT);
+	}
+
+	if (rightDistance != 0) {
+		_rightWheelTask = false;
+		pciSetup(RIGHTMOTORCOUNT);
+	}
+
+	drive(direction);
+
+	#ifdef STEPWISE_BLOCKING
+	while (!(isMoveComplete())) {}
+	stop();
+	#endif
+}
+
+void buggyMotion::step(nC::Direction direction, uint16_t distance) {
+	stepSeparately(direction, distance, distance);
+}
+
+void buggyMotion::pciSetup(uint8_t pin)
+{
+	*digitalPinToPCMSK(pin) |= bit(digitalPinToPCMSKbit(pin));  // enable pin
+	PCIFR |= bit(digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
+	PCICR |= bit(digitalPinToPCICRbit(pin)); // enable interrupt for the group
 }

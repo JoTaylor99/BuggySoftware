@@ -43,3 +43,37 @@ void buggyTop::go(){
 		//boxValues::returnData info = assessBox.interrogateBox(boxNumber, boxDirection);
 	
 };
+
+//Handler Left
+void leftStepCounter() {
+	buggy.stepDistanceLeft++;
+	if (buggy.stepDistanceLeft >= buggy.stepTargetDistanceLeft) {
+		PCICR &= ~bit(digitalPinToPCICRbit(LEFTMOTORCOUNT));
+		//buggy.stop(1);
+		digitalWrite(LEFTMOTOR, LOW);
+		buggy.stepDistanceLeft = 0;
+		buggy._leftWheelTask = true;
+	}
+}
+
+//Handler Right
+void rightStepCounter(){
+	buggy.stepDistanceRight++;
+	if (buggy.stepDistanceRight >= buggy.stepTargetDistanceRight) {
+		PCICR &= ~bit(digitalPinToPCICRbit(RIGHTMOTORCOUNT));
+		//buggy.stop(2);
+		digitalWrite(RIGHTMOTOR, LOW);
+		buggy.stepDistanceRight = 0;
+		buggy._rightWheelTask = true;
+	}
+}
+
+ISR(PCINT2_vect) // handle pin change interrupt for D0 to D7 here
+{
+	rightStepCounter();
+}
+
+ISR(PCINT0_vect) // handle pin change interrupt for D8 to D13 here
+{
+	leftStepCounter();
+}

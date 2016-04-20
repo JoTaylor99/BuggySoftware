@@ -47,31 +47,31 @@ void navigation::navigate(String str) {
 
 		Sensor::PollSensors(Sensors);
 			
-			if (str == "F") {
-				start();
-				moveForward();
-				/*unsigned long tim = 0;
-				unsigned long tim2 = 0;
+		if (str == "F") {
+			start();
+			moveForward();
+			/*unsigned long tim = 0;
+			unsigned long tim2 = 0;
 
-				drive(nC::Direction::Stop, nC::Drift::noDrift);
-				tim = micros();
-				
-				drive(nC::Direction::Forward, nC::Drift::noDrift);
-				tim2 = micros();
-				Serial.println(tim2 - tim,DEC);
+			drive(nC::Direction::Stop, nC::Drift::noDrift);
+			tim = micros();
 
-				tim = micros();
-				drive(nC::Direction::Forward, nC::Drift::noDrift);
-				tim2 = micros();
-				Serial.println(tim2 - tim, DEC);
+			drive(nC::Direction::Forward, nC::Drift::noDrift);
+			tim2 = micros();
+			Serial.println(tim2 - tim,DEC);
 
-				tim = micros();
-				drive(nC::Direction::Stop, nC::Drift::noDrift);
-				tim2 = micros();
-				Serial.println(tim2 - tim, DEC);
+			tim = micros();
+			drive(nC::Direction::Forward, nC::Drift::noDrift);
+			tim2 = micros();
+			Serial.println(tim2 - tim, DEC);
 
-*/
-			} else if (str == "B") {
+			tim = micros();
+			drive(nC::Direction::Stop, nC::Drift::noDrift);
+			tim2 = micros();
+			Serial.println(tim2 - tim, DEC);
+
+			*/
+		} else if (str == "B") {
 				start();
 				moveBackward();
 			} else if (str == "R") {
@@ -100,6 +100,18 @@ void navigation::navigate(String str) {
 			}
 			else if (str = "H") {
 				Sensor::printCurrent();
+			}
+			else if (str = "O") {
+				step(nC::Direction::Forward, 167);
+			}
+			else if (str = ".") {
+				step(nC::Direction::Backwards, 167);
+			}
+			else if (str = "I") {
+				step(nC::Direction::Left, 30);
+			}
+			else if (str = "K") {
+				step(nC::Direction::Right, 30);
 			}
 			else {
 				drive(nC::Direction::Stop);

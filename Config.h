@@ -157,6 +157,17 @@
 #define LEFTMOTOR 9
 #define RIGHTMOTOR 3
 
+//buggyMotion::step by distance defines
+#define LEFTMOTORCOUNT	8		//PCINT 0			
+#define RIGHTMOTORCOUNT	4		//PCINT 20
+
+
+//#define DEFAULTMAXDISTANCE 165	//in mm
+
+#define THESCALEFACTOR 1.035
+
+//Setting to toggle blocking mode for stepwise operations
+#define STEPWISE_BLOCKING
 
 
 //Box Defines
