@@ -594,25 +594,11 @@ void navigation::moveForward() {
 	Sensor::PollSensors(Sensors);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-		  (RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
-	   	  (RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
-		  (RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-		  (RVAL(sC::ML) != STARTVAL(sC::ML)) &&
-		  (RVAL(sC::MR) != STARTVAL(sC::MR)) &&
-		  (RVAL(sC::BL) != STARTVAL(sC::BL)) &&
-		  (RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		if (compareAllWithStart()) {
 			 NAV_PRINTLN("Success");
 			 drive(nC::Direction::Stop);
 			 delay(14);
-			 if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
-				 (((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
-				 (((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
-				 (((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
-				 (((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
-				 (((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
-				 (((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
-				 (((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+			 if (compareAllToLast()) {
 				 break;
 			 }
 		}
@@ -684,25 +670,11 @@ void navigation::moveBackward() {
 		Sensor::PollSensors(Sensors);
 		while (true) {
 			Sensor::PollSensors(Sensors);
-			if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-				(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
-				(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
-				(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-				(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
-				(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
-				(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
-				(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			if (compareAllWithStart()) {
 				NAV_PRINTLN("Success");
 				drive(nC::Direction::Stop);
 				delay(14);
-				if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
-					(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
-					(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
-					(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
-					(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
-					(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
-					(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
-					(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				if (compareAllToLast()) {
 					break;
 				}
 			}
@@ -738,4 +710,32 @@ void navigation::victoryRoll() {
 	}
 	start();
 	moveForward();
+}
+
+bool navigation::compareAllWithStart() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+		(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+		(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		return true;
+	}
+	else { return false; }
+}
+
+bool navigation::compareAllToLast() {
+	if (((RVAL(sC::FL)) == (RLASTVAL(sC::FL))) &&
+		((RVAL(sC::LTL)) == (RLASTVAL(sC::LTL))) &&
+		((RVAL(sC::LTR)) == (RLASTVAL(sC::LTR))) &&
+		((RVAL(sC::FR)) == (RLASTVAL(sC::FR))) &&
+		((RVAL(sC::ML)) == (RLASTVAL(sC::ML))) &&
+		((RVAL(sC::MR)) == (RLASTVAL(sC::MR))) &&
+		((RVAL(sC::BL)) == (RLASTVAL(sC::BL))) &&
+		((RVAL(sC::BR)) == (RLASTVAL(sC::BR)))) {
+		return true;
+	}
+	else { return false; }
 }

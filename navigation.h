@@ -94,6 +94,9 @@ private:
 	void moveForward();
 	void moveBackward();
 	void victoryRoll();
+
+	bool compareAllWithStart();
+	bool compareAllToLast();
 	
 };
 
