@@ -488,30 +488,70 @@ void navigation::adjustOnTheSpot(){
 ///			adjustOnTheSpot
 ///		}
 /// </summary>
+/// <summary>
+/// Turn Left Algorithm
+/// While (true){
+///		if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else{
+///			stop;
+///			break;
+///		}
+/// }
+/// while (true){
+///		if finished movement
+///		{stop;
+///		 break;
+///		 }
+///		else {
+///			adjustOntheSpot
+///		}
+/// }
+/// </summary>
 void navigation::turnLeft() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if ((RVAL(sC::LTL) != STARTVAL(sC::LTL)) && (RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		if ((RVAL(sC::LTL))!= STARTVAL(sC::LTL)) {
 			drive(nC::Direction::Stop);
 			break;
 		}
-		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+		else {
 			drive(nC::Direction::Left);
 		}
-		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
-			//overshoot between LTL and LTR
-			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
-				drive(nC::Direction::Right);
-			}
-			else {
-				drive(nC::Direction::Left);
+	}
+	Sensor::PollSensors(Sensors);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+			(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+			(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+			(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+			(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+			(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+			(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+			(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			NAV_PRINTLN("Success");
+			drive(nC::Direction::Stop);
+			delay(14);
+			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+				(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+				(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+				(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+				(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+				(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				break;
 			}
 		}
 		else {
-			//navigation::adjustOnTheSpot();
+			adjustOnTheSpot();
 		}
 	}
 }
+		
+
 
 
 
@@ -523,28 +563,43 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
-	Sensor::PollSensors(Sensors);
-	drive(nC::Direction::Right);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if ((RVAL(sC::LTR) != STARTVAL(sC::LTR)) && (RVAL(sC::BL) != STARTVAL(sC::BL))) {
+		if ((RVAL(sC::LTR)) != STARTVAL(sC::LTR)) {
 			drive(nC::Direction::Stop);
 			break;
 		}
-		else if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+		else {
 			drive(nC::Direction::Right);
 		}
-		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
-			//overshoot between LTL and LTR
-			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
-				drive(nC::Direction::Right);
-			}
-			else {
-				drive(nC::Direction::Left);
+	}
+	Sensor::PollSensors(Sensors);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+			(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+			(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+			(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+			(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+			(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+			(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+			(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			NAV_PRINTLN("Success");
+			drive(nC::Direction::Stop);
+			delay(14);
+			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+				(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+				(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+				(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+				(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+				(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				break;
 			}
 		}
 		else {
-			//navigation::adjustOnTheSpot();
+			adjustOnTheSpot();
 		}
 	}
 }
