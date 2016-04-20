@@ -33,3 +33,10 @@ void loop() {
 	
 	buggy1.go();
 }
+
+
+void serialEvent() {
+
+	buggy1.Check();
+
+}
