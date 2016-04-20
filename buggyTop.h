@@ -1,6 +1,7 @@
 #ifndef _BUGGYTOP_H
 #define _BUGGYTOP_H
-
+#include <DFRobot_utility.h>
+#include <utility/SerialProtocol.h>
 #include "Config.h"
 #include "navigation.h"
 #include "Comms.h"
