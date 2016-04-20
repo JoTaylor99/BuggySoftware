@@ -139,12 +139,6 @@
 #define MIN_DEFAULT 800
 
 
-//Motor Defines
-//#define DIRPINA 4
-//#define DIRPINB 5
-//#define SPEEDPINA 6
-//#define SPEEDPINB 5
-
 #define MAX_SPEED 100
 #define MIN_SPEED 65
 #define TURNING_SPEED 60
@@ -161,7 +155,6 @@
 #define LEFTMOTORCOUNT	8		//PCINT 0			
 #define RIGHTMOTORCOUNT	4		//PCINT 20
 
-
 //#define DEFAULTMAXDISTANCE 165	//in mm
 
 #define THESCALEFACTOR 1.035
@@ -169,11 +162,9 @@
 //Setting to toggle blocking mode for stepwise operations
 #define STEPWISE_BLOCKING
 
-
+#define HARDCODEDSTARTVALUES
 //Box Defines
 
-#define BOXNUM		   4
-#define BOXINV		   0
 
 #define NUMADCREADINGS 50
 
@@ -182,7 +173,7 @@
 #define ADCMAX			1023
 
 #define RK	560
-
+#define RRk7pin 99.8
 
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
@@ -213,10 +204,7 @@ namespace bC {
 		low,
 		nop
 	};
-#ifdef BOX_DEBUG
-	//temporary variables to be removed when comms between buggy and PC are finalised.
-	const byte boxNumber = BOXNUM;
-	const bool boxInverted = BOXINV;
+
 #endif
 }
 

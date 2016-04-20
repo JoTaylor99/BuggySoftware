@@ -83,17 +83,26 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-#ifdef BOX_DEBUG
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				boxs.begin(BOXNUM, BOXINV);
+				dockFailureCounter = 0;
+				if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
+				{
+					return;
+				}
 				if (!boxs.docked()) {
-					//redock unless already failed twice
+					dockFailureCounter++;
+					if (dockFailureCounter == 2) {
+							//DC write variables here
+							//Will send this ^
+							boxBeGone();
+							return;
+						}
 				}
 				else {
 					boxs.interrogateBox();
 				}
-#endif
+				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
@@ -101,46 +110,45 @@ void navigation::navigate(String str) {
 			else if (str = "H") {
 				Sensor::printCurrent();
 			}
+			else if (str = "Z") {
+				Sensor::PollSensors(Sensors);
+				Sensor::printCurrent();
+			}
+			else if (str = "K") {
+				step(nC::Direction::Forward, 20);
+			}
 			else {
 				drive(nC::Direction::Stop);
 			}
 };
 
 void navigation::boxApproach() {
-		uint8_t Distance = 0;
-		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
-		drive(nC::Direction::Forward);
-		while (true) {
-			Distance = Ultrasonic.ping_cm();
-			DEBUG_VPRINTLN(Distance);
-			if (Distance > 3) {
-				DEBUG_PRINTLN("Approaching Box");
-				Sensor::PollSensors(Sensors, Sensor::Front, 2);
-			} else {
-				DEBUG_PRINTLN("I Have Reached the box");
-				drive(nC::Direction::Stop);
-				if (Distance == 0) {
-					DEBUG_PRINTLN("Either too far or too close");
-				}
-				return;
-			}
-			delay(50);
-		}
-	}
+	start();
+	moveForward();
+}
 
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
+#ifndef HARDCODEDSTARTVALUES
 	Sensor::PollSensors(Sensors);
-	int32_t lspeed, rspeed;
-	getSpeeds(lspeed, rspeed);
-	NAV_VPRINTLN(lspeed); NAV_VPRINTLN(rspeed);
 #ifndef SENSOR_MEMORY_SAVE
 	memcpy(startingValues, Sensor::values, NUM_SENSORS);
 #else
 	startingValues = Sensor::values;
 #endif
-	DEBUG_PRINTLN("I have the starting POSITION");
+#else
+	
+	STARTVAL(sC::FL) = !STARTVAL(sC::FL);
+	STARTVAL(sC::LTL) = !STARTVAL(sC::LTL);
+	STARTVAL(sC::LTR) = !STARTVAL(sC::LTR);
+	STARTVAL(sC::FR) = !STARTVAL(sC::FR);
+	STARTVAL(sC::ML) = !STARTVAL(sC::ML);
+	STARTVAL(sC::MR) = !STARTVAL(sC::MR);
+	STARTVAL(sC::BL) = !STARTVAL(sC::BL);
+	STARTVAL(sC::BR) = !STARTVAL(sC::BR);
+#endif
 }
+
 //Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
 	if ( 
@@ -214,10 +222,10 @@ bool navigation::driftingWhenForward() {
 		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
 			//pattern of arena not flipped yet
 			if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
-				drive(nC::Direction::Forward,nC::Drift::leftDrift);
+				drive(nC::Direction::Forward,nC::Drift::rightDrift);
 			}
 			else {
-				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+				drive(nC::Direction::Forward, nC::Drift::leftDrift);
 
 			}
 
@@ -484,30 +492,71 @@ void navigation::adjustOnTheSpot(){
 ///			adjustOnTheSpot
 ///		}
 /// </summary>
+/// <summary>
+/// Turn Left Algorithm
+/// While (true){
+///		if ( LTL == STARTVAL(LTL)) {
+///			ROTATE LEFT --Actual Rotation movement
+///		}
+///		else{
+///			stop;
+///			break;
+///		}
+/// }
+/// while (true){
+///		if finished movement
+///		{stop;
+///		 break;
+///		 }
+///		else {
+///			adjustOntheSpot
+///		}
+/// }
+/// </summary>
 void navigation::turnLeft() {
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if ((RVAL(sC::LTL) != STARTVAL(sC::LTL)) && (RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		if (((RVAL(sC::LTL))!= (STARTVAL(sC::LTL))) && ((RVAL(sC::BL)) != (STARTVAL(sC::BL)))) {
 			drive(nC::Direction::Stop);
+			step(nC::Direction::Forward, 5);
 			break;
 		}
-		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+		else {
 			drive(nC::Direction::Left);
 		}
-		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
-			//overshoot between LTL and LTR
-			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
-				drive(nC::Direction::Right);
-			}
-			else {
-				drive(nC::Direction::Left);
+	}
+	Sensor::PollSensors(Sensors);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+			(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+			(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+			(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+			(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+			(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+			(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+			(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			NAV_PRINTLN("Success");
+			drive(nC::Direction::Stop);
+			delay(14);
+			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+				(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+				(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+				(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+				(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+				(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				break;
 			}
 		}
 		else {
-			//navigation::adjustOnTheSpot();
+			adjustOnTheSpot();
 		}
 	}
 }
+		
+
 
 
 
@@ -519,28 +568,44 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
-	Sensor::PollSensors(Sensors);
-	drive(nC::Direction::Right);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if ((RVAL(sC::LTR) != STARTVAL(sC::LTR)) && (RVAL(sC::BL) != STARTVAL(sC::BL))) {
+		if (((RVAL(sC::LTR)) != (STARTVAL(sC::LTR))) && ((RVAL(sC::BR)) != (STARTVAL(sC::BR)))) {
 			drive(nC::Direction::Stop);
+			step(nC::Direction::Forward, 5);
 			break;
 		}
-		else if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
+		else {
 			drive(nC::Direction::Right);
 		}
-		else if (RVAL(sC::LTL) == RVAL(sC::LTR)) {
-			//overshoot between LTL and LTR
-			if (RVAL(sC::LTR) == STARTVAL(sC::LTR)) {
-				drive(nC::Direction::Right);
-			}
-			else {
-				drive(nC::Direction::Left);
+	}
+	Sensor::PollSensors(Sensors);
+	while (true) {
+		Sensor::PollSensors(Sensors);
+		if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+			(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+			(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+			(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+			(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+			(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+			(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+			(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			NAV_PRINTLN("Success");
+			drive(nC::Direction::Stop);
+			delay(14);
+			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+				(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+				(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+				(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+				(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+				(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				break;
 			}
 		}
 		else {
-			//navigation::adjustOnTheSpot();
+			adjustOnTheSpot();
 		}
 	}
 }
@@ -594,25 +659,11 @@ void navigation::moveForward() {
 	Sensor::PollSensors(Sensors);
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-		  (RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
-	   	  (RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
-		  (RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-		  (RVAL(sC::ML) != STARTVAL(sC::ML)) &&
-		  (RVAL(sC::MR) != STARTVAL(sC::MR)) &&
-		  (RVAL(sC::BL) != STARTVAL(sC::BL)) &&
-		  (RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		if (compareAllWithStart()) {
 			 NAV_PRINTLN("Success");
 			 drive(nC::Direction::Stop);
 			 delay(14);
-			 if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
-				 (((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
-				 (((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
-				 (((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
-				 (((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
-				 (((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
-				 (((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
-				 (((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+			 if (compareAllToLast()) {
 				 break;
 			 }
 		}
@@ -684,25 +735,11 @@ void navigation::moveBackward() {
 		Sensor::PollSensors(Sensors);
 		while (true) {
 			Sensor::PollSensors(Sensors);
-			if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-				(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
-				(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
-				(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-				(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
-				(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
-				(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
-				(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+			if (compareAllWithStart()) {
 				NAV_PRINTLN("Success");
 				drive(nC::Direction::Stop);
 				delay(14);
-				if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
-					(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
-					(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
-					(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
-					(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
-					(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
-					(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
-					(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				if (compareAllToLast()) {
 					break;
 				}
 			}
@@ -739,3 +776,36 @@ void navigation::victoryRoll() {
 	start();
 	moveForward();
 }
+
+bool navigation::compareAllWithStart() {
+	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
+		(RVAL(sC::LTL) != STARTVAL(sC::LTL)) &&
+		(RVAL(sC::LTR) != STARTVAL(sC::LTR)) &&
+		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
+		(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
+		(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
+		(RVAL(sC::BL) != STARTVAL(sC::BL)) &&
+		(RVAL(sC::BR) != STARTVAL(sC::BR))) {
+		return true;
+	}
+	else { return false; }
+}
+
+bool navigation::compareAllToLast() {
+	if (((RVAL(sC::FL)) == (RLASTVAL(sC::FL))) &&
+		((RVAL(sC::LTL)) == (RLASTVAL(sC::LTL))) &&
+		((RVAL(sC::LTR)) == (RLASTVAL(sC::LTR))) &&
+		((RVAL(sC::FR)) == (RLASTVAL(sC::FR))) &&
+		((RVAL(sC::ML)) == (RLASTVAL(sC::ML))) &&
+		((RVAL(sC::MR)) == (RLASTVAL(sC::MR))) &&
+		((RVAL(sC::BL)) == (RLASTVAL(sC::BL))) &&
+		((RVAL(sC::BR)) == (RLASTVAL(sC::BR)))) {
+		return true;
+	}
+	else { return false; }
+}
+
+void navigation::boxBeGone() {
+	start();
+	moveBackward();
+	}
