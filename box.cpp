@@ -108,6 +108,7 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 	else
 	{
 		ERROR_PRINTLN("Incorect box number given ");
+		return false;
 	}
 
 	
