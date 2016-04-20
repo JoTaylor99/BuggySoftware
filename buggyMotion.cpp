@@ -283,8 +283,15 @@ bool buggyMotion::isMoveComplete() {
 void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance, uint16_t rightDistance) {
 
 	_firstCall = true;
-	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
-	if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
+	//if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
+	//if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
+
+	if ((direction == nC::LeftBackwardsOnly) || (direction == nC::LeftForwardOnly)) {
+		rightDistance = 0;
+	}
+	else if ((direction == nC::RightBackwardsOnly) || (direction == nC::RightForwardOnly)) {
+		leftDistance = 0;
+	}
 
 	stepTargetDistanceLeft = getStepsFromDistance(leftDistance);
 	stepTargetDistanceRight = getStepsFromDistance(rightDistance);
@@ -303,6 +310,7 @@ void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance,
 
 	#ifdef STEPWISE_BLOCKING
 	while (!(isMoveComplete())) {}
+	stop();
 	#endif
 }
 
