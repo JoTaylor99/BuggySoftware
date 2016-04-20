@@ -139,12 +139,6 @@
 #define MIN_DEFAULT 800
 
 
-//Motor Defines
-//#define DIRPINA 4
-//#define DIRPINB 5
-//#define SPEEDPINA 6
-//#define SPEEDPINB 5
-
 #define MAX_SPEED 100
 #define MIN_SPEED 65
 #define TURNING_SPEED 60
@@ -160,7 +154,6 @@
 //buggyMotion::step by distance defines
 #define LEFTMOTORCOUNT	8		//PCINT 0			
 #define RIGHTMOTORCOUNT	4		//PCINT 20
-
 
 //#define DEFAULTMAXDISTANCE 165	//in mm
 
