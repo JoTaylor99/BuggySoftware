@@ -98,9 +98,12 @@ private:
 	void moveForward();
 	void moveBackward();
 	void victoryRoll();
+	void boxBeGone();
 
 	bool compareAllWithStart();
 	bool compareAllToLast();
+
+	uint8_t dockFailureCounter = 0;
 	
 };
 

@@ -85,7 +85,7 @@ void navigation::navigate(String str) {
 				boxApproach();
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				
+				dockFailureCounter = 0;
 				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
 					dockFailureCounter++;
@@ -99,6 +99,7 @@ void navigation::navigate(String str) {
 				else {
 					boxs.interrogateBox();
 				}
+				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
