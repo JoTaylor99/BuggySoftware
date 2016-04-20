@@ -83,17 +83,23 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-#ifdef BOX_DEBUG
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				boxs.begin(BOXNUM, BOXINV);
+				dockFailureCounter = 0;
+				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
-					//redock unless already failed twice
+					dockFailureCounter++;
+					if (dockFailureCounter == 2) {
+							//DC write variables here
+							//Will send this ^
+							boxBeGone();
+							return;
+						}
 				}
 				else {
 					boxs.interrogateBox();
 				}
-#endif
+				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
@@ -137,17 +143,26 @@ void navigation::boxApproach() {
 
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
+#ifndef HARDCODEDSTARTVALUES
 	Sensor::PollSensors(Sensors);
-	int32_t lspeed, rspeed;
-	getSpeeds(lspeed, rspeed);
-	NAV_VPRINTLN(lspeed); NAV_VPRINTLN(rspeed);
 #ifndef SENSOR_MEMORY_SAVE
 	memcpy(startingValues, Sensor::values, NUM_SENSORS);
 #else
 	startingValues = Sensor::values;
 #endif
-	DEBUG_PRINTLN("I have the starting POSITION");
+#else
+	
+	STARTVAL(sC::FL) = !STARTVAL(sC::FL);
+	STARTVAL(sC::LTL) = !STARTVAL(sC::LTL);
+	STARTVAL(sC::LTR) = !STARTVAL(sC::LTR);
+	STARTVAL(sC::FR) = !STARTVAL(sC::FR);
+	STARTVAL(sC::ML) = !STARTVAL(sC::ML);
+	STARTVAL(sC::MR) = !STARTVAL(sC::MR);
+	STARTVAL(sC::BL) = !STARTVAL(sC::BL);
+	STARTVAL(sC::BR) = !STARTVAL(sC::BR);
+#endif
 }
+
 //Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
 	if ( 
@@ -803,3 +818,5 @@ bool navigation::compareAllToLast() {
 	}
 	else { return false; }
 }
+
+void navigation::boxBeGone() {}

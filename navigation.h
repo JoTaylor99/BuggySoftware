@@ -31,6 +31,10 @@ public:
 	*/
 	void navigate(String str);
 
+	uint8_t passedBoxNumber;
+
+	bool passedBoxInversion;
+
 #ifdef QTRSINUSE
 	Sensor Sensors[9] = { FRPIN, LTRPIN, LTLPIN, FLPIN, MRPIN, MLPIN, BRPIN, BLPIN, { (unsigned int)7, sensorConfig::QTR } };
 #else
@@ -94,9 +98,12 @@ private:
 	void moveForward();
 	void moveBackward();
 	void victoryRoll();
+	void boxBeGone();
 
 	bool compareAllWithStart();
 	bool compareAllToLast();
+
+	uint8_t dockFailureCounter = 0;
 	
 };
 
