@@ -8,8 +8,9 @@
 #include <NewPing.h>
 
 
-class navigation : private buggyMotion {
+class navigation : public buggyMotion {
 
+	//Test commit changes.
 public:
 	/* Navigation constructor*/
 	navigation();
@@ -47,14 +48,52 @@ private:
 
 	static bool _navInitComplete;
 
-	void BoxApproach();
+	void boxApproach();
 
 	void start(); //Captures and stores in an array all the sensor values at the initial node position
 
-	void TurnLeft();
-	void TurnRight();
-	void MoveForward();
-	void MoveBackward();
+	  /// <summary>
+	  /// driftingWhenForward
+	 /// Determines if the buggy  drifts away from its course in the forward motion.
+	 /// If the buggy is drifting, it fixes the drift and returns true 
+	 /// Else if the buggy is in the correct position it returns false
+	 /// </summary>
+	 /// <returns></returns>
+	bool driftingWhenForward();
+
+	/// <summary>
+	/// driftingWhenBackward
+	/// Determines if the buggy  drifts away from its course in the backward motion.
+	/// If the buggy is drifting, it fixes the drift and returns true 
+	/// Else if the buggy is in the correct position it returns false
+	/// </summary>
+	/// <returns></returns>
+	bool driftingWhenBackward();
+
+	/// <summary>
+	/// adjustOnTheSpot
+	/// Is called when ML and MR have just passed the destination intersection
+	/// ((i.e RVAL(ML)!=STARTVAL(ML) && RVAL(MR) != STARTVAL(MR))&& (LASTVAL(
+	/// checks the readings of LTL/LTR and BL/BR and rotates or moves horizontally (if applicable) on the spot
+	/// to ensure LTL!=LTR and BL!=BR which means the buggy reached the destination successfully.
+	/// </summary>
+	void adjustOnTheSpot();
+	
+	//checks if the readings of all the sensors are opposite with their corresponding starting reading (i.e. the buggy has reached its destination)
+	bool reachedDestination();
+
+	//checks if the centre of rotation of the buggy is at the top of the destination intersection
+	bool buggyCentreOnTopofDestIntersection();
+
+	// Checks if the centre of rotation is behhind the destination intersection 
+	//but the front of the buggy has passed the destination intersection
+	bool buggyCentreBehindDestIntersection();
+
+	void turnLeft();
+	void turnRight();
+	void moveForward();
+	void moveBackward();
+	void victoryRoll();
 	
 };
 

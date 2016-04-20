@@ -122,9 +122,9 @@ void Sensor::toTileColour() {
 //Prints boolean values, presently there is no material difference between the conditions,
 //so one has been commented out until such time as communication code is finalised.
 #ifndef SENSOR_MEMORY_SAVE
-void Sensor::printbw(bool *values) {
+void Sensor::printbw() {
 #else
-void Sensor::printbw(uint8_t values) {
+void Sensor::printbw() {
 #endif
 	//Print sensor outputs
 #ifdef SENSOR_DEBUG
@@ -139,10 +139,25 @@ void Sensor::printbw(uint8_t values) {
 #endif
 }
 
+//Public function callable from navigation to print sensor values for debug
+#ifndef SENSOR_MEMORY_SAVE
+void Sensor::printCurrent() {
+#else
+void Sensor::printCurrent() {
+#endif
+	Serial.print(F("FL:")); Serial.print(RVAL(sC::FL)); Serial.print(F("\t"));
+	Serial.print(F("LTL:")); Serial.print(RVAL(sC::LTL)); Serial.print(F("\t"));
+	Serial.print(F("LTR:")); Serial.print(RVAL(sC::LTR)); Serial.print(F("\t"));
+	Serial.print(F("FR:")); Serial.print(RVAL(sC::FR)); Serial.println(F("\t"));
+	Serial.print(F("ML:")); Serial.print(RVAL(sC::ML)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("MR:")); Serial.print(RVAL(sC::MR)); Serial.println(F("\t"));
+	Serial.print(F("BL:")); Serial.print(RVAL(sC::BL)); Serial.print(F("\t"));
+	Serial.print(F("\t")); Serial.print(F("BR:")); Serial.print(RVAL(sC::BR)); Serial.println(F("\t"));
+}
+
 //Polls all given sensors in the order specified.
 void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte OrderLength){
-	unsigned long t1, t2;
-	t1 = micros();
+
 	sC::sensorNumber currentSensorIndex = sC::FR;
 	for (byte n = 0; n < OrderLength; n++) {
 		currentSensorIndex = order[n];
@@ -151,11 +166,9 @@ void Sensor::PollSensors(Sensor *sens, const sC::sensorNumber *order, const byte
 		sens[currentSensorIndex].GetReading();
 		SVAL(currentSensorIndex, sens[currentSensorIndex].tileWhite);
 	}
-	t2 = micros();
-	DEBUG_PRINTLN("SENSOR VALUES: ");
-	printbw(values);
-	DEBUG_PRINT("Time to poll 8 sensors: ");
-	DEBUG_VPRINTLN(t2 - t1);
+	
+	printbw();
+
 
 }
 

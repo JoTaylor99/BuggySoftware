@@ -38,6 +38,12 @@ public:
 	
 	static void PollSensors(Sensor *sens, const sC::sensorNumber *order = Sensor::DefaultOrder, const byte OrderLength = NUM_SENSORS);
 
+	#ifndef SENSOR_MEMORY_SAVE
+		static void printCurrent(); 
+	#else
+		static void printCurrent(); 
+	#endif
+
 #ifdef SENSOR_MEMORY_SAVE
 	private:
 		static void setVal(sC::sensorNumber position, bool tileColour);
@@ -72,9 +78,9 @@ private:
 	void Normalise(); //Normalise the sensor's reading on a scale between it's minimum and maximum
 	void toTileColour(); //Checks the Normalised sensor readings against their thresholds
 #ifndef SENSOR_MEMORY_SAVE
-	static void printbw(bool *values); 
+	static void printbw(); 
 #else
-	static void printbw(uint8_t values); 
+	static void printbw(); 
 #endif
 
 	static bool _sensorInitComplete;  
