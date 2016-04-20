@@ -53,7 +53,7 @@ public:
 
 	bool docked();
 
-	void begin(uint8_t boxNumber, bool boxInverted);
+	bool begin(uint8_t boxNumber, bool boxInverted);
 
 private:
 		Adafruit_MCP23017 boxGPIO;
