@@ -165,8 +165,6 @@
 #define HARDCODEDSTARTVALUES
 //Box Defines
 
-#define BOXNUM		   4
-#define BOXINV		   0
 
 #define NUMADCREADINGS 50
 
@@ -175,7 +173,7 @@
 #define ADCMAX			1023
 
 #define RK	560
-
+#define RRk7pin 99.8
 
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
@@ -206,10 +204,7 @@ namespace bC {
 		low,
 		nop
 	};
-#ifdef BOX_DEBUG
-	//temporary variables to be removed when comms between buggy and PC are finalised.
-	const byte boxNumber = BOXNUM;
-	const bool boxInverted = BOXINV;
+
 #endif
 }
 
