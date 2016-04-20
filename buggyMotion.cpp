@@ -268,8 +268,8 @@ void buggyMotion::capSpeeds()
 	}
 }
 
-uint16_t buggyMotion::getStepsFromDistance(uint8_t mmDistance) {
-	return static_cast<uint16_t>(2*(mmDistance*0.9));
+uint16_t buggyMotion::getStepsFromDistance(uint16_t mmDistance) {
+	return static_cast<uint16_t>(8*(mmDistance*THESCALEFACTOR));
 }
 
 bool buggyMotion::isMoveComplete() {
@@ -280,7 +280,7 @@ bool buggyMotion::isMoveComplete() {
 }
 
 
-void buggyMotion::stepSeparately(nC::Direction direction, uint8_t leftDistance, uint8_t rightDistance) {
+void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance, uint16_t rightDistance) {
 
 	_firstCall = true;
 	if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
@@ -306,7 +306,7 @@ void buggyMotion::stepSeparately(nC::Direction direction, uint8_t leftDistance, 
 	#endif
 }
 
-void buggyMotion::step(nC::Direction direction, uint8_t distance) {
+void buggyMotion::step(nC::Direction direction, uint16_t distance) {
 	stepSeparately(direction, distance, distance);
 }
 
