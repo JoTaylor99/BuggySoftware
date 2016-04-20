@@ -31,6 +31,10 @@ public:
 	*/
 	void navigate(String str);
 
+	uint8_t passedBoxNumber;
+
+	bool passedBoxInversion;
+
 #ifdef QTRSINUSE
 	Sensor Sensors[9] = { FRPIN, LTRPIN, LTLPIN, FLPIN, MRPIN, MLPIN, BRPIN, BLPIN, { (unsigned int)7, sensorConfig::QTR } };
 #else
