@@ -83,17 +83,22 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-#ifdef BOX_DEBUG
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				boxs.begin(BOXNUM, BOXINV);
+				
+				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
-					//redock unless already failed twice
+					dockFailureCounter++;
+					if (dockFailureCounter == 2) {
+							//DC write variables here
+							//Will send this ^
+							boxBeGone();
+							return;
+						}
 				}
 				else {
 					boxs.interrogateBox();
 				}
-#endif
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
