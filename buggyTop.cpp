@@ -16,6 +16,7 @@ void buggyTop::init() {
 	buggy.initNavigation();
 	str = "";
 	CurrentPhase = Comms::Phase::Idle;
+	NavigateLoop = 0;
 };
 
 void buggyTop::go() {
@@ -25,16 +26,31 @@ void buggyTop::go() {
 
 
 
+	if (NavigateLoop == 1) {
+		int length = str.length();
+		for (int i = 0; i < length ; i++) {
+			if (str[i] != '\0') {
+				if (str[i] == 'T') {
+					uint8_t BoxNum = str[i + 1] - '0';
+					uint8_t Polarity = str[i + 2] = '0';
+					buggy.navigate(F("G"));
+					i += 2;
+				}
+				else {
+					buggy.navigate(String(str[i]));
+				}
 
-	//if (NavigateLoop = 1) {
-	//	int length = str.length();
-	//	for (int i = 0; i < length ; i++) {
-	//		buggy.navigate(String(str[i]));
-	//	}
-	//	NavigateLoop = 0;
 
-	//	
-	//}
+
+				
+				sendMovementComplete();
+			}
+			//Serial.println(str);
+		}
+		NavigateLoop = 0;
+
+		
+	}
 
 
 
