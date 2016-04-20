@@ -162,7 +162,7 @@ void navigation::start() {
 	STARTVAL(sC::BR) = !STARTVAL(sC::BR);
 #endif
 }
-}
+
 //Determines if the buggy reached the destination intersection correctly
 bool navigation::reachedDestination() {
 	if ( 
@@ -818,3 +818,5 @@ bool navigation::compareAllToLast() {
 	}
 	else { return false; }
 }
+
+void navigation::boxBeGone() {}
