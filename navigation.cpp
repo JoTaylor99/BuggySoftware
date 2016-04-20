@@ -86,7 +86,10 @@ void navigation::navigate(String str) {
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
 				dockFailureCounter = 0;
-				boxs.begin(passedBoxNumber, passedBoxInversion);
+				if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
+				{
+					return;
+				}
 				if (!boxs.docked()) {
 					dockFailureCounter++;
 					if (dockFailureCounter == 2) {
