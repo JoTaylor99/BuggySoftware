@@ -182,7 +182,9 @@
 #define RIGHTMOTORCOUNT	4		//PCINT 20
 
 
-#define DEFAULTMAXDISTANCE 167	//in mm
+//#define DEFAULTMAXDISTANCE 165	//in mm
+
+#define THESCALEFACTOR 1.035
 
 //Setting to toggle blocking mode for stepwise operations
 #define STEPWISE_BLOCKING
