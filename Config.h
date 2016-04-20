@@ -162,7 +162,7 @@
 //Setting to toggle blocking mode for stepwise operations
 #define STEPWISE_BLOCKING
 
-
+#define HARDCODEDSTARTVALUES
 //Box Defines
 
 #define BOXNUM		   4
