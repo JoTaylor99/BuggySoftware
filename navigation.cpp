@@ -120,26 +120,9 @@ void navigation::navigate(String str) {
 };
 
 void navigation::boxApproach() {
-		uint8_t Distance = 0;
-		NewPing Ultrasonic(TRIGGER, ECHO, MAXDISTANCE);
-		drive(nC::Direction::Forward);
-		while (true) {
-			Distance = Ultrasonic.ping_cm();
-			DEBUG_VPRINTLN(Distance);
-			if (Distance > 3) {
-				DEBUG_PRINTLN("Approaching Box");
-				Sensor::PollSensors(Sensors, Sensor::Front, 2);
-			} else {
-				DEBUG_PRINTLN("I Have Reached the box");
-				drive(nC::Direction::Stop);
-				if (Distance == 0) {
-					DEBUG_PRINTLN("Either too far or too close");
-				}
-				return;
-			}
-			delay(50);
-		}
-	}
+	start();
+	moveForward();
+}
 
 //captures and stores in an array all the sensor values at the initial node position
 void navigation::start() {
@@ -819,4 +802,7 @@ bool navigation::compareAllToLast() {
 	else { return false; }
 }
 
-void navigation::boxBeGone() {}
+void navigation::boxBeGone() {
+	start();
+	moveBackward();
+	}
