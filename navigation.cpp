@@ -604,7 +604,17 @@ void navigation::moveForward() {
 		  (RVAL(sC::BR) != STARTVAL(sC::BR))) {
 			 NAV_PRINTLN("Success");
 			 drive(nC::Direction::Stop);
-			 break;
+			 delay(14);
+			 if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+				 (((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+				 (((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+				 (((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+				 (((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+				 (((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+				 (((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+				 (((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+				 break;
+			 }
 		}
 		else {
 			adjustOnTheSpot();
@@ -684,13 +694,30 @@ void navigation::moveBackward() {
 				(RVAL(sC::BR) != STARTVAL(sC::BR))) {
 				NAV_PRINTLN("Success");
 				drive(nC::Direction::Stop);
-				break;
+				delay(14);
+				if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
+					(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
+					(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
+					(((RVAL(sC::FR)) && (RLASTVAL(sC::FR))) != STARTVAL(sC::FR)) &&
+					(((RVAL(sC::ML)) && (RLASTVAL(sC::ML))) != STARTVAL(sC::ML)) &&
+					(((RVAL(sC::MR)) && (RLASTVAL(sC::MR))) != STARTVAL(sC::MR)) &&
+					(((RVAL(sC::BL)) && (RLASTVAL(sC::BL))) != STARTVAL(sC::BL)) &&
+					(((RVAL(sC::BR)) && (RLASTVAL(sC::BR))) != STARTVAL(sC::BR))) {
+					break;
+				}
 			}
 			else {
 				adjustOnTheSpot();
 			}
 		}
 }
+
+#ifdef SENSOR_MEMORY_SAVE
+bool navigation::startValIs(sC::sensorNumber position) {
+	return bitRead(startingValues, position);
+}
+#endif
+
 /// <summary>
 /// Victory roll defined as:
 /// 6 x turnLeft (or Right)
