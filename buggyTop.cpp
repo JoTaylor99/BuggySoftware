@@ -157,6 +157,7 @@ void buggyTop::AppendRoute(struct Frame *theData) {
 	if (theData->data >> 24 != 0xFF) {
 		str += (char)theData->data;
 	}
+	NavigateLoop = 0;
 }
 
 void buggyTop::controlManually(Frame * theData)
@@ -164,7 +165,7 @@ void buggyTop::controlManually(Frame * theData)
 	uint8_t a = theData->data;
 	String temp = "";
 	temp += (char)a;
-	buggy.navigate(temp);
+	NavigateLoop = 1;
 	sendAcknowledge((Comms::FunctionCodes)a);
 }
 
