@@ -218,10 +218,10 @@ bool navigation::driftingWhenForward() {
 		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
 			//pattern of arena not flipped yet
 			if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
-				drive(nC::Direction::Forward,nC::Drift::leftDrift);
+				drive(nC::Direction::Forward,nC::Drift::rightDrift);
 			}
 			else {
-				drive(nC::Direction::Forward, nC::Drift::rightDrift);
+				drive(nC::Direction::Forward, nC::Drift::leftDrift);
 
 			}
 
