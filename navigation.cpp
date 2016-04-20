@@ -71,21 +71,7 @@ void navigation::navigate(String str) {
 			Serial.println(tim2 - tim, DEC);
 
 			*/
-		}
-		else if (str = "1") {
-			step(nC::Direction::Forward, 5);
-		}
-		else if (str = "2") {
-			step(nC::Direction::Forward, 10);
-		}
-		else if (str = "3") {
-			step(nC::Direction::Forward, 20);
-		}
-		else if (str = "4") {
-			step(nC::Direction::Forward, 100);
-		} else if (str = "5") {
-			step(nC::Direction::Backwards, 135);
-			} else if (str == "B") {
+		} else if (str == "B") {
 				start();
 				moveBackward();
 			} else if (str == "R") {
