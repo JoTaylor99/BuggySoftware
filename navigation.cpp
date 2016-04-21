@@ -84,27 +84,39 @@ void navigation::navigate(String str) {
 				turnLeft();
 			}
 			else if (str == "G") {
-				boxApproach();
-				//pass recieved boxnumber and recieved box inversion information
+				//boxApproach();
+				////pass recieved boxnumber and recieved box inversion information
+				//box boxs;
+				//dockFailureCounter = 0;
+				//if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
+				//{
+				//	return;
+				//}
+				//if (!boxs.docked()) {
+				//	dockFailureCounter++;
+				//	if (dockFailureCounter == 2) {
+				//			//DC write variables here
+				//			//Will send this ^
+				//			boxBeGone();
+				//			return;
+				//		}
+				//}
+				//else {
+				//	boxs.interrogateBox();
+				//}
+				//boxBeGone();
 				box boxs;
-				dockFailureCounter = 0;
-				if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
-				{
-					return;
-				}
-				if (!boxs.docked()) {
-					dockFailureCounter++;
-					if (dockFailureCounter == 2) {
-							//DC write variables here
-							//Will send this ^
-							boxBeGone();
-							return;
-						}
+				if ((boxs.begin(4, 0)) == true) {
+					if (boxs.docked() == true) {
+						NAV_PRINTLN("Docked correctly");
+					}
+					else {
+						NAV_PRINTLN("Improperly Docked");
+					}
 				}
 				else {
-					boxs.interrogateBox();
+					NAV_PRINTLN("Init failure");
 				}
-				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
