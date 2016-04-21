@@ -605,7 +605,7 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 		}
 	}
 	*/
-	else //only stage left for resistance value is box 3 stage 2
+	else if (_boxNumber ==3) //only stage left for resistance value is box 3 stage 2
 	{
 			//calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue)); //check presentationdata.r1 maps to box 3 RA
 		calculatedResistance = rawValue*presentationData.r1;
