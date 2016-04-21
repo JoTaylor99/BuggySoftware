@@ -402,15 +402,20 @@ bool navigation::driftingWhenBackward() {
 void navigation::adjustOnTheSpot(){
 	// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
 	if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		NAV_PRINTLN("HL");
+		NAV_PRINTLN("HR");
 		if (RVAL(sC::ML)!= RVAL(sC::MR)){
+			NAV_PRINTLN("MW(B)");
 			drive(nC::Direction::Forward);
 		}
 		else{
 			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
+				NAV_PRINTLN("MW(L)");
 			//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
 				drive(nC::Direction::LeftForwardOnly);
 			}
 			else {
+				NAV_PRINTLN("MW(R)");
 				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
 				drive(nC::Direction::RightForwardOnly);
 			}
@@ -427,6 +432,7 @@ void navigation::adjustOnTheSpot(){
 	}
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
+		NAV_PRINTLN("FC, BW");
 		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
 			drive(nC::Direction::LeftForwardOnly);
@@ -438,6 +444,7 @@ void navigation::adjustOnTheSpot(){
 	}
 	//Case 3.1 (LTL==LTR) && (BR !=BL)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
+		NAV_PRINTLN("FW, BC");
 		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
 			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
 			drive(nC::Direction::RightBackwardsOnly);
@@ -690,6 +697,7 @@ void navigation::moveForward() {
 			 drive(nC::Direction::Stop);
 			 delay(14);
 			 if (compareAllToLast()) {
+				 NAV_PRINTLN("DONE");
 				 break;
 			 }
 		}
