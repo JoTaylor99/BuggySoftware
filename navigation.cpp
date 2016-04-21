@@ -407,9 +407,18 @@ bool navigation::driftingWhenBackward() {
 /// </summary>
 void navigation::adjustOnTheSpot(){
 	// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
-	if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+	if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FR))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
+		//case for moving horizontally left
 		NAV_PRINTLN("HL");
+		moveHorizontally(nC::Direction::Left, 40);
+	}
+	else if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FL))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
+		//case for moving horizontally right
 		NAV_PRINTLN("HR");
+		moveHorizontally(nC::Direction::Right, 40);
+	}
+	else if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+		
 		if (RVAL(sC::ML)!= RVAL(sC::MR)){
 			NAV_PRINTLN("MW(B)");
 			drive(nC::Direction::Forward);
