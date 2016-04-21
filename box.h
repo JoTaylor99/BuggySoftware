@@ -55,6 +55,10 @@ public:
 
 	bool begin(uint8_t boxNumber, bool boxInverted);
 
+	//Functions to select random resistor and capacitor values based on the box number
+	double ResistorValue(uint8_t BoxNumber);
+	double CapacitorValue(uint8_t BoxNumber);
+
 private:
 		Adafruit_MCP23017 boxGPIO;
 
@@ -98,6 +102,7 @@ private:
 		/// <param name="OCap"></param>
 		/// <returns></returns>
 		double toPreferredCapacitor(double OCap);
+
 
 		double calculateFrequency();
 

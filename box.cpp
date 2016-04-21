@@ -263,6 +263,61 @@ double box::toPreferredCapacitor(double OCap) {
 	return FinalCap;
 }
 
+double box::ResistorValue(uint8_t BoxNumber) {
+	//uint8_t BoxResistors[33];
+	byte IMAX = 53;
+	byte i = 0; //To define index of array.
+	if (BoxNumber < 5)
+	{ //Boxes 2-4
+		i = 17; //Index of 100.
+		IMAX = 49; // Index of 2000.
+	}
+	else if (BoxNumber < 7)
+	{ // Boxes 5 & 6
+		i = 44; //Index of 1300.
+		IMAX = 53; //Index of 3000.
+	}
+	else { //Box 7.
+		i = 0; //Index of 20
+		IMAX = 13; // Index of 68 (closest value to 70)
+	}
+	randomSeed(micros());
+	uint8_t TempRand = random(i,IMAX+1);
+	double Resistor = PResistors[TempRand];
+	//presentationData.r1 = Resistor;
+	/*
+	if (BoxNumber == 2 | BoxNumber == 3 | BoxNumber == 4) {
+		TempRand = random(i, IMAX + 1);
+		Resistor = PResistors[TempRand];
+		presentationData.r2 = Resistor;
+	}
+	*/
+	return Resistor;
+}
+
+double box::CapacitorValue(uint8_t BoxNumber)
+{
+	double FinalCap = 0;
+	byte IMAX = 16;
+	byte i = 0; //To define index of array.
+	if (BoxNumber < 7)
+	{ //Boxes 5-6
+		i = 0; //Index of 4.7 (closest to 4).
+		IMAX = 6; // Index of 15 (closest under 17).
+	}
+	else { //Box 7.
+		i = 12; //Index of 47 (closest to 40)
+		IMAX = 16; // Index of 100 (closest value to 110)
+	}
+	//Random number generation:
+	randomSeed(micros());
+	uint8_t TempRand = random(i, IMAX+1);
+	double Capacitor = PCapacitors[TempRand];
+	//presentationData.c1 = Capacitor;
+	return Capacitor;
+}
+
+
 void box::setBoostConverter(bC::inputStatus state) {
 	if (state = bC::ON) {
 		_boostConverterOn = true;
