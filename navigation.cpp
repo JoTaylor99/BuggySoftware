@@ -85,14 +85,23 @@ void navigation::navigate(String str) {
 				boxApproach();
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
+				double c1, r1, r2;
 				dockFailureCounter = 0;
 				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
 					dockFailureCounter++;
 					if (dockFailureCounter == 2) {
-							//DC write variables here
-							//Will send this ^
-							boxBeGone();
+						
+						if (passedBoxNumber > 1) {
+							r1 = box::ResistorValue(passedBoxNumber);
+							if (passedBoxNumber > 4) {
+								c1 = box::CapacitorValue(passedBoxNumber);
+							}
+							else {
+								r2 = box::ResistorValue(passedBoxNumber);
+							}
+						}
+							//boxBeGone();
 							return;
 						}
 				}
