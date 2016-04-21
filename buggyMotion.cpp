@@ -37,7 +37,9 @@ void buggyMotion::initMotion() {
 
 void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 {
-	
+	if (direction == nC::Direction::LeftBackwardsOnly || direction == nC::Direction::LeftForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::RightForwardOnly) {
+		_firstCall = true;
+	}
 	if (direction == nC::Stop) {
 		stop();
 		return;
