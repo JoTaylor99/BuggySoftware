@@ -32,19 +32,20 @@ void buggyTop::go() {
 	if (NavigateLoop == 1) {
 		//Serial.println(str);
 		NavigateLoop = 0;
-		return;
+		//return;
 		int length = str.length();
 		for (int i = 0; i < length ; i++) {
 			//Serial.println(str[i]);
 			if (str[i] != '\0') {
 				if (str[i] == 'T') {
 					//Serial.println("Got into box case");
-					sendMovementComplete();
+					
 					
 					uint8_t BoxNum = str[i + 1] - '0';
 					uint8_t Polarity = str[i + 2] - '0';
 					buggy.navigate("G");
 					i += 2;
+					sendMovementComplete();
 				}
 				else {
 					buggy.navigate(String(str[i]));
