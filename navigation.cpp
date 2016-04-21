@@ -291,13 +291,13 @@ bool navigation::driftingWhenBackward() {
 		}
 		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
 			//drive BACKWARDS LEFT( NOT  JUST LEFT)
-			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
 
 			return true;
 		}
 		else {
 			//drive backwards right 
-			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
 
 			return true;
 		}
@@ -311,13 +311,13 @@ bool navigation::driftingWhenBackward() {
 		}
 		else if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//Drive Backwards Left
-			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
 
 			return true;
 		}
 		else {
 			//drive backwards right 
-			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
 
 			return true;
 		}
