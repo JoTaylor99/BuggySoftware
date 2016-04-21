@@ -85,7 +85,7 @@ void navigation::navigate(String str) {
 				boxApproach();
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				double c1, r1, r2, f;
+				double c1, r1, r2, f, v1;
 				dockFailureCounter = 0;
 				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
@@ -101,6 +101,9 @@ void navigation::navigate(String str) {
 							else {
 								r2 = boxs.ResistorValue(passedBoxNumber);
 							}
+						}
+						else {
+							v1 = 6.7;
 						}
 							//boxBeGone();
 							return;
