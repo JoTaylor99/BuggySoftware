@@ -475,22 +475,16 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 			calculatedResistance = (((VREF * 1000) / rawValue) - 1000);
 		}
 		else if (_boxNumber == 5) {
-			//DC EDIT R1 is known find R2
-			/*
+			//R1 is known find R2
 			calculatedResistance = (rawValue*RK)/(VREF-rawValue);
-			*/
 		}
 		else if (_boxNumber == 6) {
-			//DC edit R2 is known find R1
-			/*
-			calculatedResistance = (RK*(VREF-rawValue))/VREF
-			*/
+			//R2 is known find R1
+			calculatedResistance = (RK*(VREF - rawValue)) / VREF;
 		}
 		else if (_boxNumber == 7) {
-			//DC EDIT R1 is known find R2
-			/*
-			calculatedResistance = (rawValue*RK7pin)/(VREF-rawValue);
-			*/
+			//R1 is known find R2
+			calculatedResistance = (rawValue*Rk7)/(VREF-rawValue);
 		}
 	}
 	//DC edit
