@@ -338,6 +338,23 @@ void buggyMotion::pciSetup(uint8_t pin)
 	*digitalPinToPCMSK(pin) |= bit(digitalPinToPCMSKbit(pin));  // enable pin
 	PCIFR |= bit(digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
 	PCICR |= bit(digitalPinToPCICRbit(pin)); // enable interrupt for the group
+}
+
 void buggyMotion::moveHorizontally(nC::Direction direction, uint8_t distance) {
+	if (direction == nC::Left) {
+		//step(nC::Direction::Right, 20);
+		//step(nC::Direction::Backwards, 25);
+		//step(nC::Direction::Left, 20);
+		//step(nC::Direction::Forward, 15);
+		step(nC::Direction::RightForwardOnly, distance);
+		step(nC::Direction::LeftForwardOnly, distance);
+		step(nC::Direction::RightBackwardsOnly, distance);
+		step(nC::Direction::LeftBackwardsOnly, distance);
+	}
+	else if (direction == nC::Right) {
+		step(nC::Direction::LeftForwardOnly, distance);
+		step(nC::Direction::RightForwardOnly, distance);
+		step(nC::Direction::LeftBackwardsOnly, distance);
+		step(nC::Direction::RightBackwardsOnly, distance);
 	}
 }
