@@ -25,28 +25,38 @@ void buggyTop::go() {
 	/* Code here is needed either here or in a not yet written communications class to separate an incomming command string from controlling PC into useful variables
 	*  For the time being this is being done in the navigate function in the navigation class.
 	*/
-	delay(300);
+	
 
 
 
 	if (NavigateLoop == 1) {
+		//Serial.println(str);
+		NavigateLoop = 0;
+		return;
 		int length = str.length();
 		for (int i = 0; i < length ; i++) {
+			//Serial.println(str[i]);
 			if (str[i] != '\0') {
 				if (str[i] == 'T') {
+					//Serial.println("Got into box case");
+					sendMovementComplete();
+					
 					uint8_t BoxNum = str[i + 1] - '0';
-					uint8_t Polarity = str[i + 2] = '0';
-					buggy.navigate(F("G"));
+					uint8_t Polarity = str[i + 2] - '0';
+					buggy.navigate("G");
 					i += 2;
 				}
 				else {
 					buggy.navigate(String(str[i]));
+					if (str != "R" && str != "L") {
+						sendMovementComplete();
+					}
 				}
 
 
 
+
 				
-				sendMovementComplete();
 			}
 			//Serial.println(str);
 		}
@@ -57,31 +67,12 @@ void buggyTop::go() {
 
 
 
-	//if (Serial.available() > 0) { // If a command has been sent
-	//	str = Serial.readString();
-	//	buggy.navigate(str);
-	//}
 
-	/*Code for testing box analysis, actual structure requires team b and c discussion*/
-
-		//box assessBox;
-		//bool boxDirection = false;
-		//byte boxNumber = 0;
-
-		//Serial.println("Which box are you approaching (Enter box number):");
-		//if (Serial.available() > 0) {
-		//	boxNumber = Serial.read();
-		//}
-		//Serial.println("Are you approaching from the knob side? (1 = Yes, 2 = No):");
-		//if (Serial.available() > 0) {
-		//	boxDirection = Serial.read();
-		//}
-
-		//boxValues::returnData info = assessBox.interrogateBox(boxNumber, boxDirection);
 };
 
 void buggyTop::Check()
 {
+	//Serial.println("Check");
 	int result = readData(&receiveCmd, sizeof(receiveCmd));
 	if (result > 0) {
 		parseData(&receiveCmd);
@@ -93,6 +84,7 @@ void buggyTop::Check()
 
 void buggyTop::parseData(struct Frame *theData) {
 	Frame sendCmd;
+	//Serial.println(theData->cmd);
 	switch (theData->cmd) {
 	case Comms::FunctionCodes::ConnectionRequest:
 		sendCmd.cmd = Comms::ConnectionAccept;
@@ -114,20 +106,20 @@ void buggyTop::parseData(struct Frame *theData) {
 		}
 		break;
 	case Comms::FunctionCodes::RouteRst:
+		//Serial.println(str);
 		str = "";
 		sendAcknowledge(Comms::FunctionCodes::RouteRst);
 		break;
 	case Comms::FunctionCodes::Go:
 		if (CurrentPhase == Comms::Phase::Operational) {
-			//sendAcknowledge(Comms::FunctionCodes::Go);
+			sendAcknowledge(Comms::FunctionCodes::Go);
 			NavigateLoop = 1;
 		}
 		break;
 	case Comms::FunctionCodes::EmergencyStop:
-		digitalWrite(13, LOW);
+		//digitalWrite(13, LOW);
 
-		//Reset_AVR();
-		return;
+		RESET_AVR2();
 		//Hello Darkness My Old Friend
 		break;
 	case Comms::FunctionCodes::Acknowledge:
@@ -146,19 +138,18 @@ void buggyTop::parseData(struct Frame *theData) {
 }
 
 void buggyTop::AppendRoute(struct Frame *theData) {
-	char a;
-	if (theData->data != 0xFF) {
-		//Serial.println((char)theData->data);
+	if (theData->data != 0x00) {
+		
 		str += (char)theData->data;
 	}
-	if (theData->data >> 8 != 0xFF) {
-		str += (char)theData->data;
+	if (theData->data >> 8 != 0x00) {
+		str += (char)(theData->data >> 8);
 	}
-	if (theData->data >> 16 != 0xFF) {
-		str += (char)theData->data;
+	if (theData->data >> 16 != 0x00) {
+		str += (char)(theData->data >> 16);
 	}
-	if (theData->data >> 24 != 0xFF) {
-		str += (char)theData->data;
+	if (theData->data >> 24 != 0x00) {
+		str += (char)(theData->data >> 24);
 	}
 	NavigateLoop = 0;
 }
@@ -182,10 +173,10 @@ void buggyTop::sendError(Comms::ErrorCodes err)
 
 void buggyTop::sendAcknowledge(Comms::FunctionCodes cmd)
 {
-	//Frame sendCmd;
-	//sendCmd.cmd = Comms::FunctionCodes::Acknowledge;
-	//sendCmd.data = (uint32_t)cmd;
-	//sendData((void*)&sendCmd, sizeof(sendCmd));
+	Frame sendCmd;
+	sendCmd.cmd = Comms::FunctionCodes::Acknowledge;
+	sendCmd.data = (uint32_t)cmd;
+	sendData((void*)&sendCmd, sizeof(sendCmd));
 }
 
 void buggyTop::sendBoxValue(Comms::FunctionCodes cmd, double val) {

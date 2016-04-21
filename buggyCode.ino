@@ -41,11 +41,16 @@ void loop() {
 
 
 void serialEvent() {
-
-	buggy1.Check();
-	while (Serial.available() > 0)
-	{
-		Serial.read();
+	//delay(10);
+	while (Serial.available() > 0) {
+		while (Serial.available() < 8) {
+			//Wait to receive a full frame
+		}
+		buggy1.Check();
+		for (int i = 0; i < 8; i++)
+		{
+			Serial.read();
+		}
 	}
 
 }
