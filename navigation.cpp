@@ -93,13 +93,13 @@ void navigation::navigate(String str) {
 					if (dockFailureCounter == 2) {
 						
 						if (passedBoxNumber > 1) {
-							r1 = box::ResistorValue(passedBoxNumber);
+							r1 = boxs.ResistorValue(passedBoxNumber);
 							if (passedBoxNumber > 4) {
-								c1 = box::CapacitorValue(passedBoxNumber);
-								f = box::calculateFrequency(passedBoxNumber)
+								c1 = boxs.CapacitorValue(passedBoxNumber);
+								f = boxs.calculateFrequency(passedBoxNumber);
 							}
 							else {
-								r2 = box::ResistorValue(passedBoxNumber);
+								r2 = boxs.ResistorValue(passedBoxNumber);
 							}
 						}
 							//boxBeGone();
