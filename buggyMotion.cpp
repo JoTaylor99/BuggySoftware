@@ -202,7 +202,7 @@ void buggyMotion::setLeftSpeed(int32_t freq)
 }
 void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 {
-	if (_driftCount > 2) {
+	if (_driftCount > 3) {
 		switch (direction)
 		{
 		case nC::Forward:
