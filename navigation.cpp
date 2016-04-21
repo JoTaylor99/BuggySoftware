@@ -134,7 +134,7 @@ void navigation::navigate(String str) {
 				Sensor::PollSensors(Sensors);
 				step(nC::Direction::Right, 80);
 				Sensor::PollSensors(Sensors);
-				step(nC::Direction::Left, 45);
+				step(nC::Direction::Left, 42);
 				Sensor::PollSensors(Sensors);
 				Sensor::printCurrent();
 
