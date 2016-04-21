@@ -199,13 +199,6 @@ bool box::interrogateBox() {
 
 //Function to pick the prefered resistor from a given resistor value range.
 short box::toPreferredResistor(double OResistor) {
-	const short PResistors[] = { 20, 22, 24, 27, 30, 33, 36, 39, 43, 47, 51, //10
-		56, 62, 68, 75, 82, 91, //16
-		100, 110, 120, 130, 150, 160, 180, //23
-		200, 220, 240, 270, 300, 330, 360, 390, 430, 470, //33
-		510, 560, 620, 680, 750, 820, 910, //40
-		1000, 1100, 1200, 1300, 1400, 1500, 1600, 1800, //48
-		2000, 2200, 2400, 2700, 3000 }; //53
 	short FinalResistor = 0;
 	byte IMAX = 53;
 	byte i = 0; //To define index of array.
@@ -240,8 +233,6 @@ short box::toPreferredResistor(double OResistor) {
 };
 
 double box::toPreferredCapacitor(double OCap) {
-	const double PCapacitors[] = { 4.7, 5.6, 6.8, 8.2, 10, 12, 15, 18, //7
-		22, 27, 33, 39, 47, 56, 68, 82, 100 }; //16
 	double FinalCap = 0;
 	byte IMAX = 16;
 	byte i = 0; //To define index of array.
