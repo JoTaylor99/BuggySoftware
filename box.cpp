@@ -1,5 +1,6 @@
 #include "box.h"
 
+
 box::box() {
 
 }
@@ -410,11 +411,19 @@ short box::getRawReading(uint8_t pin) {
 
 double box::calculateResistorValue(double rawValue, bool stage) {
 	double calculatedResistance = 0;
-	if (_boxNumber == 2) {
+	if (_boxNumber == 2) { //stage 1 done with 5v P1 and stage 2 with 5V at p2 both with RK at ground so same formula can be used
 		calculatedResistance = (RK * ((VREF / rawValue) - 1));
+		//DC EDIT
+		/* Both cases R2 is known
+		calculatedResistance = (RK*(VREF-rawValue))/VREF); same formula
+		*/
 	}
-	else if (_boxNumber == 4) {
+	else if (_boxNumber == 4) { //same formula for both as R2 is known
 		calculatedResistance = (((VREF * 1200) / rawValue) - 1200);
+		//DC EDIT
+		/*
+		calculatedResistance = (1200*(VREF-rawValue))/VREF);
+		*/
 	}
 	
 	if (stage == 0) {
@@ -422,17 +431,34 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 			calculatedResistance = (((VREF * 1000) / rawValue) - 1000);
 		}
 		else if (_boxNumber == 5) {
-
+			//DC EDIT R1 is known find R2
+			/*
+			calculatedResistance = (rawValue*RK)/(VREF-rawValue);
+			*/
 		}
 		else if (_boxNumber == 6) {
-
+			//DC edit R2 is known find R1
+			/*
+			calculatedResistance = (RK*(VREF-rawValue))/VREF
+			*/
 		}
 		else if (_boxNumber == 7) {
-
+			//DC EDIT R1 is known find R2
+			/*
+			calculatedResistance = (rawValue*RK7pin)/(VREF-rawValue);
+			*/
 		}
 	}
-	else {
-			calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue));
+	//DC edit
+	/*else if (stage == 1) {
+		if (_boxNumber == 3) {
+			calculatedResistance = (((rawValue * box3stage 1 answer) / (VREF - rawValue)));
+		}
+	}
+	*/
+	else //only stage left for resistance value is box 3 stage 2
+	{
+			calculatedResistance = ((rawValue * presentationData.r1)/(VREF - rawValue)); //check presentationdata.r1 maps to box 3 RA
 	}
 }
 
