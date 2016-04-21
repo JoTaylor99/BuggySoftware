@@ -133,19 +133,11 @@
 #define ECHO A1
 #define MAXDISTANCE 100
 
-#define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
 #define MAX_DEFAULT 1000
 #define MIN_DEFAULT 800
 
-
-#define MAX_SPEED 100
-#define MIN_SPEED 65
-#define TURNING_SPEED 60
-#define CORRECTION_MAG 5
-
-//Nav::navigation defines
-#define COUNTER_LEN 2
+//Nav::navigation defines 
 #define LEFTMOTORDIR 6
 #define RIGHTMOTORDIR 7
 #define LEFTMOTOR 9
