@@ -40,6 +40,8 @@ void navigation::initNavigation() {
 }
 	DEBUG_PRINTLN("Buggy correctly placed to start");
 	DEBUG_PRINTLN("Setup Complete!");
+	passedBoxNumber = 4;
+	passedBoxInversion = false;
 
 };
 
