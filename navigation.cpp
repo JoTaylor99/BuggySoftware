@@ -435,16 +435,17 @@ void navigation::adjustOnTheSpot(){
 				drive(nC::Direction::RightForwardOnly);
 			}
 		}
-	}	
-	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
-	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
-		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-			drive(nC::Direction::Left);
-		}
-		else {
-			drive(nC::Direction::Right);
-		}
 	}
+
+	//// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
+	//else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
+	//	if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
+	//		drive(nC::Direction::Left);
+	//	}
+	//	else {
+	//		drive(nC::Direction::Right);
+	//	}
+	//}
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
 		NAV_PRINTLN("FC, BW");
