@@ -188,7 +188,7 @@
 
 //Pullup resistance on P2PIN will vary depending on board.
 //Calibrate this with known capacitor.
-#define RPULLUP 36.486  //in ohms
+#define RPULLUP 36.502  //in k ohms
 
 //change to bC
 namespace bC {
