@@ -38,5 +38,9 @@ void loop() {
 void serialEvent() {
 
 	buggy1.Check();
+	while (Serial.available() > 0)
+	{
+		Serial.read();
+	}
 
 }

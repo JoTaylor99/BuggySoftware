@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
-#define Reset_AVR() wdt_enable(WDTO_30MS); while(1) {}
+#define Reset_AVR() wdt_enable(WDTO_15MS); while(1) {}
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 #define DEBUG
@@ -14,7 +14,7 @@
 //#define BOX_DEBUG
 
 //#define SEN_INFO
-#define NAV_INFO
+//#define NAV_INFO
 //#define MOT_INFO
 //#define BOX_INFO
 
@@ -39,7 +39,7 @@
 #define COMPILE_TIME
 #endif
 
-#define DISPLAYERRORS
+//#define DISPLAYERRORS
 
 #ifdef DISPLAYERRORS
 #define ERROR_PRINTLN(x)  Serial.println (F(x))

@@ -17,12 +17,15 @@ void buggyTop::init() {
 	str = "";
 	CurrentPhase = Comms::Phase::Idle;
 	NavigateLoop = 0;
+	pinMode(13, OUTPUT);
+	digitalWrite(13, HIGH);
 };
 
 void buggyTop::go() {
 	/* Code here is needed either here or in a not yet written communications class to separate an incomming command string from controlling PC into useful variables
 	*  For the time being this is being done in the navigate function in the navigation class.
 	*/
+	delay(300);
 
 
 
@@ -116,12 +119,15 @@ void buggyTop::parseData(struct Frame *theData) {
 		break;
 	case Comms::FunctionCodes::Go:
 		if (CurrentPhase == Comms::Phase::Operational) {
-			sendAcknowledge(Comms::FunctionCodes::Go);
+			//sendAcknowledge(Comms::FunctionCodes::Go);
 			NavigateLoop = 1;
 		}
 		break;
 	case Comms::FunctionCodes::EmergencyStop:
-		Reset_AVR();
+		digitalWrite(13, LOW);
+
+		//Reset_AVR();
+		return;
 		//Hello Darkness My Old Friend
 		break;
 	case Comms::FunctionCodes::Acknowledge:
@@ -135,10 +141,7 @@ void buggyTop::parseData(struct Frame *theData) {
 	default:
 		sendError(Comms::ErrorCodes::UnknownCmd);
 	}
-	while (Serial.available() > 0)
-	{
-		Serial.read();
-	}
+
 	//Serial.println("Switch case complete");
 }
 
@@ -179,10 +182,10 @@ void buggyTop::sendError(Comms::ErrorCodes err)
 
 void buggyTop::sendAcknowledge(Comms::FunctionCodes cmd)
 {
-	Frame sendCmd;
-	sendCmd.cmd = Comms::FunctionCodes::Acknowledge;
-	sendCmd.data = (uint32_t)cmd;
-	sendData((void*)&sendCmd, sizeof(sendCmd));
+	//Frame sendCmd;
+	//sendCmd.cmd = Comms::FunctionCodes::Acknowledge;
+	//sendCmd.data = (uint32_t)cmd;
+	//sendData((void*)&sendCmd, sizeof(sendCmd));
 }
 
 void buggyTop::sendBoxValue(Comms::FunctionCodes cmd, double val) {
