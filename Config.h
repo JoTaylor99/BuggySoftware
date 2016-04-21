@@ -173,13 +173,14 @@
 #define ADCMAX			1023
 
 #define RK	560
-#define Rk7pin 99.8
+#define Rk7 99.8
+//#define Rk7pin 99.8
 
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
 #define GNDPIN	17 //Pin A3
 #define RKPIN	14 //Pin A0
-#define RK7pin	13 //digital pin 13
+#define RK7pin	12 //digital pin 12
 
 //on expander
 #define P1P2RELAYPIN	0
