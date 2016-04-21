@@ -126,8 +126,19 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 	if (_firstCall) {
 		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
 		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
-		pwmWrite(LEFTMOTOR, 128);
-		pwmWrite(RIGHTMOTOR, 128);
+		if (_leftSpeed == 0) {
+			pwmWrite(LEFTMOTOR, 0);
+		}
+		else {
+			pwmWrite(LEFTMOTOR, 128);
+		}
+
+		if (_rightSpeed == 0) {
+			pwmWrite(RIGHTMOTOR, 0);
+		}
+		else {
+			pwmWrite(RIGHTMOTOR, 128);
+		}
 		_firstCall = false;
 	}
 	
