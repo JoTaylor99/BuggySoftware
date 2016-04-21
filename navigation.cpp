@@ -516,11 +516,13 @@ void navigation::adjustOnTheSpot(){
 /// }
 /// </summary>
 void navigation::turnLeft() {
+	Sensor::PollSensors(Sensors);
+	Sensor::printCurrent();
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (((RVAL(sC::LTL))!= (STARTVAL(sC::LTL))) && ((RVAL(sC::BL)) != (STARTVAL(sC::BL)))) {
+		if (((RVAL(sC::LTL))!= (STARTVAL(sC::LTL))) && ((RVAL(sC::BR)) != (STARTVAL(sC::BR)))) {
 			drive(nC::Direction::Stop);
-			step(nC::Direction::Forward, 5);
+			//step(nC::Direction::Forward, 8);
 			break;
 		}
 		else {
@@ -570,11 +572,13 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
+	Sensor::PollSensors(Sensors);
+	Sensor::printCurrent();
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (((RVAL(sC::LTR)) != (STARTVAL(sC::LTR))) && ((RVAL(sC::BR)) != (STARTVAL(sC::BR)))) {
+		if (((RVAL(sC::LTR)) != (STARTVAL(sC::LTR))) && ((RVAL(sC::BL)) != (STARTVAL(sC::BL)))) {
 			drive(nC::Direction::Stop);
-			step(nC::Direction::Forward, 5);
+			//step(nC::Direction::Forward, 8);
 			break;
 		}
 		else {
