@@ -428,7 +428,6 @@ void box::configureForAnalysis(bool state) {
 	else {}
 
 	if (P1pin[state] == bC::input_adc) {
-		_adcPin = P1PIN;
 		pinMode(P1PIN, INPUT);
 	}
 	else if (P1pin[state] == bC::input) {
@@ -440,7 +439,6 @@ void box::configureForAnalysis(bool state) {
 	else {}
 
 	if (P2pin[state] == bC::input_adc) {
-		_adcPin = P2PIN;
 		pinMode(P2PIN, INPUT);
 	}
 	else if (P2pin[state] == bC::input) {
@@ -450,34 +448,62 @@ void box::configureForAnalysis(bool state) {
 		pinMode(P2PIN, OUTPUT);
 	}
 	else {}
-	if (_boxNumber == 7) {
-		_adcPin = RK7pin;
-	}
 
 }
 
 void box::toggleOutputs(bC::inputStatus state, bool stage) {
 	if (state == bC::ON) {
-		if (Rkpin[stage] == bC::low) { digitalWrite(RKPIN, LOW); }
-		else if (Rkpin[stage] == bC::high) { digitalWrite(RKPIN, HIGH); }
-		if (GNDpin[stage] == bC::low) { digitalWrite(GNDPIN, LOW); }
-		else if (GNDpin[stage] == bC::high) { digitalWrite(GNDPIN, HIGH); }
-		if (P1pin[stage] == bC::low) { digitalWrite(P1PIN, LOW); }
-		else if (P1pin[stage] == bC::high) { digitalWrite(P1PIN, HIGH); }
-		if (P2pin[stage] == bC::low) { digitalWrite(P2PIN, LOW); }
-		else if (P2pin[stage] == bC::high) { digitalWrite(P2PIN, HIGH); }
+		if (Rkpin[stage] == bC::low) {
+			pinMode(RKPIN, OUTPUT);
+			digitalWrite(RKPIN, LOW);
+		}
+		else if (Rkpin[stage] == bC::high) {
+			pinMode(RKPIN, OUTPUT);
+			digitalWrite(RKPIN, HIGH);
+		}
+		if (GNDpin[stage] == bC::low) {
+			pinMode(GNDPIN, OUTPUT);
+			digitalWrite(GNDPIN, LOW);
+		}
+		else if (GNDpin[stage] == bC::high) {
+			pinMode(GNDPIN, OUTPUT);
+			digitalWrite(GNDPIN, HIGH);
+		}
+		//pinMode(P1PIN, OUTPUT);
+		if (P1pin[stage] == bC::low) {
+			pinMode(P1PIN, OUTPUT);
+			digitalWrite(P1PIN, LOW);
+		}
+		else if (P1pin[stage] == bC::high) {
+			pinMode(P1PIN, OUTPUT);
+			digitalWrite(P1PIN, HIGH);
+		}
+
+		//delay(100000);
+		if (P2pin[stage] == bC::low) {
+			pinMode(P2PIN, OUTPUT);
+			digitalWrite(P2PIN, LOW);
+		}
+		else if (P2pin[stage] == bC::high) {
+			pinMode(P2PIN, OUTPUT);
+			digitalWrite(P2PIN, HIGH);
+		}
 	}
 	else if (state == bC::OFF) {
 		if ((Rkpin[stage] == bC::high) || (Rkpin[stage] == bC::low)) {
+			digitalWrite(RKPIN, OUTPUT);
 			digitalWrite(RKPIN, LOW);
 		}
 		if ((GNDpin[stage] == bC::high) || (GNDpin[stage] == bC::low)) {
+			digitalWrite(GNDPIN, OUTPUT);
 			digitalWrite(GNDPIN, LOW);
 		}
 		if ((P1pin[stage] == bC::high) || (P1pin[stage] == bC::low)) {
+			digitalWrite(P1PIN, OUTPUT);
 			digitalWrite(P1PIN, LOW);
 		}
 		if ((P2pin[stage] == bC::high) || (P2pin[stage] == bC::low)) {
+			digitalWrite(P2PIN, OUTPUT);
 			digitalWrite(P2PIN, LOW);
 		}
 	}
