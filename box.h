@@ -72,8 +72,18 @@ private:
 
 		boxValues::returnData presentationData = { 0 };
 
+		/// <summary>
+		/// Function to pick the prefered resistor from a given resistor value range based on the box number.
+		/// </summary>
+		/// <param name="OResistor"></param>
+		/// <returns></returns>
 		short toPreferredResistor(double OResistor);
 
+		/// <summary>
+		/// Function to pick the prefered Capacitor from a given capacitor value range based on the box number.
+		/// </summary>
+		/// <param name="OCap"></param>
+		/// <returns></returns>
 		double toPreferredCapacitor(double OCap);
 
 		double calculateFrequency();
