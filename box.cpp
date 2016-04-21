@@ -373,7 +373,35 @@ bool box::docked() {
 }
 
 void box::configureForAnalysis(bool state) {
-	_adcPin = P2PIN;
+	//_adcPin = P2PIN;
+	if (_boxNumber == 1 || _boxNumber==2 ) {
+		_adcPin = P2PIN;
+	}
+	else if (_boxNumber == 3) {
+		if (state == 0) {
+			_adcPin = P1PIN;
+		}
+		else {
+			_adcPin = P2PIN;
+		}
+	}
+	else if (_boxNumber == 4) {
+		if (state == 0) {
+			_adcPin = P2PIN;
+		}
+		else {
+			_adcPin = P1PIN;
+		}
+	}
+	else{ //5, 6 & 7
+		if (state == 0) {
+			_adcPin = P2PIN;
+		}
+		else {
+			_adcPin = P2PIN; //Not sure..
+		}
+	}
+
 
 	if (Rkpin[state] == bC::input_adc) {
 		ERROR_PRINTLN("Rkpin not used for readings, setup as high impedance, ADC pin left as default (P2)");
