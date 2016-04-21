@@ -116,8 +116,16 @@ void navigation::navigate(String str) {
 				Sensor::PollSensors(Sensors);
 				Sensor::printCurrent();
 			}
-			else if (str = "K") {
-				step(nC::Direction::Forward, 20);
+			else if (str == "K") {
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Left, 40);
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Right, 80);
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Left, 45);
+				Sensor::PollSensors(Sensors);
+				Sensor::printCurrent();
+
 			}
 			else {
 				drive(nC::Direction::Stop);
