@@ -162,7 +162,7 @@
 //Setting to toggle blocking mode for stepwise operations
 #define STEPWISE_BLOCKING
 
-#define HARDCODEDSTARTVALUES
+//#define HARDCODEDSTARTVALUES
 //Box Defines
 
 
@@ -204,8 +204,6 @@ namespace bC {
 		low,
 		nop
 	};
-
-
 }
 
 //change to sC
