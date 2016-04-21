@@ -102,8 +102,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::input;
 		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::input;
-		Rk7pin[0] = bC::input; // set to input in begin //set to box 7 set to output then set back to pin mode 
-		Rk7pin[1] = bC::high; //still call getreading but before called configure. change known resistors array to inputs
 		return true;
 	}
 	else
