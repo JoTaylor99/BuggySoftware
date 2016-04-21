@@ -139,6 +139,12 @@ void navigation::navigate(String str) {
 				Sensor::printCurrent();
 
 			}
+			else if (str == "N") {
+				moveHorizontally(nC::Direction::Left, 40);
+			}
+			else if (str == "M") {
+				moveHorizontally(nC::Direction::Right, 40);
+			}
 			else {
 				drive(nC::Direction::Stop);
 			}
