@@ -157,6 +157,7 @@ void buggyMotion::setLeftMotorDirection(nC::Direction dir)
 	if (dir == nC::Direction::Stop) {
 		MOT_PRINTLN("LStop");
 		pwmWrite(LEFTMOTOR, 0);
+		_leftSpeed = 0;
 	}
 }
 void buggyMotion::setRightMotorDirection(nC::Direction dir)
@@ -169,7 +170,8 @@ void buggyMotion::setRightMotorDirection(nC::Direction dir)
 	}
 	if (dir == nC::Direction::Stop) {
 		MOT_PRINTLN("RStop");
-		pwmWrite(LEFTMOTOR, 0);
+		pwmWrite(RIGHTMOTOR, 0);
+		_rightSpeed = 0;
 	}
 }
 void buggyMotion::setRightSpeed(int32_t freq)
