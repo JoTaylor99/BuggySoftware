@@ -57,8 +57,8 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 
 		}
 		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
-			_leftSpeed = 50;
-			_rightSpeed = 50;
+			_leftSpeed = 35;
+			_rightSpeed = 35;
 		}
 		
 		if (direction == nC::Direction::RightForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::LeftForwardOnly || nC::Direction::LeftBackwardsOnly) {
