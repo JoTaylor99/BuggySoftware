@@ -109,10 +109,10 @@ void navigation::navigate(String str) {
 				drive(nC::Direction::Stop);
 
 			}
-			else if (str = "H") {
+			else if (str == "H") {
 				Sensor::printCurrent();
 			}
-			else if (str = "Z") {
+			else if (str == "Z") {
 				Sensor::PollSensors(Sensors);
 				Sensor::printCurrent();
 			}
