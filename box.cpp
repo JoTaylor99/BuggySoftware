@@ -284,7 +284,7 @@ double box::ResistorValue(uint8_t BoxNumber) {
 	randomSeed(micros());
 	uint8_t TempRand = random(i,IMAX+1);
 	double Resistor = PResistors[TempRand];
-	//presentationData.r1 = Resistor;
+	presentationData.r1 = Resistor;
 	/*
 	if (BoxNumber == 2 | BoxNumber == 3 | BoxNumber == 4) {
 		TempRand = random(i, IMAX + 1);
@@ -313,7 +313,7 @@ double box::CapacitorValue(uint8_t BoxNumber)
 	randomSeed(micros());
 	uint8_t TempRand = random(i, IMAX+1);
 	double Capacitor = PCapacitors[TempRand];
-	//presentationData.c1 = Capacitor;
+	presentationData.c1 = Capacitor;
 	return Capacitor;
 }
 
@@ -582,6 +582,19 @@ double box::calculateFrequency() {
 		frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
 	}
 	else if (_boxNumber == 7) {
+		frequency = (1 / (2 * PI * sqrt(1e-6 * presentationData.c1)));
+	}
+	else {}
+
+	return frequency;
+}
+
+double box::calculateFrequency(uint8_t BoxNumber) {
+	double frequency = 0;
+	if ((BoxNumber == 5) || (BoxNumber == 6)) {
+		frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
+	}
+	else if (BoxNumber == 7) {
 		frequency = (1 / (2 * PI * sqrt(1e-6 * presentationData.c1)));
 	}
 	else {}

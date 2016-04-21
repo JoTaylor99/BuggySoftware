@@ -85,7 +85,7 @@ void navigation::navigate(String str) {
 				boxApproach();
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				double c1, r1, r2;
+				double c1, r1, r2, f;
 				dockFailureCounter = 0;
 				boxs.begin(passedBoxNumber, passedBoxInversion);
 				if (!boxs.docked()) {
@@ -96,6 +96,7 @@ void navigation::navigate(String str) {
 							r1 = box::ResistorValue(passedBoxNumber);
 							if (passedBoxNumber > 4) {
 								c1 = box::CapacitorValue(passedBoxNumber);
+								f = box::calculateFrequency(passedBoxNumber)
 							}
 							else {
 								r2 = box::ResistorValue(passedBoxNumber);

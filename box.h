@@ -58,6 +58,7 @@ public:
 	//Functions to select random resistor and capacitor values based on the box number
 	double ResistorValue(uint8_t BoxNumber);
 	double CapacitorValue(uint8_t BoxNumber);
+	double calculateFrequency(uint8_t BoxNumber);
 
 private:
 		Adafruit_MCP23017 boxGPIO;
