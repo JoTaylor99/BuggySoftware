@@ -5,6 +5,8 @@
 #include "arduino2.h"
 #include "Config.h"
 #include "boxValues.h"
+#include "Comms.h"
+#include "buggyTop.h"
 
 class box {
 
