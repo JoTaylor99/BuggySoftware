@@ -758,13 +758,20 @@ double box::measureCapacitance() {
 
 double box::calculateFrequency() {
 	double frequency = 0;
+	double resist = presentationData.r1;
+	double cap = presentationData.c1;
+
+
+
 	if ((_boxNumber == 5) || (_boxNumber == 6)) {
-		frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
+		//frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
+		frequency = 2 * PI * presentationData.r1 * presentationData.c1 * 1e-9; //* 1e-6;
+		double freq1 = frequency;
+		frequency = 1 / frequency;
 	}
-	else if (_boxNumber == 7) {
-		frequency = (1 / (2 * PI * sqrt(1e-6 * presentationData.c1)));
+	else{
+		frequency = (1 / (2 * PI * sqrt(1e-9 * presentationData.c1)));
 	}
-	else {}
 
 	return frequency;
 }
@@ -772,12 +779,12 @@ double box::calculateFrequency() {
 double box::calculateFrequency(uint8_t BoxNumber) {
 	double frequency = 0;
 	if ((BoxNumber == 5) || (BoxNumber == 6)) {
-		frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
+		frequency = 2 * PI * presentationData.r1 * presentationData.c1 * 1e+6;
+		frequency = 1 / frequency;
+		//frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
 	}
-	else if (BoxNumber == 7) {
+	else{
 		frequency = (1 / (2 * PI * sqrt(1e-6 * presentationData.c1)));
 	}
-	else {}
-
 	return frequency;
 }
