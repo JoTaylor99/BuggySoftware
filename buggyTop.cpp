@@ -41,8 +41,16 @@ void buggyTop::go() {
 					//Serial.println("Got into box case");
 					
 					sendMovementComplete();
-					uint8_t BoxNum = str[i + 1] - '0';
+					buggy.passedBoxNumber = str[i + 1] - '0';
 					uint8_t Polarity = str[i + 2] - '0';
+					if (Polarity == 'f') {
+						buggy.passedBoxInversion = false;
+					}
+					else if (Polarity == 'r') {
+						buggy.passedBoxInversion = true;
+					}
+
+					}
 					buggy.navigate("G");
 					i += 2;
 					//sendMovementComplete();
@@ -63,14 +71,7 @@ void buggyTop::go() {
 		}
 		str = "";
 		NavigateLoop = 0;
-
-		
 	}
-
-
-
-
-};
 
 void buggyTop::Check()
 {
