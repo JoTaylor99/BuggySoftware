@@ -334,7 +334,6 @@ double box::ResistorValue(uint8_t BoxNumber) {
 
 double box::CapacitorValue(uint8_t BoxNumber)
 {
-	double FinalCap = 0;
 	byte IMAX = 16;
 	byte i = 0; //To define index of array.
 	if (BoxNumber < 7)
@@ -578,7 +577,6 @@ double box::getReading(bool stage) {
 }
 
 double box::convertToVoltage(short raw) {
-	double tempraw = raw;
 	double tempvolt = 5.0*raw/1023.0;
 	//double tempvolt = double(VREF * (raw / ADCMAX));
 
@@ -666,8 +664,8 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 }
 
 double box::measureCapacitance() {
-	uint8_t outPin;
-	uint8_t inPin;
+	uint8_t outPin = P2PIN;
+	uint8_t inPin = P1PIN;
 	unsigned long u1;
 	unsigned long t;
 	int digVal;
@@ -769,15 +767,10 @@ double box::measureCapacitance() {
 
 double box::calculateFrequency() {
 	double frequency = 0;
-	double resist = presentationData.r1;
-	double cap = presentationData.c1;
-
-
 
 	if ((_boxNumber == 5) || (_boxNumber == 6)) {
 		//frequency = (1 / (2 * PI * presentationData.r1 * presentationData.c1));
 		frequency = 2 * PI * presentationData.r1 * presentationData.c1 * 1e-9; //* 1e-6;
-		double freq1 = frequency;
 		frequency = 1 / frequency;
 	}
 	else{
