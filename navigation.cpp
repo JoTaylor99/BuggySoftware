@@ -84,7 +84,7 @@ void navigation::navigate(String str) {
 				turnLeft();
 			}
 			else if (str == "G") {
-				//boxApproach();
+				boxApproach();
 				////pass recieved boxnumber and recieved box inversion information
 				//box boxs;
 				//dockFailureCounter = 0;
@@ -117,6 +117,7 @@ void navigation::navigate(String str) {
 				else {
 					NAV_PRINTLN("Init failure");
 				}
+				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
