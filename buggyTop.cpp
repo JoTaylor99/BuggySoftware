@@ -212,7 +212,6 @@ void leftStepCounter() {
 	buggy.stepDistanceLeft++;
 	if (buggy.stepDistanceLeft >= buggy.stepTargetDistanceLeft) {
 		PCICR &= ~bit(digitalPinToPCICRbit(LEFTMOTORCOUNT));
-		//buggy.stop(1);
 		digitalWrite(LEFTMOTOR, LOW);
 		buggy.stepDistanceLeft = 0;
 		buggy._leftWheelTask = true;
@@ -224,7 +223,6 @@ void rightStepCounter(){
 	buggy.stepDistanceRight++;
 	if (buggy.stepDistanceRight >= buggy.stepTargetDistanceRight) {
 		PCICR &= ~bit(digitalPinToPCICRbit(RIGHTMOTORCOUNT));
-		//buggy.stop(2);
 		digitalWrite(RIGHTMOTOR, LOW);
 		buggy.stepDistanceRight = 0;
 		buggy._rightWheelTask = true;
