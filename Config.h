@@ -160,22 +160,25 @@
 
 #define NUMADCREADINGS 50
 
-#define BOXONERATIO		0.56
+#define BOXONERATIO		0.4528
 #define VREF			5
 #define ADCMAX			1023
 
 #define RK	560
-#define RRk7pin 99.8
+#define Rk7 99.8
 
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
 #define GNDPIN	17 //Pin A3
 #define RKPIN	14 //Pin A0
+#define RK7pin  12
 
 //on expander
 #define P1P2RELAYPIN	0
 #define BCPIN			1
 #define BCRELAYPIN		2
+#define BC_DPDT         3 // dc adding
+
 
 //Pullup resistance on P2PIN will vary depending on board.
 //Calibrate this with known capacitor.
