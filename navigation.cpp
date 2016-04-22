@@ -246,6 +246,7 @@ bool navigation::driftingWhenForward() {
 		return false;
 	}
 	else{
+		NAV_PRINTLN("D");
 		//Deviation from the course
 		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
 			//pattern of arena not flipped yet
