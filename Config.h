@@ -169,6 +169,7 @@
 #define NUMADCREADINGS 50
 
 #define BOXONERATIO		0.56
+#define BOXONERATIO		0.4528
 #define VREF			5
 #define ADCMAX			1023
 
