@@ -1,7 +1,7 @@
 // 
 // 
 // 
-
+#include "buggyTop.h"
 #include "navigation.h"
 
 //Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
@@ -46,7 +46,7 @@ void navigation::initNavigation() {
 };
 
 void navigation::navigate(String str) {
-
+	
 		Sensor::PollSensors(Sensors);
 			
 		if (str == "F") {
@@ -116,6 +116,7 @@ void navigation::navigate(String str) {
 					}
 					else {
 						NAV_PRINTLN("Improperly Docked");
+						//buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)57.5);
 					}
 				}
 				else {
