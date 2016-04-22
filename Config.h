@@ -187,6 +187,7 @@
 #define P1P2RELAYPIN	0
 #define BCPIN			1
 #define BCRELAYPIN		2
+#define BC_DPDT			3 // dc adding
 
 //Pullup resistance on P2PIN will vary depending on board.
 //Calibrate this with known capacitor.
