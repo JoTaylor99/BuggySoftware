@@ -142,7 +142,6 @@ bool box::interrogateBox() {
 	case 3:
 	case 4:
 		rawValue = getReading(0);
-
 		//calculate resistor value
 		calculatedValue = calculateResistorValue(rawValue, 0);
 
@@ -178,6 +177,8 @@ bool box::interrogateBox() {
 		BOX_VPRINTLN(presentationData.r1);
 
 		calculatedValue = measureCapacitance();
+
+
 		presentationData.c1 = toPreferredCapacitor(calculatedValue);
 		//In future will Coms result for now just serial print
 		BOX_PRINT("C = ");
@@ -508,7 +509,6 @@ void box::toggleOutputs(bC::inputStatus state, bool stage) {
 			digitalWrite(P1PIN, HIGH);
 		}
 
-		//delay(100000);
 		if (P2pin[stage] == bC::low) {
 			pinMode(P2PIN, OUTPUT);
 			digitalWrite(P2PIN, LOW);
@@ -545,7 +545,6 @@ double box::getReading(bool stage) {
 	if (_boxNumber == 7 && stage == 1) {} else {
 		//_adcPin = P2PIN; //This needs to be taken out.
 		pinMode(_adcPin, INPUT);
-		//delay(2000);
 		if (_boxNumber == 1) {
 			setBoostConverter(bC::ON);
 		}
@@ -670,7 +669,6 @@ double box::measureCapacitance() {
 		else {
 			pinMode(RKPIN, INPUT);
 		}
-		//delay(10000);
 	}
 	else if (_boxNumber == 6) {
 		inPin = GNDPIN;
@@ -692,9 +690,6 @@ double box::measureCapacitance() {
 		digitalWrite2(outPin, HIGH);
 		int val = analogRead(inPin);
 		digitalWrite2(outPin, LOW);
-
-
-			//Big capacitor - so use RC charging method
 
 			//discharge the capacitor (from low capacitance test)
 			pinMode(inPin, OUTPUT);
