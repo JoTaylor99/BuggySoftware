@@ -48,7 +48,8 @@ void navigation::initNavigation() {
 void navigation::navigate(String str) {
 	
 		Sensor::PollSensors(Sensors);
-			
+		Serial.println(str);
+
 		if (str == "F") {
 			start();
 			moveForward();
