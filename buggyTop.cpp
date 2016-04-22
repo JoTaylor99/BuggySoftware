@@ -158,8 +158,9 @@ void buggyTop::AppendRoute(struct Frame *theData) {
 void buggyTop::controlManually(Frame * theData)
 {
 	uint8_t a = theData->data;
-	String temp = "";
-	temp += (char)a;
+	//String temp = "";
+	str = "";
+	str += (char)a;
 	NavigateLoop = 1;
 	sendAcknowledge((Comms::FunctionCodes)a);
 }
