@@ -61,6 +61,7 @@ void buggyTop::go() {
 			}
 			//Serial.println(str);
 		}
+		str = "";
 		NavigateLoop = 0;
 
 		
