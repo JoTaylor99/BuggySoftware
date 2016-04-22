@@ -152,7 +152,7 @@ void navigation::navigate(String str) {
 
 void navigation::boxApproach() {
 	start();
-	moveForward();
+	moveForward(true);
 }
 
 //captures and stores in an array all the sensor values at the initial node position
