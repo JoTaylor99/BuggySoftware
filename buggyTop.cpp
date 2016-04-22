@@ -40,18 +40,18 @@ void buggyTop::go() {
 				if (str[i] == 'T') {
 					//Serial.println("Got into box case");
 					
-					
+					sendMovementComplete();
 					uint8_t BoxNum = str[i + 1] - '0';
 					uint8_t Polarity = str[i + 2] - '0';
 					buggy.navigate("G");
 					i += 2;
-					sendMovementComplete();
+					//sendMovementComplete();
 				}
 				else {
 					buggy.navigate(String(str[i]));
-					if (str != "R" && str != "L") {
+					//if (str != "R" && str != "L") {
 						sendMovementComplete();
-					}
+					//}
 				}
 
 
