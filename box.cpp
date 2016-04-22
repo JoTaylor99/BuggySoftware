@@ -222,7 +222,7 @@ bool box::interrogateBox() {
 
 //Function to pick the prefered resistor from a given resistor value range.
 short box::toPreferredResistor(double OResistor) {
-	short FinalResistor = 0;
+	short FinalResistor = PResistors[0];
 	byte IMAX = 53;
 	byte i = 0; //To define index of array.
 	if (_boxNumber < 5) { //Boxes 2-4
@@ -256,7 +256,7 @@ short box::toPreferredResistor(double OResistor) {
 };
 
 double box::toPreferredCapacitor(double OCap) {
-	double FinalCap = 0;
+	double FinalCap = PCapacitors[0];
 	byte IMAX = 16;
 	byte i = 0; //To define index of array.
 	if (_boxNumber < 7) { //Boxes 5-6
