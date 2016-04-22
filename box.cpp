@@ -606,9 +606,9 @@ double box::calculateResistorValue(double rawValue, bool stage) {
 	if (stage == 0) {
 		if (_boxNumber == 3) {
 			//calculatedResistance = (((VREF * 1000) / rawValue) - 1000);
-			calculatedResistance = VREF * 1200;
+			calculatedResistance = VREF * 1000;
 			calculatedResistance = calculatedResistance / rawValue;
-			calculatedResistance = calculatedResistance - 1200;
+			calculatedResistance = calculatedResistance - 1000;
 		}
 		else if (_boxNumber == 5) {
 			//R1 is known find R2
