@@ -135,8 +135,9 @@ bool box::interrogateBox() {
 		//store voltage in return data variable
 		presentationData.v1 = calculatedValue;
 		//In future will Coms result for now just serial print
-		BOX_PRINT("V1 = ");
-		BOX_VPRINTLN(presentationData.v1);
+		Serial.print(F("V1 = "));
+		Serial.println(presentationData.v1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)presentationData.v1);
 		return true;
 	case 2:
 	case 3:
@@ -149,18 +150,19 @@ bool box::interrogateBox() {
 		presentationData.r1 = toPreferredResistor(calculatedValue);
 
 		//In future will Coms result for now just serial print
-		BOX_PRINT("R1 = ");
-		BOX_VPRINTLN(presentationData.r1);
+		Serial.print (F("Ra = "));
+		Serial.println(presentationData.r1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)presentationData.r1);
 
 		rawValue = getReading(1);
 		//calculate resistor value
 		calculatedValue = calculateResistorValue(rawValue, 1);
 		//get preferred
 		presentationData.r2 = toPreferredResistor(calculatedValue);
-
+		Serial.print(F("Rb = "));
+		Serial.println(presentationData.r2);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)presentationData.r2);
 		//In future will Coms result for now just serial print
-		BOX_PRINT("R2 = ");
-		BOX_VPRINTLN(presentationData.r2);
 		return true;
 	case 5:
 	case 6:
@@ -173,21 +175,26 @@ bool box::interrogateBox() {
 		presentationData.r1 = toPreferredResistor(calculatedValue);
 
 		//In future will Coms result for now just serial print
-		BOX_PRINT("R = ");
-		BOX_VPRINTLN(presentationData.r1);
+		Serial.print(F("R = "));
+		Serial.println(presentationData.r1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)presentationData.r1);
+
 
 		calculatedValue = measureCapacitance();
 
 
 		presentationData.c1 = toPreferredCapacitor(calculatedValue);
 		//In future will Coms result for now just serial print
-		BOX_PRINT("C = ");
-		BOX_VPRINTLN(presentationData.c1);
+		Serial.print(F("C = "));
+		Serial.println(presentationData.c1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue2, (float)presentationData.c1);
+
 
 		presentationData.f = calculateFrequency();
 		//In future will Coms result for now just serial print
-		BOX_PRINT("Frequency = ");
-		BOX_VPRINTLN(presentationData.f);
+		Serial.print(F("Frequency = "));
+		Serial.println(presentationData.f);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue3, (float)presentationData.f);
 
 		return true;
 	case 7:
@@ -201,19 +208,24 @@ bool box::interrogateBox() {
 		presentationData.r1 = toPreferredResistor(calculatedValue);
 
 		//In future will Coms result for now just serial print
-		BOX_PRINT("R = ");
-		BOX_VPRINTLN(presentationData.r1);
-		
+		Serial.print(F("R = "));
+		Serial.println(presentationData.r1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)presentationData.r1);
+
 		calculatedValue = measureCapacitance();
 		presentationData.c1 = toPreferredCapacitor(calculatedValue);
 		//In future will Coms result for now just serial print
-		BOX_PRINT("C = ");
-		BOX_VPRINTLN(presentationData.c1);
+		Serial.print(F("C = "));
+		Serial.println(presentationData.c1);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue2, (float)presentationData.c1);
+
 
 		presentationData.f = calculateFrequency();
 		//In future will Coms result for now just serial print
-		BOX_PRINT("Frequency = ");
-		BOX_VPRINTLN(presentationData.f);
+		Serial.print(F("Frequency = "));
+		Serial.println(presentationData.f);
+
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue3, (float)presentationData.f);
 
 		return true;
 	default:
