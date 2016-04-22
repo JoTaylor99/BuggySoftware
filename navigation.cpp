@@ -1,7 +1,7 @@
 // 
 // 
 // 
-
+#include "buggyTop.h"
 #include "navigation.h"
 
 //Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
@@ -46,7 +46,17 @@ void navigation::initNavigation() {
 };
 
 void navigation::navigate(String str) {
+	delay(5000);
+	if (str == "G") {
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)55.5);
+		delay(5000);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)56.5);
+		delay(5000);
+		buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)57.5);
 
+
+	}
+	return;
 		Sensor::PollSensors(Sensors);
 			
 		if (str == "F") {

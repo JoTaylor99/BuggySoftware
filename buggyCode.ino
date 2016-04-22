@@ -4,6 +4,11 @@
  Author:	Henry
 */
 
+
+
+
+#include <DFRobot_utility.h>
+#include <utility/SerialProtocol.h>
 #include <arduino2.h>
 #include <PWM.h>
 #include <NewPing.h>
@@ -32,4 +37,20 @@ void setup() {
 void loop() {
 	
 	buggy1.go();
+}
+
+
+void serialEvent() {
+	//delay(10);
+	while (Serial.available() > 0) {
+		while (Serial.available() < 8) {
+			//Wait to receive a full frame
+		}
+		buggy1.Check();
+		for (int i = 0; i < 8; i++)
+		{
+			Serial.read();
+		}
+	}
+
 }
