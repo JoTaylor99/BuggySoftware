@@ -693,15 +693,40 @@ double box::measureCapacitance() {
 
 			//Discharge capacitor for next measurement
 			digitalWrite2(inPin, HIGH);
+			t = 400000L;
 			int dischargeTime = (int)(t / 1000L) * 5;
 			delay(dischargeTime);    //discharge slowly to start with
 			pinMode(outPin, OUTPUT);  //discharge remainder quickly
 			digitalWrite2(outPin, LOW);
 			digitalWrite2(inPin, LOW);
 
+
+			pinMode2(outPin, INPUT_PULLUP);
+			u1 = micros();
+
+			//Charge to a fairly arbitrary level mid way between 0 and 5V
+			//Best not to use analogRead() here because it's not really quick enough
+			do
+			{
+				digVal = digitalRead2(outPin);
+				u2 = micros();
+				t = u2 > u1 ? u2 - u1 : u1 - u2;
+			} while ((digVal < 1) && (t < 400000L));
+
+			pinMode2(outPin, INPUT);  //Stop charging
+									  //Now we can read the level the capacitor has charged up to
+			val = analogRead(outPin);
+
+			//Discharge capacitor for next measurement
+			digitalWrite2(inPin, HIGH);
+			dischargeTime = (int)(t / 1000L) * 5;
+			delay(dischargeTime);    //discharge slowly to start with
+			pinMode(outPin, OUTPUT);  //discharge remainder quickly
+			digitalWrite2(outPin, LOW);
+			digitalWrite2(inPin, LOW);
 			//Calculate and print result
-			float capacitance = (-(float)t / RPULLUP)
-				/ (log(1.0 - (float)val / (float)ADCMAX));
+			double capacitance = (-(double)t / RPULLUP)
+				/ (log(1.0 - (double)val / (double)ADCMAX));
 
 			return capacitance;
 
