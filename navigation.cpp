@@ -678,7 +678,7 @@ void navigation::turnRight() {
 ///	}
 /// 
 /// </summary>
-void navigation::moveForward() {
+void navigation::moveForward(bool approachingBox) {
 	while (true) {
 		Sensor::PollSensors(Sensors);
 		//m1 = micros()
@@ -700,6 +700,9 @@ void navigation::moveForward() {
 			}
 		}
 	}
+
+	if (approachingBox == true) { return; }
+
 	Sensor::PollSensors(Sensors);
 	while (true) {
 		Sensor::PollSensors(Sensors);
