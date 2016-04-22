@@ -662,13 +662,21 @@ double box::measureCapacitance() {
 		outPin = P2PIN;
 		pinMode(GNDPIN, INPUT);
 		pinMode(_adcPin, INPUT);
-		if (_boxNumber == 7{
+		if (_boxNumber == 7){
 			pinMode(RK7pin, INPUT);
 		}
+		else {
+			pinMode(RKPIN, INPUT);
+		}
+		//delay(10000);
 	}
 	else if (_boxNumber == 6) {
 		inPin = GNDPIN;
 		outPin = P2PIN;
+		pinMode(RKPIN, INPUT);
+		pinMode(P1PIN, INPUT);
+		pinMode(_adcPin, INPUT);
+		
 	}
 
 		pinMode2(outPin, OUTPUT);
