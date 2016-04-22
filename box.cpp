@@ -546,6 +546,8 @@ double box::getReading(bool stage) {
 		//_adcPin = P2PIN; //This needs to be taken out.
 		pinMode(_adcPin, INPUT);
 		if (_boxNumber == 1) {
+			pinMode(P1PIN, OUTPUT);
+			digitalWrite(P1PIN, HIGH);
 			setBoostConverter(bC::ON);
 		}
 		for (int i = 0; i < NUMADCREADINGS; i++) {
