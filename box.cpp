@@ -396,10 +396,21 @@ void box::configureForAnalysis(bool state) {
 	else{ //5, 6 & 7
 		if (state == 0) {
 			_adcPin = P2PIN;
+			if (_boxNumber == 7) {
+				pinMode(RK7pin, OUTPUT);
+				digitalWrite(RK7pin, HIGH);
+			}
 		}
 		else {
-			_adcPin = P2PIN; //Not sure..
+			if (_boxNumber == 7) {
+				digitalWrite(RK7pin, LOW);
+				pinMode(GNDPIN, INPUT);
+			}else{
+				_adcPin = P2PIN; //Not sure..
+			}
+			//_adcPin = P2PIN; //Not sure..
 		}
+		
 	}
 
 
@@ -513,17 +524,25 @@ double box::getReading(bool stage) {
 	double retrievedVoltage = 0;
 	configureForAnalysis(stage);
 	toggleOutputs(bC::ON, stage);
-	if (_boxNumber == 1) {
-	setBoostConverter(bC::ON);
+	if (_boxNumber == 7 && stage == 1) {} else {
+		//_adcPin = P2PIN; //This needs to be taken out.
+		pinMode(_adcPin, INPUT);
+		//delay(2000);
+		if (_boxNumber == 1) {
+			setBoostConverter(bC::ON);
+		}
+		for (int i = 0; i < NUMADCREADINGS; i++) {
+			retrievedVoltage += convertToVoltage(getRawReading(_adcPin));
+		}
+
+		retrievedVoltage /= NUMADCREADINGS;
+
+
+		if (_boxNumber == 1) {
+			setBoostConverter(bC::OFF);
+		}
+		toggleOutputs(bC::OFF, stage);
 	}
-	for (int i = 0; i < NUMADCREADINGS; i++) {
-		retrievedVoltage += convertToVoltage(getRawReading(_adcPin));
-	}
-	retrievedVoltage /= NUMADCREADINGS;
-	if (_boxNumber == 1) {
-		setBoostConverter(bC::OFF);
-	}
-	toggleOutputs(bC::OFF, stage);
 	return retrievedVoltage;
 }
 
@@ -625,6 +644,11 @@ double box::measureCapacitance() {
 	if ((_boxNumber == 5) || (_boxNumber == 7)) {
 		inPin = P1PIN;
 		outPin = P2PIN;
+		pinMode(GNDPIN, INPUT);
+		pinMode(_adcPin, INPUT);
+		if (_boxNumber == 7{
+			pinMode(RK7pin, INPUT);
+		}
 	}
 	else if (_boxNumber == 6) {
 		inPin = GNDPIN;
