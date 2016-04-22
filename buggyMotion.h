@@ -76,7 +76,7 @@ protected:
 	/// </summary>
 	/// <param name="direction">left = 0, right = 1</param>
 	/// <param name="distance">distance in mm for centre of buggy to move in specified direction</param>
-	void moveHorizontally(bool direction, uint8_t distance);
+	void moveHorizontally(nC::Direction direction, uint8_t distance);
 
 private:
 	/// <summary>

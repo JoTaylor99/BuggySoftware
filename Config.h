@@ -133,19 +133,11 @@
 #define ECHO A1
 #define MAXDISTANCE 100
 
-#define LOGIC_THRESHOLD 200 // Minimum difference in Normalised value to detect opposite colour
 #define NORMALISED_MAX 1000
 #define MAX_DEFAULT 1000
 #define MIN_DEFAULT 800
 
-
-#define MAX_SPEED 100
-#define MIN_SPEED 65
-#define TURNING_SPEED 60
-#define CORRECTION_MAG 5
-
-//Nav::navigation defines
-#define COUNTER_LEN 2
+//Nav::navigation defines 
 #define LEFTMOTORDIR 6
 #define RIGHTMOTORDIR 7
 #define LEFTMOTOR 9
@@ -155,43 +147,37 @@
 #define LEFTMOTORCOUNT	8		//PCINT 0			
 #define RIGHTMOTORCOUNT	4		//PCINT 20
 
-//#define DEFAULTMAXDISTANCE 165	//in mm
-
 #define THESCALEFACTOR 1.035
 
 //Setting to toggle blocking mode for stepwise operations
 #define STEPWISE_BLOCKING
 
-#define HARDCODEDSTARTVALUES
+//#define HARDCODEDSTARTVALUES		//NOT USING THIS
 //Box Defines
 
 
 #define NUMADCREADINGS 50
 
 #define BOXONERATIO		0.56
-#define BOXONERATIO		0.4528
 #define VREF			5
 #define ADCMAX			1023
 
 #define RK	560
-#define Rk7 99.8
-//#define Rk7pin 99.8
+#define RRk7pin 99.8
 
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
 #define GNDPIN	17 //Pin A3
 #define RKPIN	14 //Pin A0
-#define RK7pin	12 //digital pin 12
 
 //on expander
 #define P1P2RELAYPIN	0
 #define BCPIN			1
 #define BCRELAYPIN		2
-#define BC_DPDT			3 // dc adding
 
 //Pullup resistance on P2PIN will vary depending on board.
 //Calibrate this with known capacitor.
-#define RPULLUP 36.502  //in k ohms
+#define RPULLUP 36.486  //in ohms
 
 //change to bC
 namespace bC {
@@ -208,8 +194,6 @@ namespace bC {
 		low,
 		nop
 	};
-
-//#endif
 }
 
 //change to sC
