@@ -346,6 +346,7 @@ void box::setBoostConverter(bC::inputStatus state) {
 	if (state = bC::ON) {
 		_boostConverterOn = true;
 		boxGPIO.digitalWrite(BCRELAYPIN, HIGH);
+		boxGPIO.digitalWrite(BC_DPDT, HIGH);
 		delay(10);
 		boxGPIO.digitalWrite(BCPIN, HIGH);
 		delay(10);
