@@ -37,7 +37,9 @@ void buggyMotion::initMotion() {
 
 void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 {
-	
+	if (direction == nC::Direction::LeftBackwardsOnly || direction == nC::Direction::LeftForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::RightForwardOnly) {
+		_firstCall = true;
+	}
 	if (direction == nC::Stop) {
 		stop();
 		return;
@@ -55,8 +57,8 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 
 		}
 		if (direction == nC::Direction::Left || direction == nC::Direction::Right) {
-			_leftSpeed = 50;
-			_rightSpeed = 50;
+			_leftSpeed = 35;
+			_rightSpeed = 35;
 		}
 		
 		if (direction == nC::Direction::RightForwardOnly || direction == nC::Direction::RightBackwardsOnly || direction == nC::Direction::LeftForwardOnly || nC::Direction::LeftBackwardsOnly) {
@@ -124,8 +126,19 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 	if (_firstCall) {
 		SetPinFrequencySafe(LEFTMOTOR, _leftSpeed);
 		SetPinFrequencySafe(RIGHTMOTOR, _rightSpeed);
-		pwmWrite(LEFTMOTOR, 128);
-		pwmWrite(RIGHTMOTOR, 128);
+		if (_leftSpeed == 0) {
+			pwmWrite(LEFTMOTOR, 0);
+		}
+		else {
+			pwmWrite(LEFTMOTOR, 128);
+		}
+
+		if (_rightSpeed == 0) {
+			pwmWrite(RIGHTMOTOR, 0);
+		}
+		else {
+			pwmWrite(RIGHTMOTOR, 128);
+		}
 		_firstCall = false;
 	}
 	
@@ -155,6 +168,7 @@ void buggyMotion::setLeftMotorDirection(nC::Direction dir)
 	if (dir == nC::Direction::Stop) {
 		MOT_PRINTLN("LStop");
 		pwmWrite(LEFTMOTOR, 0);
+		_leftSpeed = 0;
 	}
 }
 void buggyMotion::setRightMotorDirection(nC::Direction dir)
@@ -167,7 +181,8 @@ void buggyMotion::setRightMotorDirection(nC::Direction dir)
 	}
 	if (dir == nC::Direction::Stop) {
 		MOT_PRINTLN("RStop");
-		pwmWrite(LEFTMOTOR, 0);
+		pwmWrite(RIGHTMOTOR, 0);
+		_rightSpeed = 0;
 	}
 }
 void buggyMotion::setRightSpeed(int32_t freq)
@@ -187,7 +202,7 @@ void buggyMotion::setLeftSpeed(int32_t freq)
 }
 void buggyMotion::driftCorrect(nC::Direction direction, nC::Drift drift)
 {
-	if (_driftCount > 2) {
+	if (_driftCount > 3) {
 		switch (direction)
 		{
 		case nC::Forward:
@@ -283,8 +298,6 @@ bool buggyMotion::isMoveComplete() {
 void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance, uint16_t rightDistance) {
 
 	_firstCall = true;
-	//if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
-	//if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
 
 	if ((direction == nC::LeftBackwardsOnly) || (direction == nC::LeftForwardOnly)) {
 		rightDistance = 0;
@@ -323,4 +336,19 @@ void buggyMotion::pciSetup(uint8_t pin)
 	*digitalPinToPCMSK(pin) |= bit(digitalPinToPCMSKbit(pin));  // enable pin
 	PCIFR |= bit(digitalPinToPCICRbit(pin)); // clear any outstanding interrupt
 	PCICR |= bit(digitalPinToPCICRbit(pin)); // enable interrupt for the group
+}
+
+void buggyMotion::moveHorizontally(nC::Direction direction, uint8_t distance) {
+	if (direction == nC::Left) {
+		step(nC::Direction::RightForwardOnly, distance);
+		step(nC::Direction::LeftForwardOnly, distance);
+		step(nC::Direction::RightBackwardsOnly, distance);
+		step(nC::Direction::LeftBackwardsOnly, distance);
+	}
+	else if (direction == nC::Right) {
+		step(nC::Direction::LeftForwardOnly, distance);
+		step(nC::Direction::RightForwardOnly, distance);
+		step(nC::Direction::LeftBackwardsOnly, distance);
+		step(nC::Direction::RightBackwardsOnly, distance);
+	}
 }
