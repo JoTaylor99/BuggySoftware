@@ -95,7 +95,7 @@ private:
 
 	void turnLeft();
 	void turnRight();
-	void moveForward();
+	void moveForward(bool approachingBox = 0);
 	void moveBackward();
 	void victoryRoll();
 	void boxBeGone();

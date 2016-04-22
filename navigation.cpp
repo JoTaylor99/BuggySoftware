@@ -40,6 +40,8 @@ void navigation::initNavigation() {
 }
 	DEBUG_PRINTLN("Buggy correctly placed to start");
 	DEBUG_PRINTLN("Setup Complete!");
+	passedBoxNumber = 4;
+	passedBoxInversion = false;
 
 };
 
@@ -83,39 +85,66 @@ void navigation::navigate(String str) {
 			}
 			else if (str == "G") {
 				boxApproach();
-				//pass recieved boxnumber and recieved box inversion information
+				////pass recieved boxnumber and recieved box inversion information
+				//box boxs;
+				//dockFailureCounter = 0;
+				//if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
+				//{
+				//	return;
+				//}
+				//if (!boxs.docked()) {
+				//	dockFailureCounter++;
+				//	if (dockFailureCounter == 2) {
+				//			//DC write variables here
+				//			//Will send this ^
+				//			boxBeGone();
+				//			return;
+				//		}
+				//}
+				//else {
+				//	boxs.interrogateBox();
+				//}
+				//boxBeGone();
 				box boxs;
-				dockFailureCounter = 0;
-				if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
-				{
-					return;
-				}
-				if (!boxs.docked()) {
-					dockFailureCounter++;
-					if (dockFailureCounter == 2) {
-							//DC write variables here
-							//Will send this ^
-							boxBeGone();
-							return;
-						}
+				if ((boxs.begin(4, 0)) == true) {
+					if (boxs.docked() == true) {
+						NAV_PRINTLN("Docked correctly");
+					}
+					else {
+						NAV_PRINTLN("Improperly Docked");
+					}
 				}
 				else {
-					boxs.interrogateBox();
+					NAV_PRINTLN("Init failure");
 				}
 				boxBeGone();
 			} else if (str == "S") {
 				drive(nC::Direction::Stop);
 
 			}
-			else if (str = "H") {
+			else if (str == "H") {
 				Sensor::printCurrent();
 			}
-			else if (str = "Z") {
+			else if (str == "Z") {
 				Sensor::PollSensors(Sensors);
 				Sensor::printCurrent();
 			}
-			else if (str = "K") {
-				step(nC::Direction::Forward, 20);
+			else if (str == "K") {
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Left, 40);
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Right, 80);
+				Sensor::PollSensors(Sensors);
+				step(nC::Direction::Left, 42);
+				Sensor::PollSensors(Sensors);
+				Sensor::printCurrent();
+
+			}
+			else if (str == "N") {
+				moveHorizontally(nC::Direction::Left, 40);
+			}
+			else if (str == "M") {
+				moveHorizontally(nC::Direction::Right, 40);
 			}
 			else {
 				drive(nC::Direction::Stop);
@@ -124,7 +153,7 @@ void navigation::navigate(String str) {
 
 void navigation::boxApproach() {
 	start();
-	moveForward();
+	moveForward(true);
 }
 
 //captures and stores in an array all the sensor values at the initial node position
@@ -218,6 +247,7 @@ bool navigation::driftingWhenForward() {
 		return false;
 	}
 	else{
+		NAV_PRINTLN("D");
 		//Deviation from the course
 		if ((RVAL(sC::FL) == STARTVAL(sC::FL)) && (RVAL(sC::FR) == STARTVAL(sC::FR))) {
 			//pattern of arena not flipped yet
@@ -289,13 +319,13 @@ bool navigation::driftingWhenBackward() {
 		}
 		else if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
 			//drive BACKWARDS LEFT( NOT  JUST LEFT)
-			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
 
 			return true;
 		}
 		else {
 			//drive backwards right 
-			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
 
 			return true;
 		}
@@ -309,13 +339,13 @@ bool navigation::driftingWhenBackward() {
 		}
 		else if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//Drive Backwards Left
-			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
+			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
 
 			return true;
 		}
 		else {
 			//drive backwards right 
-			drive(nC::Direction::Backwards, nC::Drift::leftDrift);
+			drive(nC::Direction::Backwards, nC::Drift::rightDrift);
 
 			return true;
 		}
@@ -379,32 +409,22 @@ bool navigation::driftingWhenBackward() {
 /// </summary>
 void navigation::adjustOnTheSpot(){
 	// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
-	if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
-		if (RVAL(sC::ML)!= RVAL(sC::MR)){
-			drive(nC::Direction::Forward);
-		}
-		else{
-			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
-			//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
-				drive(nC::Direction::LeftForwardOnly);
-			}
-			else {
-				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
-				drive(nC::Direction::RightForwardOnly);
-			}
-		}
-	}	
-	// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
-	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
-		if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-			drive(nC::Direction::Left);
-		}
-		else {
-			drive(nC::Direction::Right);
-		}
+	if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FR))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
+		//case for moving horizontally left
+		NAV_PRINTLN("HR");
+		moveHorizontally(nC::Direction::Right, 40);
 	}
+	else if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FL))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
+		//case for moving horizontally right
+		NAV_PRINTLN("HL");
+		moveHorizontally(nC::Direction::Left, 40);
+	}
+
+
+
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
+		NAV_PRINTLN("FC, BW");
 		if (RVAL(sC::BL) == STARTVAL(sC::BL)) {
 			//LEFT WHEEL FORWARD, RIGHT WHEEL STOP
 			drive(nC::Direction::LeftForwardOnly);
@@ -414,8 +434,10 @@ void navigation::adjustOnTheSpot(){
 			drive(nC::Direction::RightForwardOnly);
 		}
 	}
+
 	//Case 3.1 (LTL==LTR) && (BR !=BL)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
+		NAV_PRINTLN("FW, BC");
 		if (RVAL(sC::LTL) != STARTVAL(sC::LTL)) {
 			//LEFT WHEEL STOP, RIGHT WHEEL BACKWARD
 			drive(nC::Direction::RightBackwardsOnly);
@@ -423,6 +445,26 @@ void navigation::adjustOnTheSpot(){
 		else {
 			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
 			drive(nC::Direction::LeftBackwardsOnly);
+		}
+	}
+
+	else if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+
+		if (RVAL(sC::ML) != RVAL(sC::MR)){
+			NAV_PRINTLN("MW(B)");
+			drive(nC::Direction::Forward);
+		}
+		else{
+			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
+				NAV_PRINTLN("MW(L)");
+				//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::LeftForwardOnly);
+			}
+			else {
+				NAV_PRINTLN("MW(R)");
+				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::RightForwardOnly);
+			}
 		}
 	}
 }
@@ -514,11 +556,13 @@ void navigation::adjustOnTheSpot(){
 /// }
 /// </summary>
 void navigation::turnLeft() {
+	Sensor::PollSensors(Sensors);
+	Sensor::printCurrent();
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (((RVAL(sC::LTL))!= (STARTVAL(sC::LTL))) && ((RVAL(sC::BL)) != (STARTVAL(sC::BL)))) {
+		if (((RVAL(sC::LTL))!= (STARTVAL(sC::LTL))) && ((RVAL(sC::BR)) != (STARTVAL(sC::BR)))) {
 			drive(nC::Direction::Stop);
-			step(nC::Direction::Forward, 5);
+			//step(nC::Direction::Forward, 8);
 			break;
 		}
 		else {
@@ -568,11 +612,13 @@ void navigation::turnLeft() {
 /// </summary>
 //Function to turn right.
 void navigation::turnRight() {
+	Sensor::PollSensors(Sensors);
+	Sensor::printCurrent();
 	while (true) {
 		Sensor::PollSensors(Sensors);
-		if (((RVAL(sC::LTR)) != (STARTVAL(sC::LTR))) && ((RVAL(sC::BR)) != (STARTVAL(sC::BR)))) {
+		if (((RVAL(sC::LTR)) != (STARTVAL(sC::LTR))) && ((RVAL(sC::BL)) != (STARTVAL(sC::BL)))) {
 			drive(nC::Direction::Stop);
-			step(nC::Direction::Forward, 5);
+			//step(nC::Direction::Forward, 8);
 			break;
 		}
 		else {
@@ -633,7 +679,7 @@ void navigation::turnRight() {
 ///	}
 /// 
 /// </summary>
-void navigation::moveForward() {
+void navigation::moveForward(bool approachingBox) {
 	while (true) {
 		Sensor::PollSensors(Sensors);
 		//m1 = micros()
@@ -651,11 +697,13 @@ void navigation::moveForward() {
 		//}
 		else {
 			if (!navigation::driftingWhenForward()) {
-				NAV_PRINTLN("D");
 				drive(nC::Direction::Forward);
 			}
 		}
 	}
+
+	if (approachingBox == true) { return; }
+
 	Sensor::PollSensors(Sensors);
 	while (true) {
 		Sensor::PollSensors(Sensors);
@@ -664,6 +712,7 @@ void navigation::moveForward() {
 			 drive(nC::Direction::Stop);
 			 delay(14);
 			 if (compareAllToLast()) {
+				 NAV_PRINTLN("DONE");
 				 break;
 			 }
 		}

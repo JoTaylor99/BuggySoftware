@@ -34,7 +34,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::nop;
 		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::nop;
-		return true;
 	}
 	else if (_boxNumber == 2) {
 		P1pin[0] = bC::high;
@@ -45,7 +44,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::high;
 		Rkpin[0] = bC::low;
 		Rkpin[1] = bC::low;
-		return true;
 	}
 	else if (_boxNumber == 3) {
 		P1pin[0] = bC::input_adc;
@@ -56,7 +54,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::low;
 		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::input;
-		return true;
 	}
 	else if (_boxNumber == 4) {
 		P1pin[0] = bC::high;
@@ -67,7 +64,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::low;
 		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::input;
-		return true;
 	}
 	else if (_boxNumber == 5) {
 		P1pin[0] = bC::input;
@@ -78,7 +74,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::input;
 		Rkpin[0] = bC::high;
 		Rkpin[1] = bC::input;
-		return true;
 		
 	}
 	else if (_boxNumber == 6) {
@@ -90,7 +85,6 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::nop;
 		Rkpin[0] = bC::low;
 		Rkpin[1] = bC::input;
-		return true;
 	}
 	else if (_boxNumber == 7) {
 		P1pin[0] = bC::input;
@@ -101,15 +95,13 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 		GNDpin[1] = bC::input;
 		Rkpin[0] = bC::input;
 		Rkpin[1] = bC::input;
-		Rk7pin[0] = bC::input; // set to input in begin //set to box 7 set to output then set back to pin mode 
-		Rk7pin[1] = bC::high; //still call getreading but before called configure. change known resistors array to inputs
-		return true;
 	}
 	else
 	{
 		ERROR_PRINTLN("Incorect box number given ");
 		return false;
 	}
+	return true;
 
 	
 }
