@@ -701,7 +701,6 @@ void navigation::moveForward() {
 		//}
 		else {
 			if (!navigation::driftingWhenForward()) {
-				NAV_PRINTLN("D");
 				drive(nC::Direction::Forward);
 			}
 		}
