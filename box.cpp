@@ -20,6 +20,7 @@ bool box::begin(uint8_t boxNumber, bool boxInverted) {
 	boxGPIO.pinMode(P1P2RELAYPIN, OUTPUT);
 	boxGPIO.pinMode(BCPIN, OUTPUT);
 	boxGPIO.pinMode(BCRELAYPIN, OUTPUT);
+	boxGPIO.pinMode(BC_DPDT, OUTPUT);
 	boxGPIO.digitalWrite(BCRELAYPIN, LOW);
 
 	if (boxInverted) {
