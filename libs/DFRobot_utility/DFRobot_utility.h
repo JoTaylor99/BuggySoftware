@@ -37,8 +37,4 @@
 #include "split.h"
 #include "serialStream.h"
 #include "checksum.h"
-#include "keycheck.h"
 #include "DF_utility.h"
-#include "DFRobotCar.h"
-#include "io.h"
-#include "color.h"

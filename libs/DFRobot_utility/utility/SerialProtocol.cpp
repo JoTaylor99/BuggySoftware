@@ -88,6 +88,8 @@ int readData (void *theData, uint8_t theLeng) {
 		return -3; 
 	}
 	memcpy ((void*)theData, (void*)(buffer+2), theLeng);
+	return 8;
+
 }
 
 
