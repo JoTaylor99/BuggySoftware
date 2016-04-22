@@ -400,6 +400,22 @@ void box::configureForAnalysis(bool state) {
 				pinMode(RK7pin, OUTPUT);
 				digitalWrite(RK7pin, HIGH);
 			}
+			else if (_boxNumber == 5) {
+				pinMode(RKPIN, OUTPUT);
+				digitalWrite(RKPIN, HIGH);
+				pinMode(P1PIN, INPUT);
+				pinMode(GNDPIN, OUTPUT);
+				digitalWrite(GNDPIN, LOW);
+				_adcPin = P2PIN;
+			}
+			else if (_boxNumber == 6) {
+				pinMode(RKPIN, OUTPUT);
+				digitalWrite(RKPIN, HIGH);
+				pinMode(P1PIN, OUTPUT);
+				digitalWrite(P1PIN, LOW);
+				pinMode(GNDPIN, INPUT);
+				_adcPin = P2PIN;
+			}
 		}
 		else {
 			if (_boxNumber == 7) {
