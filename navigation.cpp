@@ -122,6 +122,7 @@ void navigation::navigate(String str) {
 					}
 					else {
 						NAV_PRINTLN("Improperly Docked");
+						//buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)57.5);
 					}
 				}
 				else {
