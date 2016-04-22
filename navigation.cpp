@@ -410,43 +410,17 @@ void navigation::adjustOnTheSpot(){
 	// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
 	if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FR))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
 		//case for moving horizontally left
-		NAV_PRINTLN("HL");
-		moveHorizontally(nC::Direction::Left, 40);
-	}
-	else if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FL))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
-		//case for moving horizontally right
 		NAV_PRINTLN("HR");
 		moveHorizontally(nC::Direction::Right, 40);
 	}
-	else if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
-		
-		if (RVAL(sC::ML)!= RVAL(sC::MR)){
-			NAV_PRINTLN("MW(B)");
-			drive(nC::Direction::Forward);
-		}
-		else{
-			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
-				NAV_PRINTLN("MW(L)");
-			//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
-				drive(nC::Direction::LeftForwardOnly);
-			}
-			else {
-				NAV_PRINTLN("MW(R)");
-				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
-				drive(nC::Direction::RightForwardOnly);
-			}
-		}
+	else if ((((RVAL(sC::LTL)) == (RVAL(sC::LTR))) == (RVAL(sC::FL))) && ((RVAL(sC::BR)) == (RVAL(sC::BL)))) {
+		//case for moving horizontally right
+		NAV_PRINTLN("HL");
+		moveHorizontally(nC::Direction::Left, 40);
 	}
 
-	//// Case 2 ((LTL == LTR && LTL==BL && LTL ==BR)
-	//else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::LTL) == RVAL(sC::BR)) && (RVAL(sC::LTL) == RVAL(sC::BL))) {
-	//	if (RVAL(sC::LTL) == STARTVAL(sC::LTL)) {
-	//		drive(nC::Direction::Left);
-	//	}
-	//	else {
-	//		drive(nC::Direction::Right);
-	//	}
-	//}
+
+
 	//Case 3 (LTL!= LTR) && (BR==BL)   
 	else if ((RVAL(sC::LTL) != RVAL(sC::LTR)) && (RVAL(sC::BL) == RVAL(sC::BR))) {
 		NAV_PRINTLN("FC, BW");
@@ -459,6 +433,7 @@ void navigation::adjustOnTheSpot(){
 			drive(nC::Direction::RightForwardOnly);
 		}
 	}
+
 	//Case 3.1 (LTL==LTR) && (BR !=BL)
 	else if ((RVAL(sC::LTL) == RVAL(sC::LTR)) && (RVAL(sC::BL) != RVAL(sC::BR))) {
 		NAV_PRINTLN("FW, BC");
@@ -469,6 +444,26 @@ void navigation::adjustOnTheSpot(){
 		else {
 			//LEFT WHEEL BACKWARD, RIGHT WHEEL STOP
 			drive(nC::Direction::LeftBackwardsOnly);
+		}
+	}
+
+	else if ((RVAL(sC::ML) == STARTVAL(sC::ML)) || (RVAL(sC::MR) == STARTVAL(sC::MR))) {
+
+		if (RVAL(sC::ML) != RVAL(sC::MR)){
+			NAV_PRINTLN("MW(B)");
+			drive(nC::Direction::Forward);
+		}
+		else{
+			if (RVAL(sC::ML) == STARTVAL(sC::ML)) {
+				NAV_PRINTLN("MW(L)");
+				//	LEFT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::LeftForwardOnly);
+			}
+			else {
+				NAV_PRINTLN("MW(R)");
+				//	RIGHT MIDDLE SENSOR BEHIND THE INTERSECTION
+				drive(nC::Direction::RightForwardOnly);
+			}
 		}
 	}
 }
