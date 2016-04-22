@@ -102,8 +102,6 @@ private:
 
 	bool compareAllWithStart();
 	bool compareAllToLast();
-
-	uint8_t dockFailureCounter = 0;
 	
 };
 
