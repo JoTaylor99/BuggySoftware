@@ -298,8 +298,6 @@ bool buggyMotion::isMoveComplete() {
 void buggyMotion::stepSeparately(nC::Direction direction, uint16_t leftDistance, uint16_t rightDistance) {
 
 	_firstCall = true;
-	//if (leftDistance > DEFAULTMAXDISTANCE) { leftDistance = DEFAULTMAXDISTANCE; }
-	//if (rightDistance > DEFAULTMAXDISTANCE) { rightDistance = DEFAULTMAXDISTANCE; }
 
 	if ((direction == nC::LeftBackwardsOnly) || (direction == nC::LeftForwardOnly)) {
 		rightDistance = 0;
@@ -342,10 +340,6 @@ void buggyMotion::pciSetup(uint8_t pin)
 
 void buggyMotion::moveHorizontally(nC::Direction direction, uint8_t distance) {
 	if (direction == nC::Left) {
-		//step(nC::Direction::Right, 20);
-		//step(nC::Direction::Backwards, 25);
-		//step(nC::Direction::Left, 20);
-		//step(nC::Direction::Forward, 15);
 		step(nC::Direction::RightForwardOnly, distance);
 		step(nC::Direction::LeftForwardOnly, distance);
 		step(nC::Direction::RightBackwardsOnly, distance);
