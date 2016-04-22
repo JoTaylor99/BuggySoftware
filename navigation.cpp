@@ -87,40 +87,38 @@ void navigation::navigate(String str) {
 				boxApproach();
 				//pass recieved boxnumber and recieved box inversion information
 				box boxs;
-				dockFailureCounter = 0;
 				if ((boxs.begin(passedBoxNumber, passedBoxInversion)) == false)
 				{
 					ERROR_PRINTLN("Box Init failure");
 					return;
 				}
-
-				if (!boxs.docked()) {
-					dockFailureCounter++;
-					if (dockFailureCounter == 2) {
-						if (passedBoxNumber == 1) {
-							
+				for (uint8_t dockFailureCounter = 0; dockFailureCounter < 2; dockFailureCounter++) {
+					if (boxs.docked() == false) {
+						NAV_PRINTLN("Improperly Docked");
+						if (dockFailureCounter == 1) {
+							if (passedBoxNumber == 1) {
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)6.7);
+							}
+							else if (passedBoxNumber == (2 || 3 || 4)) {
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)boxs.ResistorValue(passedBoxNumber));
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue2, (float)boxs.ResistorValue(passedBoxNumber));
+							}
+							else if (passedBoxNumber == (5 || 6 || 7)) {
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)boxs.ResistorValue(passedBoxNumber));
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue2, (float)boxs.CapacitorValue(passedBoxNumber));
+								buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue3, (float)boxs.calculateFrequency(passedBoxNumber));
+							}
+							boxBeGone();
+							return;
 						}
+
 						boxBeGone();
-						return;
+						boxApproach();
 					}
-				}
-				else {
-					boxs.interrogateBox();
-				}
-				boxBeGone();
-				box boxs;
-				if ((boxs.begin(4, 0)) == true) {
-					if (boxs.docked() == true) {
+					else {
 						NAV_PRINTLN("Docked correctly");
 						boxs.interrogateBox();
 					}
-					else {
-						NAV_PRINTLN("Improperly Docked");
-						//buggyTop::sendBoxValue(Comms::FunctionCodes::BoxValue1, (float)57.5);
-					}
-				}
-				else {
-					
 				}
 				boxBeGone();
 			} else if (str == "S") {
@@ -146,13 +144,13 @@ void navigation::navigate(String str) {
 
 			}
 			else if (str == "N") {
-				moveHorizontally(nC::Direction::Left, 40);
+				//moveHorizontally(nC::Direction::Left, 40);
 			}
 			else if (str == "M") {
-				moveHorizontally(nC::Direction::Right, 40);
+				//moveHorizontally(nC::Direction::Right, 40);
 			}
 			else {
-				drive(nC::Direction::Stop);
+				//drive(nC::Direction::Stop);
 			}
 };
 
