@@ -587,6 +587,7 @@ void navigation::turnLeft() {
 			NAV_PRINTLN("Success");
 			drive(nC::Direction::Stop);
 			delay(14);
+			Sensor::PollSensors(Sensors);
 			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
 				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
 				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
@@ -643,6 +644,7 @@ void navigation::turnRight() {
 			NAV_PRINTLN("Success");
 			drive(nC::Direction::Stop);
 			delay(14);
+			Sensor::PollSensors(Sensors);
 			if ((((RVAL(sC::FL)) && (RLASTVAL(sC::FL))) != STARTVAL(sC::FL)) &&
 				(((RVAL(sC::LTL)) && (RLASTVAL(sC::LTL))) != STARTVAL(sC::LTL)) &&
 				(((RVAL(sC::LTR)) && (RLASTVAL(sC::LTR))) != STARTVAL(sC::LTR)) &&
@@ -715,6 +717,7 @@ void navigation::moveForward(bool approachingBox) {
 			 NAV_PRINTLN("Success");
 			 drive(nC::Direction::Stop);
 			 delay(14);
+			 Sensor::PollSensors(Sensors);
 			 if (compareAllToLast()) {
 				 NAV_PRINTLN("DONE");
 				 break;
@@ -792,6 +795,7 @@ void navigation::moveBackward() {
 				NAV_PRINTLN("Success");
 				drive(nC::Direction::Stop);
 				delay(14);
+				Sensor::PollSensors(Sensors);
 				if (compareAllToLast()) {
 					break;
 				}
