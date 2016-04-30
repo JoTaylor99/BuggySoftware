@@ -149,6 +149,9 @@ void navigation::navigate(String str) {
 			else {
 				drive(nC::Direction::Stop);
 			}
+
+
+			Serial.println("X");
 };
 
 void navigation::boxApproach() {
