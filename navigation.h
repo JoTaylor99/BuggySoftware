@@ -18,11 +18,12 @@ public:
 	/* Navigation destructor*/
 	~navigation();
 
-	/* Navigation init function
-	*  Void return type
-	*  Will depends on communications class for sending error codes or debug statements
-	*  Sets up
-	*/
+	 /// <summary>
+	 /// Navigation init function
+	 /// Void return type
+	 ///	  Will depends on communications class for sending error codes or debug statements
+	 ///  Sets up
+	 /// </summary>
 	void initNavigation();
 
 	/* navigate function
@@ -83,14 +84,23 @@ private:
 	/// </summary>
 	void adjustOnTheSpot();
 	
-	//checks if the readings of all the sensors are opposite with their corresponding starting reading (i.e. the buggy has reached its destination)
+	/// <summary>
+	/// checks if the readings of all the sensors are opposite with their corresponding starting reading (i.e. the buggy has reached its destination)
+	/// </summary>
+	/// <returns></returns>
 	bool reachedDestination();
 
-	//checks if the centre of rotation of the buggy is at the top of the destination intersection
+	/// <summary>
+	/// checks if the centre of rotation of the buggy is at the top of the destination intersection
+	/// </summary>
+	/// <returns></returns>
 	bool buggyCentreOnTopofDestIntersection();
 
-	// Checks if the centre of rotation is behhind the destination intersection 
+	/// <summary>
+	/// Checks if the centre of rotation is behhind the destination intersection 
 	//but the front of the buggy has passed the destination intersection
+	/// </summary>
+	/// <returns></returns>
 	bool buggyCentreBehindDestIntersection();
 
 	void turnLeft();

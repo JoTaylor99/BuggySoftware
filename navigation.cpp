@@ -4,11 +4,13 @@
 #include "buggyTop.h"
 #include "navigation.h"
 
-//Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
-//Previous values are read using RLASTVAL(sensorNumber)
-//Starting values are read using STARTVAL(sensorNumber)
-//test commit changes
 
+/// <summary>
+/// Note sensors are read using RVAL(sensorNumber) e.g. RVAL(sC::LTL), RVAL(sC::FR), etc.
+///Previous values are read using RLASTVAL(sensorNumber)
+///Starting values are read using STARTVAL(sensorNumber)
+///test commit changes
+/// </summary>
 navigation::navigation() {
 	
 }
@@ -160,7 +162,9 @@ void navigation::boxApproach() {
 	moveForward(true);
 }
 
-//captures and stores in an array all the sensor values at the initial node position
+/// <summary>
+/// captures and stores in an array all the sensor values at the initial node position
+/// </summary>
 void navigation::start() {
 #ifndef HARDCODEDSTARTVALUES
 	Sensor::PollSensors(Sensors);
@@ -182,7 +186,10 @@ void navigation::start() {
 #endif
 }
 
-//Determines if the buggy reached the destination intersection correctly
+/// <summary>
+/// Determines if the buggy reached the destination intersection correctly
+/// </summary>
+/// <returns></returns>
 bool navigation::reachedDestination() {
 	if ( 
 		(RVAL(sC::ML) != STARTVAL(sC::ML))&&  
@@ -195,7 +202,10 @@ bool navigation::reachedDestination() {
 	}
 }
 
-//Determines if the centre of rotation of the buggy has just arrived at the top of the destination Intersection
+/// <summary>
+/// Determines if the centre of rotation of the buggy has just arrived at the top of the destination Intersection
+/// </summary>
+/// <returns></returns>
 bool navigation::buggyCentreOnTopofDestIntersection() {
 	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
 		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
@@ -208,7 +218,10 @@ bool navigation::buggyCentreOnTopofDestIntersection() {
 		return false;
 	}
 }
-//checks if centre of rotation of the buggy is behind the intersection while front of the buggy has passed
+/// <summary>
+/// checks if centre of rotation of the buggy is behind the intersection while front of the buggy has passed
+/// </summary>
+/// <returns></returns>
 bool navigation::buggyCentreBehindDestIntersection() {
 	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
 		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
@@ -221,7 +234,8 @@ bool navigation::buggyCentreBehindDestIntersection() {
 	}
 }
 
-/// driftingWhenForward Algorithm
+/// <summary>
+///  driftingWhenForward Algorithm
 /// If (LTL!= LTR )
 ///		Buggy follows correctly the line
 ///		return false;
@@ -246,6 +260,8 @@ bool navigation::buggyCentreBehindDestIntersection() {
 ///			}
 ///		return true;
 /// }
+/// </summary>
+/// <returns></returns>
 bool navigation::driftingWhenForward() {
 	if ((RVAL(sC::LTL) && RLASTVAL(sC::LTL)) != (RVAL(sC::LTR) && RLASTVAL(sC::LTR))) {
 		return false;
@@ -359,7 +375,7 @@ bool navigation::driftingWhenBackward() {
 
 
 /// <summary>
-/// adjustOnTheSpot is called when ML and MR have just crossed the destination intersection line
+/// /// adjustOnTheSpot is called when ML and MR have just crossed the destination intersection line
 /// Aims to get the buggy to have correct finish position 
 /// adjustOnTheSpot algorithm
 /// Case 1 Middle Sensors have moved accidentally  behind the destination intersection line
@@ -609,13 +625,11 @@ void navigation::turnLeft() {
 
 
 
-
 /// <summary>
-/// Same algorithm as RotateLeft
+/// /// Same algorithm as RotateLeft
 /// Only difference is the direction of rotation  which is Right
 /// 
 /// </summary>
-//Function to turn right.
 void navigation::turnRight() {
 	Sensor::PollSensors(Sensors);
 	Sensor::printCurrent();
@@ -813,7 +827,7 @@ bool navigation::startValIs(sC::sensorNumber position) {
 #endif
 
 /// <summary>
-/// Victory roll defined as:
+/// /// Victory roll defined as:
 /// 6 x turnLeft (or Right)
 /// 1 x moveForward
 /// 2 x turnLeft (or Right)
