@@ -6,9 +6,7 @@
 
 #include <SparkFunTSL2561.h>
 #include "Config.h"
-#include <Wire.h>
 #include <Adafruit_MCP23017.h>
-#include "Comms.h"
 
 #ifdef QTRSINUSE
 #include <QTRSensors.h>
@@ -20,8 +18,8 @@ class Sensor {
 
 public:
 	/* Sensor constructor*/
-	Sensor(uint16_t Pin);
-	Sensor(uint16_t Pin, sC::SensorType S);
+	Sensor(uint8_t Pin);
+	Sensor(uint8_t Pin, sC::SensorType S);
 
 	
 	/* Sensor destructor*/
@@ -63,7 +61,7 @@ public:
 
 private:
 	bool tileWhite;
-	uint16_t _pin;
+	uint8_t _pin;
 	uint16_t Max;
 	uint16_t Min;
 	uint16_t Raw;

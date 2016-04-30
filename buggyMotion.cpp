@@ -284,7 +284,7 @@ void buggyMotion::capSpeeds()
 }
 
 uint16_t buggyMotion::getStepsFromDistance(uint16_t mmDistance) {
-	return static_cast<uint16_t>(8*(mmDistance*THESCALEFACTOR));
+	return static_cast<uint16_t>(8*(mmDistance*STEPWISESCALEFACTOR));
 }
 
 bool buggyMotion::isMoveComplete() {

@@ -18,7 +18,7 @@ const sC::sensorNumber Sensor::Back[2] = { sC::BR, sC::BL };
 const sC::sensorNumber Sensor::Middle[2] = { sC::MR, sC::ML };
 const sC::sensorNumber Sensor::FrontNMiddle[6] = { sC::FR, sC::LTR, sC::LTL, sC::FL, sC::MR, sC::ML };
 
-Sensor::Sensor(uint16_t Pin) {
+Sensor::Sensor(uint8_t Pin) {
 	_pin = Pin;
 	Max = MAX_DEFAULT;
 	Min = MIN_DEFAULT;
@@ -27,7 +27,7 @@ Sensor::Sensor(uint16_t Pin) {
 	_s = sC::SensorType::TSL;
 }; 
 
-Sensor::Sensor(uint16_t index, sC::SensorType S) {
+Sensor::Sensor(uint8_t index, sC::SensorType S) {
 	_pin = index;
 	Max = MAX_DEFAULT;
 	Min = MIN_DEFAULT;
