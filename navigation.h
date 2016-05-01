@@ -90,14 +90,47 @@ private:
 	/// <returns></returns>
 	bool reachedDestination();
 
+	/// <summary>
+	///   90 degrees left rotation
+	/// </summary>
 	void turnLeft();
+	/// <summary>
+	/// 90 degrees right rotation
+	/// </summary>
 	void turnRight();
+	/// <summary>
+	/// Function used to move the buggy one intersection Forward
+	/// </summary>
+	/// <param name="approachingBox"></param>
 	void moveForward(bool approachingBox = 0);
+
+	/// <summary>
+	/// Function used to move the buggy one intersection backwards
+	/// </summary>
 	void moveBackward();
+	/// <summary>
+	/// Executes the victory roll movement 
+	/// </summary>
 	void victoryRoll();
+	/// <summary>
+	/// Function that takes the buggy one intersection backwards once it analysed a box
+	/// </summary>
 	void boxBeGone();
 
+	/// <summary>
+	/// Bool function that compares all the current readings of the sensors with their initial readings  
+	/// Returns true if all the current readings of the sensors are opposite with their initial readings corresponding readings
+	/// which means that a movement is completed
+	/// Else it returns false 
+	/// </summary>
+	/// <returns></returns>
 	bool compareAllWithStart();
+	/// <summary>
+	/// Bool function that compares all the current readings of the sensors with their last obtained reading 
+	/// Returns true if the current readings of the sensors are equal with their last corresponding readings
+	/// Else it returns false 
+	/// </summary>
+	/// <returns></returns>
 	bool compareAllToLast();
 	
 };
