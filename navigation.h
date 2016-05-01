@@ -90,19 +90,6 @@ private:
 	/// <returns></returns>
 	bool reachedDestination();
 
-	/// <summary>
-	/// checks if the centre of rotation of the buggy is at the top of the destination intersection
-	/// </summary>
-	/// <returns></returns>
-	bool buggyCentreOnTopofDestIntersection();
-
-	/// <summary>
-	/// Checks if the centre of rotation is behhind the destination intersection 
-	//but the front of the buggy has passed the destination intersection
-	/// </summary>
-	/// <returns></returns>
-	bool buggyCentreBehindDestIntersection();
-
 	void turnLeft();
 	void turnRight();
 	void moveForward(bool approachingBox = 0);

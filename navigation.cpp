@@ -203,38 +203,6 @@ bool navigation::reachedDestination() {
 }
 
 /// <summary>
-/// Determines if the centre of rotation of the buggy has just arrived at the top of the destination Intersection
-/// </summary>
-/// <returns></returns>
-bool navigation::buggyCentreOnTopofDestIntersection() {
-	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-		(RVAL(sC::ML) != STARTVAL(sC::ML)) &&
-		(RVAL(sC::MR) != STARTVAL(sC::MR)) &&
-		((RLASTVAL(sC::ML) == STARTVAL(sC::ML)) || (RLASTVAL(sC::MR) == STARTVAL(sC::MR)))) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-/// <summary>
-/// checks if centre of rotation of the buggy is behind the intersection while front of the buggy has passed
-/// </summary>
-/// <returns></returns>
-bool navigation::buggyCentreBehindDestIntersection() {
-	if ((RVAL(sC::FL) != STARTVAL(sC::FL)) &&
-		(RVAL(sC::FR) != STARTVAL(sC::FR)) &&
-		(RVAL(sC::ML) == STARTVAL(sC::ML)) &&
-		(RVAL(sC::MR) == STARTVAL(sC::MR))) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-/// <summary>
 ///  driftingWhenForward Algorithm
 /// If (LTL!= LTR )
 ///		Buggy follows correctly the line
