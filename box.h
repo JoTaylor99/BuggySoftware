@@ -154,7 +154,14 @@ private:
 
 		double calculateResistorValue(double rawValue, bool stage);
 
-		
+		/// <summary>
+		/// This code was taken and edited for our purposes from:
+		///  Nethercott, J. (2014). Capacitance Meter Mk II | PIC Tutorials. [online]
+		/// Wordpress.codewrite.co.uk.Available at :
+		/// http ://wordpress.codewrite.co.uk/pic/2014/01/25/capacitance-meter-mk-ii/
+		/// [Accessed 1 May 2016].
+		/// </summary>
+		/// <returns></returns>
 		double measureCapacitance();
 };
 
