@@ -3,7 +3,12 @@
 #include <Arduino.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
+
+/// <summary>
+/// Arduino Watchdog timer reset.  This macro will result in an emergency stop of the buggy and reset of the microcontroller 15 millseconds after it is called.
+/// </summary>
 #define RESET_AVR2() wdt_enable(WDTO_15MS); while(1) {}
+
 //Toggle this statement to enable global debug statements, for example "Setup complete" in buggyTop
 //Note this can also be used to do things such as test timings while leaving more in depth debug prints disabled.
 #define DEBUG
@@ -102,6 +107,10 @@
 
 //#define QTRSINUSE
 //#define SENSOR_MEMORY_SAVE
+
+/// <summary>
+/// Preprocessor switch to toggle sensor value storage between an array of boolean elements (each of length 8 bits) or storage in a single byte.
+/// </summary>
 #ifndef SENSOR_MEMORY_SAVE
 #define SVAL(sensorNumber, value) Sensor::values[sensorNumber] = value
 #define RVAL(sensorNumber)	Sensor::values[sensorNumber]
@@ -117,38 +126,51 @@
 #endif
 //Sensor Defines
 
+/// <summary>
+/// Number of sensors in use
+/// </summary>
 #define NUM_SENSORS 8
 
+/// <summary>
+/// Sensor pins
+/// </summary>
 //Change these depending on what pins each sensor's address pin is connected to
-#define FRPIN 7                                                                                 /*       _ _front _ _    */
-#define LTRPIN 6                                                                              /*       / s1 | s0 \ */
-#define LTLPIN 5                                                                                 /*      |     |     |*/
-#define FLPIN 4                                                                                 /*      |_ s3_|_s2_ |*/
-#define MRPIN 3                                                                                 /*      |  s5 | s4  |*/
-#define MLPIN 2                                                                                /*       \_____|_____/*/
+#define FRPIN 7
+#define LTRPIN 6
+#define LTLPIN 5
+#define FLPIN 4
+#define MRPIN 3
+#define MLPIN 2
 #define BRPIN 1
 #define BLPIN 0
 
+/// <summary>
+/// Sensor thresholds, maximum normalised range
+/// </summary>
 #define UPPER_THRESHOLD 55     //In percent
 #define LOWER_THRESHOLD 20
-#define TRIGGER A0
-#define ECHO A1
-#define MAXDISTANCE 100
 
 #define NORMALISED_MAX 1000
+
+/// <summary>
+/// Default raw values for use in normalisation of first set of readings after power on
+/// </summary>
 #define MAX_DEFAULT 1000
 #define MIN_DEFAULT 800
 
-//Nav::navigation defines 
+/// <summary>
+/// Motor control pins
+/// </summary>
 #define LEFTMOTORDIR 6
 #define RIGHTMOTORDIR 7
 #define LEFTMOTOR 9
 #define RIGHTMOTOR 3
-
-//buggyMotion::step by distance defines
 #define LEFTMOTORCOUNT	8		//PCINT 0			
 #define RIGHTMOTORCOUNT	4		//PCINT 20
 
+/// <summary>
+/// Stepwise motion adjustment factor to account for occasional missed step and slippage
+/// </summary>
 #define STEPWISESCALEFACTOR 1.035
 
 //Setting to toggle blocking mode for stepwise operations
@@ -158,31 +180,39 @@
 //Box Defines
 
 
+/// <summary>
+/// Box analysis constants
+/// </summary>
 #define NUMADCREADINGS 50
-
 #define BOXONERATIO		0.4528
 #define VREF			5
 #define ADCMAX			1023
 
+/// <summary>
+/// Box analysis known resistors
+/// </summary>
 #define RK	560
 #define Rk7 99.8
+//Pullup resistance on P2PIN will vary depending on board.
+//Calibrate this with known capacitor.
+#define RPULLUP 36.486  //in ohms
 
+/// <summary>
+/// Box analyis pins
+/// </summary>
 #define P1PIN	15 //Pin A1
 #define P2PIN	16 //Pin A2
 #define GNDPIN	17 //Pin A3
 #define RKPIN	14 //Pin A0
 #define RK7pin  12
 
-//on expander
+/// <summary>
+/// Box analysis GPIO expander pins
+/// </summary>
 #define P1P2RELAYPIN	0
 #define BCPIN			1
 #define BCRELAYPIN		2
-#define BC_DPDT         3 // dc adding
-
-
-//Pullup resistance on P2PIN will vary depending on board.
-//Calibrate this with known capacitor.
-#define RPULLUP 36.486  //in ohms
+#define BC_DPDT         3
 
 //change to bC
 namespace bC {
@@ -227,15 +257,6 @@ namespace bC {
 		};
 
 	};
-
-	namespace mC {
-
-		enum Direction : uint8_t {
-			F, B, S
-		};
-
-	};
-
 
 	namespace nC{
 	
