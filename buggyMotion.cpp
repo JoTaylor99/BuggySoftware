@@ -144,10 +144,11 @@ void buggyMotion::drive(nC::Direction direction, nC::Drift drift)
 	
 	_previousDrift = drift;
 }
-void buggyMotion::getSpeeds(int32_t & leftSpeed, int32_t & rightSpeed)
+void buggyMotion::getSpeeds()
 {
-	leftSpeed = _leftSpeed;
-	rightSpeed = _rightSpeed;
+	Serial.print(_leftSpeed);
+	Serial.print(F("\t"));
+	Serial.println(_rightSpeed);
 }
 void buggyMotion::stepperControl(nC::Direction leftMotor, nC::Direction rightMotor) {
 
@@ -339,6 +340,7 @@ void buggyMotion::pciSetup(uint8_t pin)
 }
 
 void buggyMotion::moveHorizontally(nC::Direction direction, uint8_t distance) {
+#ifdef STEPWISE_BLOCKING
 	if (direction == nC::Left) {
 		step(nC::Direction::RightForwardOnly, distance);
 		step(nC::Direction::LeftForwardOnly, distance);
@@ -351,4 +353,5 @@ void buggyMotion::moveHorizontally(nC::Direction direction, uint8_t distance) {
 		step(nC::Direction::LeftBackwardsOnly, distance);
 		step(nC::Direction::RightBackwardsOnly, distance);
 	}
+#endif
 }

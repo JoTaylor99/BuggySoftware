@@ -101,7 +101,7 @@ private:
 	/// <summary>
 	/// Function used to move the buggy one intersection Forward
 	/// </summary>
-	/// <param name="approachingBox"></param>
+	/// <param name="approachingBox">If Approaching box is true, then adjust on the spot is disabled to ensure the buggy will not move forward of the intersection and strike the box</param>
 	void moveForward(bool approachingBox = 0);
 
 	/// <summary>

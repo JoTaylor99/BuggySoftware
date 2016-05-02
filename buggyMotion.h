@@ -4,7 +4,6 @@
 #define _BUGGYMOTION_H
 
 #include "Config.h"
-#include <arduino2.h>
 #include <PWM.h>
 
 /// <summary>
@@ -45,14 +44,14 @@ protected:
 	/// <param name="drift">If the buggy is drifting, set this parameter to be the direction the buggy is drifting relative to the direction it is going.</param>
 	void drive(nC::Direction direction, nC::Drift drift = nC::Drift::noDrift);
 
-	void getSpeeds(int32_t &leftSpeed, int32_t &rightSpeed);
+	void getSpeeds();
 
 	/// <summary>
 	/// steps the desired distance in mm in the requested direction 
 	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
 	/// <param name="direction">Direction to turn wheels</param>
-	/// <param name="distance">Distance in mm to turn wheels MAX 250</param>
+	/// <param name="distance">Distance in mm to turn wheels</param>
 	void step(nC::Direction direction, uint16_t distance = 0);
 
 	/// <summary>
@@ -60,10 +59,18 @@ protected:
 	/// Sets _leftWheelTask and/or _rightWheelTask to false
 	/// </summary>
 	/// <param name="direction"></param>
-	/// <param name="leftDistance">Distance in mm to turn left wheel MAX 250</param>
-	/// <param name="rightDistance">Distance in mm to turn right wheel MAX 250</param>
+	/// <param name="leftDistance">Distance in mm to turn left wheel</param>
+	/// <param name="rightDistance">Distance in mm to turn right wheel</param>
 	void stepSeparately(nC::Direction direction, uint16_t leftDistance = 0, uint16_t rightDistance = 0);
 
+	/// <summary>
+	/// Calls a series of step commands to move the buggy horizontally left and right while remaining in the same position in the forward/backward axis.
+	/// </summary>
+	/// <param name="direction">left or right, direction to shift</param>
+	/// <param name="distance">distance in mm for centre of buggy to move in specified direction</param>
+	void moveHorizontally(nC::Direction direction, uint8_t distance);
+
+private:
 
 	/// <summary>
 	/// If both leftWheelTask and rightWheelTask are true then return true
@@ -71,14 +78,6 @@ protected:
 	/// <returns></returns>
 	bool isMoveComplete();
 
-	/// <summary>
-	/// Calls a series of step commands to move the buggy horizontally left and right while remaining in the same position in the forward/backward axis.
-	/// </summary>
-	/// <param name="direction">left = 0, right = 1</param>
-	/// <param name="distance">distance in mm for centre of buggy to move in specified direction</param>
-	void moveHorizontally(nC::Direction direction, uint8_t distance);
-
-private:
 	/// <summary>
 	/// Provides control of each motors direction, the speed of the motors will be determined by the variables _leftSpeed and _rightSpeed
 	/// </summary>
